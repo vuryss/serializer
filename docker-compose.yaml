@@ -1,0 +1,22 @@
+name: vuryss-serializer
+
+services:
+    library:
+        build: .
+        volumes:
+            - .:/library
+        working_dir: /library
+        command: 'sleep infinity'
+        extra_hosts:
+            -   "host.docker.internal:host-gateway"
+        environment:
+            PHP_IDE_CONFIG: "serverName=library"
+        configs:
+            -   source: php.ini
+                target: /usr/local/etc/php/conf.d/zzzzz-php.ini
+
+configs:
+    php.ini:
+        content: |
+            xdebug.mode=debug
+            xdebug.client_host=host.docker.internal

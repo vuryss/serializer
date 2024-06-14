@@ -14,9 +14,10 @@ use Vuryss\Serializer\Attribute\SerializerContext;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Exception\MetadataExtractionException;
 use Vuryss\Serializer\Exception\UnsupportedType;
+use Vuryss\Serializer\MetadataExtractorInterface;
 use Vuryss\Serializer\SerializerException;
 
-class MetadataExtractor
+class MetadataExtractor implements MetadataExtractorInterface
 {
     // TODO: Cache
     private static function getPropertyInfoInstance(): PropertyInfoExtractorInterface

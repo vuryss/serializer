@@ -8,7 +8,6 @@ use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
-use Vuryss\Serializer\Metadata\MetadataExtractor;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\WriteAccess;
 use Vuryss\Serializer\Path;
@@ -25,8 +24,7 @@ class ObjectDenormalizer implements DenormalizerInterface
             throw new DeserializationImpossibleException('Data must be an array');
         }
 
-        $metadataExtractor = new MetadataExtractor();
-        $classMetadata = $metadataExtractor->extractClassMetadata($className);
+        $classMetadata = $denormalizer->getMetadataExtractor()->extractClassMetadata($className);
         $constructorParameters = [];
         $directAssignmentProperties = [];
         $setterProperties = [];

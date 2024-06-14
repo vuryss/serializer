@@ -11,7 +11,9 @@ use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
 use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
 use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
 use Vuryss\Serializer\Exception\EncodingException;
+use Vuryss\Serializer\Metadata\CachedMetadataExtractor;
 use Vuryss\Serializer\Metadata\DataType;
+use Vuryss\Serializer\Metadata\MetadataExtractor;
 use Vuryss\Serializer\Normalizer\ArrayNormalizer;
 use Vuryss\Serializer\Normalizer\BasicTypesNormalizer;
 use Vuryss\Serializer\Normalizer\DateTimeNormalizer;
@@ -22,6 +24,7 @@ readonly class Serializer implements SerializerInterface
 {
     private Normalizer $normalizer;
     private Denormalizer $denormalizer;
+    private MetadataExtractorInterface $metadataExtractor;
 
     /**
      * @param array<NormalizerInterface> $normalizers
@@ -30,7 +33,10 @@ readonly class Serializer implements SerializerInterface
     public function __construct(
         array $normalizers = [],
         array $denormalizers = [],
+        ?MetadataExtractorInterface $metadataExtractor = null,
     ) {
+        $this->metadataExtractor = $metadataExtractor ?? new CachedMetadataExtractor(new MetadataExtractor());
+
         $normalizers = [] === $normalizers
             ? [
                 new BasicTypesNormalizer(),
@@ -41,7 +47,7 @@ readonly class Serializer implements SerializerInterface
             ]
             : $normalizers;
 
-        $this->normalizer = new Normalizer(normalizers: $normalizers);
+        $this->normalizer = new Normalizer(normalizers: $normalizers, metadataExtractor: $this->metadataExtractor);
 
         $denormalizers = [] === $denormalizers
             ? [
@@ -54,7 +60,7 @@ readonly class Serializer implements SerializerInterface
             ]
             : $denormalizers;
 
-        $this->denormalizer = new Denormalizer(denormalizers: $denormalizers);
+        $this->denormalizer = new Denormalizer(denormalizers: $denormalizers, metadataExtractor: $this->metadataExtractor);
     }
 
     /**

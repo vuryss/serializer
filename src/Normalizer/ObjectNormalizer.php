@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Normalizer;
 
-use Vuryss\Serializer\Metadata\MetadataExtractor;
 use Vuryss\Serializer\Metadata\ReadAccess;
 use Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\NormalizerInterface;
@@ -15,8 +14,7 @@ class ObjectNormalizer implements NormalizerInterface
     {
         assert(is_object($data));
 
-        $metadataExtractor = new MetadataExtractor();
-        $classMetadata = $metadataExtractor->extractClassMetadata($data::class);
+        $classMetadata = $normalizer->getMetadataExtractor()->extractClassMetadata($data::class);
         $normalizedData = [];
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {

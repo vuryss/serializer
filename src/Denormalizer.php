@@ -16,7 +16,8 @@ final readonly class Denormalizer
      * @param array<DenormalizerInterface> $denormalizers
      */
     public function __construct(
-        private array $denormalizers
+        private array $denormalizers,
+        private MetadataExtractorInterface $metadataExtractor,
     ) {}
 
     /**
@@ -30,6 +31,11 @@ final readonly class Denormalizer
 
         /** @psalm-suppress MixedReturnStatement */
         return $denormalizer->denormalize($data, $dataType, $this, $path);
+    }
+
+    public function getMetadataExtractor(): MetadataExtractorInterface
+    {
+        return $this->metadataExtractor;
     }
 
     /**

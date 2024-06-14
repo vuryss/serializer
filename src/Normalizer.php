@@ -16,6 +16,7 @@ final readonly class Normalizer
      */
     public function __construct(
         private array $normalizers,
+        private MetadataExtractorInterface $metadataExtractor,
     ) {}
 
     /**
@@ -28,6 +29,11 @@ final readonly class Normalizer
         $normalizer = $this->resolveNormalizer($data);
 
         return $normalizer->normalize($data, $this, $attributes);
+    }
+
+    public function getMetadataExtractor(): MetadataExtractorInterface
+    {
+        return $this->metadataExtractor;
     }
 
     /**

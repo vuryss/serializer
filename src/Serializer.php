@@ -29,11 +29,13 @@ readonly class Serializer implements SerializerInterface
     /**
      * @param array<NormalizerInterface> $normalizers
      * @param array<DenormalizerInterface> $denormalizers
+     * @param array<string, string|int|float|bool> $attributes
      */
     public function __construct(
         array $normalizers = [],
         array $denormalizers = [],
         ?MetadataExtractorInterface $metadataExtractor = null,
+        array $attributes = [],
     ) {
         $this->metadataExtractor = $metadataExtractor ?? new CachedMetadataExtractor(new MetadataExtractor());
 
@@ -47,7 +49,11 @@ readonly class Serializer implements SerializerInterface
             ]
             : $normalizers;
 
-        $this->normalizer = new Normalizer(normalizers: $normalizers, metadataExtractor: $this->metadataExtractor);
+        $this->normalizer = new Normalizer(
+            normalizers: $normalizers,
+            metadataExtractor: $this->metadataExtractor,
+            attributes: $attributes,
+        );
 
         $denormalizers = [] === $denormalizers
             ? [
@@ -60,7 +66,11 @@ readonly class Serializer implements SerializerInterface
             ]
             : $denormalizers;
 
-        $this->denormalizer = new Denormalizer(denormalizers: $denormalizers, metadataExtractor: $this->metadataExtractor);
+        $this->denormalizer = new Denormalizer(
+            denormalizers: $denormalizers,
+            metadataExtractor: $this->metadataExtractor,
+            attributes: $attributes,
+        );
     }
 
     /**

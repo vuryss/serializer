@@ -13,10 +13,12 @@ final readonly class Normalizer
 {
     /**
      * @param array<NormalizerInterface> $normalizers
+     * @param array<string, string|int|float|bool> $attributes
      */
     public function __construct(
         private array $normalizers,
         private MetadataExtractorInterface $metadataExtractor,
+        private array $attributes = [],
     ) {}
 
     /**
@@ -27,6 +29,8 @@ final readonly class Normalizer
     public function normalize(mixed $data, array $attributes): mixed
     {
         $normalizer = $this->resolveNormalizer($data);
+
+        $attributes = $attributes + $this->attributes;
 
         return $normalizer->normalize($data, $this, $attributes);
     }

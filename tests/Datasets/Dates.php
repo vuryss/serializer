@@ -17,4 +17,6 @@ class Dates
 
     #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC3339_EXTENDED])]
     public \DateTime $dateTimeFormat1;
+
+    public \DateTimeImmutable $globalDateTimeFormat;
 }

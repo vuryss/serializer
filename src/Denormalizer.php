@@ -14,10 +14,12 @@ final readonly class Denormalizer
 {
     /**
      * @param array<DenormalizerInterface> $denormalizers
+     * @param array<string, string|int|float|bool> $attributes
      */
     public function __construct(
         private array $denormalizers,
         private MetadataExtractorInterface $metadataExtractor,
+        private array $attributes = [],
     ) {}
 
     /**
@@ -27,6 +29,7 @@ final readonly class Denormalizer
      */
     public function denormalize(mixed $data, DataType $dataType, Path $path): mixed
     {
+        $dataType->attributes += $this->attributes;
         $denormalizer = $this->resolveDenormalizer($data, $dataType, $path);
 
         /** @psalm-suppress MixedReturnStatement */

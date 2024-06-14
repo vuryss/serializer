@@ -24,6 +24,20 @@ test('Deserializing into data structures', function ($expected, $serialized) {
     [['key' => ['nested' => ['deeply' => 'nested']]], '{"key":{"nested":{"deeply":"nested"}}}'],
 ]);
 
+test('Deserializing object, skipping optional arguments in constructor', function() {
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $monitor = $serializer->deserialize(
+        json_encode(['make' => 'Asus', 'size' => 24]),
+        \Vuryss\Serializer\Tests\Datasets\Monitor::class
+    );
+
+    expect($monitor)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Monitor::class)
+        ->and($monitor->make)->toBe('Asus')
+        ->and($monitor->is4k)->toBeTrue()
+        ->and($monitor->size)->toBe(24);
+});
+
 test('Complex deserialization & serialization', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
     $object = $serializer->deserialize(Car::getJsonSerialized(), Car::class);

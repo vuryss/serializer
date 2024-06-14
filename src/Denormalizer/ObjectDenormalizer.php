@@ -109,6 +109,8 @@ class ObjectDenormalizer implements DenormalizerInterface
                     sprintf('Missing required constructor argument "%s" for class "%s"', $argument->name, $className)
                 );
             }
+
+            $constructorArguments[] = $argument->defaultValue;
         }
 
         return new $className(...$constructorArguments);

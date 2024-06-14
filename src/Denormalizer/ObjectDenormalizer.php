@@ -123,10 +123,13 @@ class ObjectDenormalizer implements DenormalizerInterface
      */
     private function tryToDenormalize(mixed $value, array $types, Denormalizer $denormalizer, Path $path): mixed
     {
+        $lastException = null;
+
         foreach ($types as $type) {
             try {
                 return $denormalizer->denormalize($value, $type, $path);
-            } catch (SerializerException) {
+            } catch (SerializerException $e) {
+                $lastException = $e;
                 continue;
             }
         }
@@ -135,6 +138,6 @@ class ObjectDenormalizer implements DenormalizerInterface
             'Cannot denormalize value "%s" at path "%s" into any of the given types',
             get_debug_type($value),
             $path->toString()
-        ));
+        ), previous: $lastException);
     }
 }

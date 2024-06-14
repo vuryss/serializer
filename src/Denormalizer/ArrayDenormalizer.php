@@ -57,10 +57,13 @@ class ArrayDenormalizer implements DenormalizerInterface
             $types = [DataType::fromData($data)];
         }
 
+        $lastException = null;
+
         foreach ($types as $type) {
             try {
                 return $denormalizer->denormalize($data, $type, $path);
-            } catch (SerializerException) {
+            } catch (SerializerException $e) {
+                $lastException = $e;
                 continue;
             }
         }
@@ -68,8 +71,6 @@ class ArrayDenormalizer implements DenormalizerInterface
         throw new DeserializationImpossibleException(sprintf(
             'Cannot denormalize array element at path "%s" into any of the given types',
             $path->toString()
-        ));
-
-        throw new DeserializationImpossibleException('Cannot denormalize data into any of the given types');
+        ), previous: $lastException);
     }
 }

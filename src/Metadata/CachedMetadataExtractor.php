@@ -27,9 +27,11 @@ class CachedMetadataExtractor implements MetadataExtractorInterface
     public function extractClassMetadata(string $class): ClassMetadata
     {
         if (!isset($this->cache[$class])) {
+            $cacheKey = base64_encode($class);
+
             if (null !== $this->externalCache) {
                 try {
-                    $cacheItem = $this->externalCache->getItem($class);
+                    $cacheItem = $this->externalCache->getItem($cacheKey);
 
                     if ($cacheItem->isHit()) {
                         $this->cache[$class] = $cacheItem->get();
@@ -44,7 +46,7 @@ class CachedMetadataExtractor implements MetadataExtractorInterface
 
             if (null !== $this->externalCache) {
                 try {
-                    $cacheItem = $this->externalCache->getItem($class);
+                    $cacheItem = $this->externalCache->getItem($cacheKey);
                     $cacheItem->set($this->cache[$class]);
                     $this->externalCache->saveDeferred($cacheItem);
                 } catch (\Throwable) {

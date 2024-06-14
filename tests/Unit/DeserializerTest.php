@@ -24,7 +24,7 @@ test('Deserializing into data structures', function ($expected, $serialized) {
     [['key' => ['nested' => ['deeply' => 'nested']]], '{"key":{"nested":{"deeply":"nested"}}}'],
 ]);
 
-test('Complex deserialization', function () {
+test('Complex deserialization & serialization', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
     $object = $serializer->deserialize(Car::getJsonSerialized(), Car::class);
 
@@ -76,5 +76,7 @@ test('Complex deserialization', function () {
             ->and($airbag->model)->toBeString();
     }
 
+    $string = $serializer->serialize($object);
 
+    expect($string)->json()->toMatchArray(json_decode(Car::getJsonSerialized(), true));
 });

@@ -14,6 +14,7 @@ use Vuryss\Serializer\Exception\NormalizerNotFoundException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Normalizer\ArrayNormalizer;
 use Vuryss\Serializer\Normalizer\BasicTypesNormalizer;
+use Vuryss\Serializer\Normalizer\EnumNormalizer;
 use Vuryss\Serializer\Normalizer\ObjectNormalizer;
 
 readonly class Serializer
@@ -37,6 +38,7 @@ readonly class Serializer
             ? [
                 new BasicTypesNormalizer(),
                 new ArrayNormalizer(),
+                new EnumNormalizer(),
                 new ObjectNormalizer(),
             ]
             : $normalizers;

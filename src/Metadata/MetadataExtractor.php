@@ -112,6 +112,7 @@ class MetadataExtractor
                 $propertyName,
                 $serializerContext,
             ),
+            attributes: $serializerContext->attributes,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
         );

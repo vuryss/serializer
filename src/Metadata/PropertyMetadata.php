@@ -11,11 +11,13 @@ class PropertyMetadata
 
     /**
      * @param DataType[] $types
+     * @param array<string, string|int|float|bool> $attributes
      */
     public function __construct(
         public string $name,
         public string $serializedName,
         public array $types,
+        public array $attributes,
         public ReadAccess $readAccess,
         public WriteAccess $writeAccess,
     ) {

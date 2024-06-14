@@ -6,24 +6,21 @@ namespace Vuryss\Serializer;
 
 use Vuryss\Serializer\Denormalizer\ArrayDenormalizer;
 use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
+use Vuryss\Serializer\Denormalizer\DateTimeDenormalizer;
 use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
 use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
 use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
 use Vuryss\Serializer\Exception\EncodingException;
-use Vuryss\Serializer\Exception\NormalizerNotFoundException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Normalizer\ArrayNormalizer;
 use Vuryss\Serializer\Normalizer\BasicTypesNormalizer;
+use Vuryss\Serializer\Normalizer\DateTimeNormalizer;
 use Vuryss\Serializer\Normalizer\EnumNormalizer;
 use Vuryss\Serializer\Normalizer\ObjectNormalizer;
 
-readonly class Serializer
+readonly class Serializer implements SerializerInterface
 {
-    /**
-     * @var NormalizerInterface[]
-     */
-    private array $normalizers;
-
+    private Normalizer $normalizer;
     private Denormalizer $denormalizer;
 
     /**
@@ -34,20 +31,24 @@ readonly class Serializer
         array $normalizers = [],
         array $denormalizers = [],
     ) {
-        $this->normalizers = [] === $normalizers
+        $normalizers = [] === $normalizers
             ? [
                 new BasicTypesNormalizer(),
                 new ArrayNormalizer(),
                 new EnumNormalizer(),
+                new DateTimeNormalizer(),
                 new ObjectNormalizer(),
             ]
             : $normalizers;
+
+        $this->normalizer = new Normalizer(normalizers: $normalizers);
 
         $denormalizers = [] === $denormalizers
             ? [
                 new BasicTypesDenormalizer(),
                 new ArrayDenormalizer(),
                 new EnumDenormalizer(),
+                new DateTimeDenormalizer(),
                 new ObjectDenormalizer(),
                 new InterfaceDenormalizer(),
             ]
@@ -101,25 +102,7 @@ readonly class Serializer
      */
     public function normalize(mixed $data): mixed
     {
-        $normalizer = $this->resolveNormalizer($data);
-
-        return $normalizer->normalize($data, $this);
-    }
-
-    /**
-     * @throws NormalizerNotFoundException
-     */
-    private function resolveNormalizer(mixed $data): NormalizerInterface
-    {
-        foreach ($this->normalizers as $normalizer) {
-            if ($normalizer->supportsNormalization($data)) {
-                return $normalizer;
-            }
-        }
-
-        throw new NormalizerNotFoundException(
-            sprintf('No normalizer found for the given data: %s', get_debug_type($data)),
-        );
+        return $this->normalizer->normalize($data, []);
     }
 
     /**

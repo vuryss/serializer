@@ -4,35 +4,20 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer;
 
-use Vuryss\Serializer\Denormalizer\ArrayDenormalizer;
-use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
-use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
 use Vuryss\Serializer\Exception\DenormalizerNotFoundException;
 use Vuryss\Serializer\Metadata\DataType;
 
 /**
  * @internal
  */
-class Denormalizer
+final readonly class Denormalizer
 {
-    /**
-     * @var DenormalizerInterface[]
-     */
-    private array $denormalizers;
-
     /**
      * @param array<DenormalizerInterface> $denormalizers
      */
     public function __construct(
-        array $denormalizers = [],
+        private array $denormalizers
     ) {
-        $this->denormalizers = [] === $denormalizers
-            ? [
-                new BasicTypesDenormalizer(),
-                new ArrayDenormalizer(),
-                new ObjectDenormalizer(),
-            ]
-            : $denormalizers;
     }
 
     /**

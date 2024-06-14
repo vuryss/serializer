@@ -19,6 +19,8 @@ class Car implements SerializableInterface
     /** @var array<Airbag> */
     public array $airbags = [];
 
+    public \DateTimeImmutable $releaseDate;
+
     /**
      * @var int|float|string|Airbag[]|string[]|FuelType[]|Engine|null
      */
@@ -60,6 +62,7 @@ class Car implements SerializableInterface
             'isReleased' => true,
             'weight' => 1500.5,
             'height' => 123,
+            'releaseDate' => '2021-05-24T17:36:10+02:00',
             'controlModules' => [
                 ['type' => 'climate', 'maxTemperature' => 30],
                 ['type' => 'engine', 'fuelType' => 'hybrid'],

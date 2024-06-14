@@ -6,12 +6,12 @@ namespace Vuryss\Serializer\Normalizer;
 
 use Vuryss\Serializer\Metadata\MetadataExtractor;
 use Vuryss\Serializer\Metadata\ReadAccess;
+use Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\NormalizerInterface;
-use Vuryss\Serializer\Serializer;
 
 class ObjectNormalizer implements NormalizerInterface
 {
-    public function normalize(mixed $data, Serializer $serializer): array
+    public function normalize(mixed $data, Normalizer $normalizer, array $attributes): array
     {
         assert(is_object($data));
 
@@ -32,7 +32,7 @@ class ObjectNormalizer implements NormalizerInterface
                 $value = $data->{$propertyMetadata->getterMethod}();
             }
 
-            $normalizedData[$propertyMetadata->serializedName] = $serializer->normalize($value);
+            $normalizedData[$propertyMetadata->serializedName] = $normalizer->normalize($value, $propertyMetadata->attributes);
         }
 
         return $normalizedData;

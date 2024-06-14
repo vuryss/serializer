@@ -7,6 +7,7 @@ namespace Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\Metadata\ReadAccess;
 use Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\NormalizerInterface;
+use Vuryss\Serializer\SerializerInterface;
 
 class ObjectNormalizer implements NormalizerInterface
 {
@@ -16,6 +17,7 @@ class ObjectNormalizer implements NormalizerInterface
 
         $classMetadata = $normalizer->getMetadataExtractor()->extractClassMetadata($data::class);
         $normalizedData = [];
+        $skipNullValues = $attributes[SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES] ?? false;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
             if (ReadAccess::NONE === $propertyMetadata->readAccess) {
@@ -28,6 +30,10 @@ class ObjectNormalizer implements NormalizerInterface
             } else {
                 /** @var scalar|null|object|array $value */
                 $value = $data->{$propertyMetadata->getterMethod}();
+            }
+
+            if (null === $value && true === $skipNullValues) {
+                continue;
             }
 
             $normalizedData[$propertyMetadata->serializedName] = $normalizer->normalize($value, $propertyMetadata->attributes);

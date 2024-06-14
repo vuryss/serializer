@@ -26,3 +26,31 @@ test('Serializing data structures', function ($data, $expected) {
         [new ClassWithNestedClass(), '{"person":{"firstName":"John","lastName":"Doe","age":25,"isStudent":true},"nonNestedProperty":"nonNestedProperty"}'],
     ]
 );
+
+test('Serializer with null values', function () {
+    $serializer = new Serializer(
+        attributes: [
+            \Vuryss\Serializer\SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => false,
+        ]
+    );
+
+    $data = new \Vuryss\Serializer\Tests\Datasets\NullValues();
+    $expected = json_encode([
+        'nullableString' => null,
+        'nullableInt' => null,
+    ]);
+
+    expect($serializer->serialize($data))->toBe($expected);
+});
+
+test('Serializer without null values', function () {
+    $serializer = new Serializer(
+        attributes: [
+            \Vuryss\Serializer\SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true,
+        ]
+    );
+
+    $data = new \Vuryss\Serializer\Tests\Datasets\NullValues();
+
+    expect($serializer->serialize($data))->toBe('[]');
+});

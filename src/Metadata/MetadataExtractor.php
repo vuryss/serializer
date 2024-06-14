@@ -244,7 +244,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
         }
 
-        throw new UnsupportedType('Class type is not supported');
+        throw new UnsupportedType(sprintf('Cannot resolve class: %s', $className));
     }
 
     private function getPropertyReadAccess(\ReflectionProperty $reflectionProperty): ReadAccess

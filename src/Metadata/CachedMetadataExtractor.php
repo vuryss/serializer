@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Metadata;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Vuryss\Serializer\MetadataExtractorInterface;
 use Vuryss\Serializer\SerializerException;
 
@@ -16,6 +17,7 @@ class CachedMetadataExtractor implements MetadataExtractorInterface
 
     public function __construct(
         private readonly MetadataExtractorInterface $metadataExtractor,
+        private readonly ?CacheItemPoolInterface $externalCache = null,
     ) {}
 
     /**
@@ -25,7 +27,29 @@ class CachedMetadataExtractor implements MetadataExtractorInterface
     public function extractClassMetadata(string $class): ClassMetadata
     {
         if (!isset($this->cache[$class])) {
+            if (null !== $this->externalCache) {
+                try {
+                    $cacheItem = $this->externalCache->getItem($class);
+
+                    if ($cacheItem->isHit()) {
+                        $this->cache[$class] = $cacheItem->get();
+
+                        return $this->cache[$class];
+                    }
+                } catch (\Throwable) {
+                }
+            }
+
             $this->cache[$class] = $this->metadataExtractor->extractClassMetadata($class);
+
+            if (null !== $this->externalCache) {
+                try {
+                    $cacheItem = $this->externalCache->getItem($class);
+                    $cacheItem->set($this->cache[$class]);
+                    $this->externalCache->saveDeferred($cacheItem);
+                } catch (\Throwable) {
+                }
+            }
         }
 
         return $this->cache[$class];

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Vuryss\Serializer;
 
 use Vuryss\Serializer\Exception\NormalizerNotFoundException;
-use Vuryss\Serializer\Metadata\DataType;
 
 /**
  * @internal

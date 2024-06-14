@@ -9,6 +9,7 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@PER-CS2.0' => true,
         '@PHP83Migration' => true,
+        'no_unused_imports' => true,
     ])
     ->setFinder($finder)
 ;

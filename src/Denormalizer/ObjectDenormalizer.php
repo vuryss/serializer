@@ -6,7 +6,6 @@ namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
-use Vuryss\Serializer\Exception\DenormalizerNotFoundException;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\MetadataExtractor;

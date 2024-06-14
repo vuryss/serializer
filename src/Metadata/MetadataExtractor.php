@@ -179,7 +179,7 @@ class MetadataExtractor
             Type::BUILTIN_TYPE_ARRAY, Type::BUILTIN_TYPE_ITERABLE => new DataType(
                 BuiltInType::ARRAY,
                 listType: array_map(
-                    fn (Type $type): DataType => $this->mapType($type, $reflectionProperty, $serializerContext),
+                    fn(Type $type): DataType => $this->mapType($type, $reflectionProperty, $serializerContext),
                     $extractedType->getCollectionValueTypes(),
                 ),
                 attributes: $serializerContext->attributes

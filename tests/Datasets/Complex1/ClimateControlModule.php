@@ -9,6 +9,5 @@ class ClimateControlModule implements ControlModuleInterface
     public function __construct(
         public string $type,
         public int $maxTemperature,
-    ) {
-    }
+    ) {}
 }

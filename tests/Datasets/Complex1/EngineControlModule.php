@@ -9,6 +9,5 @@ class EngineControlModule implements ControlModuleInterface
     public function __construct(
         public string $type,
         public FuelType $fuelType,
-    ) {
-    }
+    ) {}
 }

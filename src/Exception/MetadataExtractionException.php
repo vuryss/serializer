@@ -6,6 +6,4 @@ namespace Vuryss\Serializer\Exception;
 
 use Vuryss\Serializer\SerializerException;
 
-class MetadataExtractionException extends \Exception implements SerializerException
-{
-}
+class MetadataExtractionException extends \Exception implements SerializerException {}

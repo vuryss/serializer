@@ -6,6 +6,4 @@ namespace Vuryss\Serializer\Exception;
 
 use Vuryss\Serializer\SerializerException;
 
-class InvalidAttributeUsageException extends \Exception implements SerializerException
-{
-}
+class InvalidAttributeUsageException extends \Exception implements SerializerException {}

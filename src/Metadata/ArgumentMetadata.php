@@ -10,6 +10,5 @@ class ArgumentMetadata
         public string $name,
         public bool $hasDefaultValue,
         public mixed $defaultValue,
-    ) {
-    }
+    ) {}
 }

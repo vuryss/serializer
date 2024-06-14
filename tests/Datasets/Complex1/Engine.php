@@ -20,8 +20,7 @@ class Engine
         #[SerializerContext(name: 'engineCode')]
         private readonly string $code,
         public FuelType $fuelType,
-    ) {
-    }
+    ) {}
 
     public function setCylinders(int $cylinders): void
     {

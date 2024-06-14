@@ -15,7 +15,7 @@ class ArrayNormalizer implements NormalizerInterface
      */
     public function normalize(mixed $data, Normalizer $normalizer, array $attributes): array
     {
-        return array_map(fn (mixed $item): mixed => $normalizer->normalize($item, $attributes), $data);
+        return array_map(fn(mixed $item): mixed => $normalizer->normalize($item, $attributes), $data);
     }
 
     public function supportsNormalization(mixed $data): bool

@@ -29,15 +29,14 @@ class Car implements SerializableInterface
 
     /** @var array<ControlModuleInterface> */
     #[SerializerContext(typeMap: [
-        'type' => ['climate' => ClimateControlModule::class, 'engine' => EngineControlModule::class]
+        'type' => ['climate' => ClimateControlModule::class, 'engine' => EngineControlModule::class],
     ])]
     public array $controlModules;
 
     public function __construct(
         public bool $isReleased,
         private readonly int $horsePower,
-    ) {
-    }
+    ) {}
 
     public function getHorsePower(): int
     {
@@ -82,7 +81,7 @@ class Car implements SerializableInterface
             'airbags' => [
                 ['model' => 'ARG123'],
                 ['model' => 'FTP231'],
-            ]
+            ],
         ]);
     }
 }

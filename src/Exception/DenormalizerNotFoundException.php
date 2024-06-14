@@ -6,6 +6,4 @@ namespace Vuryss\Serializer\Exception;
 
 use Vuryss\Serializer\SerializerException;
 
-class DenormalizerNotFoundException extends \Exception implements SerializerException
-{
-}
+class DenormalizerNotFoundException extends \Exception implements SerializerException {}

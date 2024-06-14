@@ -22,8 +22,7 @@ class DataType
         public array $listType = [],
         public array $typeMap = [],
         public array $attributes = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @throws DeserializationImpossibleException

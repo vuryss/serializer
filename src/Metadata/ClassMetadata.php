@@ -12,6 +12,5 @@ class ClassMetadata
     public function __construct(
         public array $properties,
         public ConstructorMetadata $constructor,
-    ) {
-    }
+    ) {}
 }

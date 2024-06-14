@@ -17,8 +17,7 @@ final readonly class Denormalizer
      */
     public function __construct(
         private array $denormalizers
-    ) {
-    }
+    ) {}
 
     /**
      * Denormalized data into the given type.

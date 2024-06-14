@@ -15,6 +15,5 @@ class SerializerContext
         public ?string $name = null,
         public ?array $typeMap = null,
         public array $attributes = [],
-    ) {
-    }
+    ) {}
 }

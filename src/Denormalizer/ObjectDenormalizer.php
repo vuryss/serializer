@@ -54,10 +54,10 @@ class ObjectDenormalizer implements DenormalizerInterface
                 case WriteAccess::NONE:
                     break;
                 case WriteAccess::CONSTRUCTOR:
-                        $constructorParameters[$name] = $value;
+                    $constructorParameters[$name] = $value;
                     break;
                 case WriteAccess::DIRECT:
-                        $directAssignmentProperties[$name] = $value;
+                    $directAssignmentProperties[$name] = $value;
                     break;
                 case WriteAccess::SETTER:
                     assert(null !== $propertyMetadata->setterMethod);

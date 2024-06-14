@@ -13,6 +13,5 @@ class ConstructorMetadata
     public function __construct(
         public bool $isPublic,
         public array $arguments,
-    ) {
-    }
+    ) {}
 }

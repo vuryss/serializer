@@ -12,7 +12,8 @@
     "require-dev": {
         "pestphp/pest": "^2.34",
         "vimeo/psalm": "^5.24",
-        "pestphp/pest-plugin-faker": "^2.0"
+        "pestphp/pest-plugin-faker": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.58"
     },
     "autoload": {
         "psr-4": {

@@ -6,6 +6,4 @@ namespace Vuryss\Serializer\Exception;
 
 use Vuryss\Serializer\SerializerException;
 
-class UnsupportedType extends \Exception implements SerializerException
-{
-}
+class UnsupportedType extends \Exception implements SerializerException {}

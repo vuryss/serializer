@@ -17,8 +17,7 @@ final readonly class Normalizer
      */
     public function __construct(
         private array $normalizers,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, string|int|float|bool> $attributes

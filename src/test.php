@@ -8,4 +8,5 @@ $serializer = new Vuryss\Serializer\Serializer();
 
 $json = \Vuryss\Serializer\Tests\Datasets\Complex1\Car::getJsonSerialized();
 
-$serializer->deserialize('["list","of","data",false,true,null,1,1.2]');
+// $serializer->deserialize('["list","of","data",false,true,null,1,1.2]');
+$serializer->deserialize(\Vuryss\Serializer\Tests\Datasets\Complex1\Car::getJsonSerialized(), \Vuryss\Serializer\Tests\Datasets\Complex1\Car::class);

@@ -6,6 +6,7 @@ namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
+use Vuryss\Serializer\Exception\DenormalizerNotFoundException;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
@@ -41,7 +42,7 @@ class ArrayDenormalizer implements DenormalizerInterface
         foreach ($types as $type) {
             try {
                 return $denormalizer->denormalize($data, $type);
-            } catch (DeserializationImpossibleException) {
+            } catch (SerializerException) {
                 continue;
             }
         }

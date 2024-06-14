@@ -10,6 +10,12 @@ class Engine
 {
     private int $cylinders;
 
+    /**
+     * @var int|float|string|Airbag[]|FuelType[]|string[]|Engine|null
+     */
+    #[SerializerContext(name: 'multiTypeField')]
+    public int|null|float|string|array|object $multiValueField;
+
     public function __construct(
         #[SerializerContext(name: 'engineCode')]
         private readonly string $code,

@@ -33,14 +33,32 @@ test('Complex deserialization', function () {
         ->and($object->getHorsePower())->toBe(150)
         ->and($object->isReleased)->toBeTrue()
         ->and($object->weight)->toBe(1500.5)
-        ->and($object->height)->toBe(123);
+        ->and($object->height)->toBe(123)
+        ->and($object->multiValueField)->toBeInstanceOf(Engine::class);
+
+    $engine = $object->multiValueField;
+
+    expect($engine)->toBeInstanceOf(Engine::class)
+        ->and($engine->getCylinders())->toBe(4)
+        ->and($engine->getCode())->toBe('VTEC')
+        ->and($engine->fuelType)->toBe(FuelType::DIESEL)
+        ->and($engine->multiValueField)->toBeArray();
+
+    foreach ($engine->multiValueField as $string) {
+        expect($string)->toBeString();
+    }
 
     $engine = $object->getEngine();
 
     expect($engine)->toBeInstanceOf(Engine::class)
-        ->and($engine->getCylinders())->toBe(4)
+        ->and($engine->getCylinders())->toBe(8)
         ->and($engine->getCode())->toBe('V8')
-        ->and($engine->fuelType)->toBe(FuelType::PETROL);
+        ->and($engine->fuelType)->toBe(FuelType::PETROL)
+        ->and($engine->multiValueField)->toBeArray();
+
+    foreach ($engine->multiValueField as $enum) {
+        expect($enum)->toBe(FuelType::DIESEL);
+    }
 
     $airbags = $object->airbags;
 

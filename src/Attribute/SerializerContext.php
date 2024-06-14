@@ -7,9 +7,12 @@ namespace Vuryss\Serializer\Attribute;
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class SerializerContext
 {
+    /**
+     * @@param array<string, array<string, class-string>> $typeMap
+     */
     public function __construct(
         public ?string $name = null,
-        public ?string $arrayType = null,
+        public ?array $typeMap = null,
     ) {
     }
 }

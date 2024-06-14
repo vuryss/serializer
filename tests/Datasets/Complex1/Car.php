@@ -25,6 +25,12 @@ class Car implements SerializableInterface
     #[SerializerContext(name: 'multiTypeField')]
     public int|null|float|string|array|object $multiValueField;
 
+    /** @var array<ControlModuleInterface> */
+    #[SerializerContext(typeMap: [
+        'type' => ['climate' => ClimateControlModule::class, 'engine' => EngineControlModule::class]
+    ])]
+    public array $controlModules;
+
     public function __construct(
         public bool $isReleased,
         private readonly int $horsePower,
@@ -54,6 +60,10 @@ class Car implements SerializableInterface
             'isReleased' => true,
             'weight' => 1500.5,
             'height' => 123,
+            'controlModules' => [
+                ['type' => 'climate', 'maxTemperature' => 30],
+                ['type' => 'engine', 'fuelType' => 'hybrid'],
+            ],
             'multiTypeField' => [ // Should be array of Engine
                 'cylinders' => 4,
                 'engineCode' => 'VTEC',

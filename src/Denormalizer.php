@@ -40,18 +40,18 @@ class Denormalizer
      *
      * @throws SerializerException
      */
-    public function denormalize(mixed $data, DataType $dataType): mixed
+    public function denormalize(mixed $data, DataType $dataType, Path $path): mixed
     {
-        $denormalizer = $this->resolveDenormalizer($data, $dataType);
+        $denormalizer = $this->resolveDenormalizer($data, $dataType, $path);
 
         /** @psalm-suppress MixedReturnStatement */
-        return $denormalizer->denormalize($data, $dataType, $this);
+        return $denormalizer->denormalize($data, $dataType, $this, $path);
     }
 
     /**
      * @throws DenormalizerNotFoundException
      */
-    private function resolveDenormalizer(mixed $data, DataType $dataType): DenormalizerInterface
+    private function resolveDenormalizer(mixed $data, DataType $dataType, Path $path): DenormalizerInterface
     {
         foreach ($this->denormalizers as $denormalizer) {
             if ($denormalizer->supportsDenormalization($data, $dataType)) {
@@ -59,8 +59,11 @@ class Denormalizer
             }
         }
 
-        throw new DenormalizerNotFoundException(
-            sprintf('No denormalizer found for the given data and type: %s, %s', get_debug_type($data), $dataType->type->value),
-        );
+        throw new DenormalizerNotFoundException(sprintf(
+            'Could not denormalize data at path %s. Received data of type %s, expected type %s',
+            $path->toString(),
+            get_debug_type($data),
+            $dataType->type->value,
+        ));
     }
 }

@@ -7,6 +7,7 @@ namespace Vuryss\Serializer;
 use Vuryss\Serializer\Denormalizer\ArrayDenormalizer;
 use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
 use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
+use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
 use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
 use Vuryss\Serializer\Exception\EncodingException;
 use Vuryss\Serializer\Exception\NormalizerNotFoundException;
@@ -46,6 +47,7 @@ readonly class Serializer
                 new ArrayDenormalizer(),
                 new EnumDenormalizer(),
                 new ObjectDenormalizer(),
+                new InterfaceDenormalizer(),
             ]
             : $denormalizers;
 
@@ -127,6 +129,6 @@ readonly class Serializer
     {
         $dataType = null === $type ? DataType::fromData($data) : DataType::fromUserType($type);
 
-        return $this->denormalizer->denormalize($data, $dataType);
+        return $this->denormalizer->denormalize($data, $dataType, new Path());
     }
 }

@@ -13,11 +13,13 @@ class DataType
      * @param BuiltInType $type
      * @param class-string|null $className
      * @param array<DataType> $listType
+     * @param array<string, array<string, class-string>> $typeMap
      */
     public function __construct(
         public BuiltInType $type,
         public ?string $className = null,
         public array $listType = [],
+        public array $typeMap = [],
     ) {
     }
 

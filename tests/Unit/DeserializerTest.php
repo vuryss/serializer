@@ -34,7 +34,14 @@ test('Complex deserialization', function () {
         ->and($object->isReleased)->toBeTrue()
         ->and($object->weight)->toBe(1500.5)
         ->and($object->height)->toBe(123)
-        ->and($object->multiValueField)->toBeInstanceOf(Engine::class);
+        ->and($object->multiValueField)->toBeInstanceOf(Engine::class)
+        ->and($object->controlModules)->toBeArray()
+        ->and($object->controlModules)->toHaveCount(2)
+        ->and($object->controlModules[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Complex1\ClimateControlModule::class)
+        ->and($object->controlModules[0]->maxTemperature)->toBe(30)
+        ->and($object->controlModules[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Complex1\EngineControlModule::class)
+        ->and($object->controlModules[1]->fuelType)->toBe(FuelType::HYBRID)
+    ;
 
     $engine = $object->multiValueField;
 
@@ -68,4 +75,6 @@ test('Complex deserialization', function () {
         expect($airbag)->toBeInstanceOf(Airbag::class)
             ->and($airbag->model)->toBeString();
     }
+
+
 });

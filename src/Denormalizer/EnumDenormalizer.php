@@ -9,10 +9,11 @@ use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
+use Vuryss\Serializer\Path;
 
 class EnumDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer): \BackedEnum
+    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): \BackedEnum
     {
         assert(is_string($data) && null !== $type->className);
 
@@ -21,9 +22,12 @@ class EnumDenormalizer implements DenormalizerInterface
         $enum = $enumClass::tryFrom($data);
 
         if (null === $enum) {
-            throw new DeserializationImpossibleException(
-                sprintf('Cannot denormalize data "%s" into enum "%s"', $data, $type->className)
-            );
+            throw new DeserializationImpossibleException(sprintf(
+                'Cannot denormalize data "%s" at path "%s" into enum "%s"',
+                $data,
+                $path->toString(),
+                $type->className,
+            ));
         }
 
         return $enum;

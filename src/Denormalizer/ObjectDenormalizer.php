@@ -6,17 +6,18 @@ namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
+use Vuryss\Serializer\Exception\DenormalizerNotFoundException;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
-use Vuryss\Serializer\Exception\InvalidTypeException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\MetadataExtractor;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\WriteAccess;
+use Vuryss\Serializer\Path;
 use Vuryss\Serializer\SerializerException;
 
 class ObjectDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer): object
+    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): object
     {
         assert(null !== $type->className && class_exists($type->className));
         $className = $type->className;
@@ -36,7 +37,18 @@ class ObjectDenormalizer implements DenormalizerInterface
                 continue;
             }
 
-            $value = $this->tryToDenormalize($data[$propertyMetadata->serializedName], $propertyMetadata->types, $denormalizer);
+            $path->pushObjectProperty($propertyMetadata->serializedName);
+
+            try {
+                $value = $this->tryToDenormalize(
+                    $data[$propertyMetadata->serializedName],
+                    $propertyMetadata->types,
+                    $denormalizer,
+                    $path
+                );
+            } finally {
+                $path->pop();
+            }
 
             switch ($propertyMetadata->writeAccess) {
                 case WriteAccess::NONE:
@@ -110,16 +122,20 @@ class ObjectDenormalizer implements DenormalizerInterface
      *
      * @throws SerializerException
      */
-    private function tryToDenormalize(mixed $value, array $types, Denormalizer $denormalizer): mixed
+    private function tryToDenormalize(mixed $value, array $types, Denormalizer $denormalizer, Path $path): mixed
     {
         foreach ($types as $type) {
             try {
-                return $denormalizer->denormalize($value, $type);
-            } catch (DeserializationImpossibleException|InvalidTypeException) {
+                return $denormalizer->denormalize($value, $type, $path);
+            } catch (SerializerException) {
                 continue;
             }
         }
 
-        throw new DeserializationImpossibleException(sprintf('Cannot denormalize value "%s"', get_debug_type($value)));
+        throw new DeserializationImpossibleException(sprintf(
+            'Cannot denormalize value "%s" at path "%s" into any of the given types',
+            get_debug_type($value),
+            $path->toString()
+        ));
     }
 }

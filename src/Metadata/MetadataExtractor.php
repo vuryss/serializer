@@ -106,20 +106,27 @@ class MetadataExtractor
         return new PropertyMetadata(
             name: $propertyName,
             serializedName: $serializerContext->name ?? $propertyName,
-            types: $this->resolveType($propertyInfoExtractor, $reflectionProperty, $propertyName),
+            types: $this->resolveType(
+                $propertyInfoExtractor,
+                $reflectionProperty,
+                $propertyName,
+                $serializerContext->typeMap ?? []
+            ),
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
         );
     }
 
     /**
+     * @param array<string, array<string, class-string>> $typeMap
      * @return DataType[]
      * @throws SerializerException
      */
     private function resolveType(
         PropertyInfoExtractorInterface $propertyInfoExtractor,
         \ReflectionProperty $reflectionProperty,
-        string $propertyName
+        string $propertyName,
+        array $typeMap,
     ): array {
         $extractedTypes = $propertyInfoExtractor->getTypes(
             $reflectionProperty->getDeclaringClass()->getName(),
@@ -139,16 +146,17 @@ class MetadataExtractor
         $mappedTypes = [];
 
         foreach ($extractedTypes as $extractedType) {
-            $mappedTypes[] = $this->mapType($extractedType, $reflectionProperty);
+            $mappedTypes[] = $this->mapType($extractedType, $reflectionProperty, $typeMap);
         }
 
         return $mappedTypes;
     }
 
     /**
+     * @param array<string, array<string, class-string>> $typeMap
      * @throws UnsupportedType
      */
-    private function mapType(Type $extractedType, \ReflectionProperty $reflectionProperty): DataType
+    private function mapType(Type $extractedType, \ReflectionProperty $reflectionProperty, array $typeMap): DataType
     {
         return match ($extractedType->getBuiltinType()) {
             Type::BUILTIN_TYPE_INT => new DataType(BuiltInType::INTEGER),
@@ -162,11 +170,11 @@ class MetadataExtractor
                     $reflectionProperty->getDeclaringClass()->getName(),
                 ),
             ),
-            Type::BUILTIN_TYPE_OBJECT => $this->mapObjectType($extractedType),
+            Type::BUILTIN_TYPE_OBJECT => $this->mapObjectType($extractedType, $typeMap),
             Type::BUILTIN_TYPE_ARRAY, Type::BUILTIN_TYPE_ITERABLE => new DataType(
                 BuiltInType::ARRAY,
                 listType: array_map(
-                    fn (Type $type): DataType => $this->mapType($type, $reflectionProperty),
+                    fn (Type $type): DataType => $this->mapType($type, $reflectionProperty, $typeMap),
                     $extractedType->getCollectionValueTypes(),
                 )
             ),
@@ -190,9 +198,10 @@ class MetadataExtractor
     }
 
     /**
+     * @param array<string, array<string, class-string>> $typeMap
      * @throws UnsupportedType
      */
-    private function mapObjectType(Type $extractedType): DataType
+    private function mapObjectType(Type $extractedType, array $typeMap): DataType
     {
         $className = $extractedType->getClassName();
 
@@ -205,7 +214,7 @@ class MetadataExtractor
         }
 
         if (interface_exists($className)) {
-            return new DataType(BuiltInType::INTERFACE, $className);
+            return new DataType(BuiltInType::INTERFACE, $className, typeMap: $typeMap);
         }
 
         if (class_exists($className)) {

@@ -43,11 +43,6 @@ class MetadataExtractor implements MetadataExtractorInterface
     public function extractClassMetadata(string $class): ClassMetadata
     {
         $propertyInfoExtractor = self::getPropertyInfoInstance();
-        $propertyNames = $propertyInfoExtractor->getProperties($class);
-
-        if (null === $propertyNames) {
-            throw new MetadataExtractionException(sprintf('Failed to extract properties of class "%s"', $class));
-        }
 
         try {
             $reflectionClass = new \ReflectionClass($class);
@@ -57,7 +52,8 @@ class MetadataExtractor implements MetadataExtractorInterface
 
         $properties = [];
 
-        foreach ($propertyNames as $propertyName) {
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            $propertyName = $reflectionProperty->getName();
             try {
                 $properties[$propertyName] = $this->extractPropertyMetadata(
                     $propertyInfoExtractor,

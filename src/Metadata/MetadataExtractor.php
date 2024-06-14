@@ -110,7 +110,7 @@ class MetadataExtractor
                 $propertyInfoExtractor,
                 $reflectionProperty,
                 $propertyName,
-                $serializerContext->typeMap ?? []
+                $serializerContext,
             ),
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
@@ -118,7 +118,6 @@ class MetadataExtractor
     }
 
     /**
-     * @param array<string, array<string, class-string>> $typeMap
      * @return DataType[]
      * @throws SerializerException
      */
@@ -126,7 +125,7 @@ class MetadataExtractor
         PropertyInfoExtractorInterface $propertyInfoExtractor,
         \ReflectionProperty $reflectionProperty,
         string $propertyName,
-        array $typeMap,
+        SerializerContext $serializerContext,
     ): array {
         $extractedTypes = $propertyInfoExtractor->getTypes(
             $reflectionProperty->getDeclaringClass()->getName(),
@@ -146,23 +145,28 @@ class MetadataExtractor
         $mappedTypes = [];
 
         foreach ($extractedTypes as $extractedType) {
-            $mappedTypes[] = $this->mapType($extractedType, $reflectionProperty, $typeMap);
+            $mappedTypes[] = $this->mapType($extractedType, $reflectionProperty, $serializerContext);
         }
 
         return $mappedTypes;
     }
 
     /**
-     * @param array<string, array<string, class-string>> $typeMap
      * @throws UnsupportedType
      */
-    private function mapType(Type $extractedType, \ReflectionProperty $reflectionProperty, array $typeMap): DataType
-    {
+    private function mapType(
+        Type $extractedType,
+        \ReflectionProperty $reflectionProperty,
+        SerializerContext $serializerContext
+    ): DataType {
         return match ($extractedType->getBuiltinType()) {
-            Type::BUILTIN_TYPE_INT => new DataType(BuiltInType::INTEGER),
-            Type::BUILTIN_TYPE_FLOAT => new DataType(BuiltInType::FLOAT),
-            Type::BUILTIN_TYPE_STRING => new DataType(BuiltInType::STRING),
-            Type::BUILTIN_TYPE_BOOL, Type::BUILTIN_TYPE_FALSE, Type::BUILTIN_TYPE_TRUE => new DataType(BuiltInType::BOOLEAN),
+            Type::BUILTIN_TYPE_INT => new DataType(BuiltInType::INTEGER, attributes: $serializerContext->attributes),
+            Type::BUILTIN_TYPE_FLOAT => new DataType(BuiltInType::FLOAT, attributes: $serializerContext->attributes),
+            Type::BUILTIN_TYPE_STRING => new DataType(BuiltInType::STRING, attributes: $serializerContext->attributes),
+            Type::BUILTIN_TYPE_BOOL, Type::BUILTIN_TYPE_FALSE, Type::BUILTIN_TYPE_TRUE => new DataType(
+                BuiltInType::BOOLEAN,
+                attributes: $serializerContext->attributes
+            ),
             Type::BUILTIN_TYPE_RESOURCE => throw new UnsupportedType(
                 sprintf(
                     'Property "%s" of class "%s" has an unsupported type: resource',
@@ -170,15 +174,16 @@ class MetadataExtractor
                     $reflectionProperty->getDeclaringClass()->getName(),
                 ),
             ),
-            Type::BUILTIN_TYPE_OBJECT => $this->mapObjectType($extractedType, $typeMap),
+            Type::BUILTIN_TYPE_OBJECT => $this->mapObjectType($extractedType, $serializerContext),
             Type::BUILTIN_TYPE_ARRAY, Type::BUILTIN_TYPE_ITERABLE => new DataType(
                 BuiltInType::ARRAY,
                 listType: array_map(
-                    fn (Type $type): DataType => $this->mapType($type, $reflectionProperty, $typeMap),
+                    fn (Type $type): DataType => $this->mapType($type, $reflectionProperty, $serializerContext),
                     $extractedType->getCollectionValueTypes(),
-                )
+                ),
+                attributes: $serializerContext->attributes
             ),
-            Type::BUILTIN_TYPE_NULL => new DataType(BuiltInType::NULL),
+            Type::BUILTIN_TYPE_NULL => new DataType(BuiltInType::NULL, attributes: $serializerContext->attributes),
             Type::BUILTIN_TYPE_CALLABLE => throw new UnsupportedType(
                 sprintf(
                     'Property "%s" of class "%s" has an unsupported type: callable',
@@ -198,27 +203,31 @@ class MetadataExtractor
     }
 
     /**
-     * @param array<string, array<string, class-string>> $typeMap
      * @throws UnsupportedType
      */
-    private function mapObjectType(Type $extractedType, array $typeMap): DataType
+    private function mapObjectType(Type $extractedType, SerializerContext $serializerContext): DataType
     {
         $className = $extractedType->getClassName();
 
         if (null === $className) {
-            return new DataType(BuiltInType::OBJECT);
+            return new DataType(BuiltInType::OBJECT, attributes: $serializerContext->attributes);
         }
 
         if (enum_exists($className)) {
-            return new DataType(BuiltInType::ENUM, $className);
+            return new DataType(BuiltInType::ENUM, $className, attributes: $serializerContext->attributes);
         }
 
         if (interface_exists($className)) {
-            return new DataType(BuiltInType::INTERFACE, $className, typeMap: $typeMap);
+            return new DataType(
+                BuiltInType::INTERFACE,
+                className: $className,
+                typeMap: $serializerContext->typeMap ?? [],
+                attributes: $serializerContext->attributes
+            );
         }
 
         if (class_exists($className)) {
-            return new DataType(BuiltInType::OBJECT, $className);
+            return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
         }
 
         throw new UnsupportedType('Class type is not supported');

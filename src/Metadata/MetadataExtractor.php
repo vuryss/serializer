@@ -140,10 +140,26 @@ class MetadataExtractor implements MetadataExtractorInterface
             );
         }
 
+        $hasNullableType = false;
+        $shouldHaveNullableType = false;
         $mappedTypes = [];
 
         foreach ($extractedTypes as $extractedType) {
-            $mappedTypes[] = $this->mapType($extractedType, $reflectionProperty, $serializerContext);
+            $mappedType = $this->mapType($extractedType, $reflectionProperty, $serializerContext);
+
+            if (BuiltInType::NULL === $mappedType->type) {
+                $hasNullableType = true;
+            }
+
+            if ($extractedType->isNullable()) {
+                $shouldHaveNullableType = true;
+            }
+
+            $mappedTypes[] = $mappedType;
+        }
+
+        if (!$hasNullableType && $shouldHaveNullableType) {
+            $mappedTypes[] = new DataType(BuiltInType::NULL, attributes: $serializerContext->attributes);
         }
 
         return $mappedTypes;

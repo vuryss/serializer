@@ -81,7 +81,7 @@ readonly class Serializer implements SerializerInterface
         $normalizedData = $this->normalize($data);
 
         try {
-            return json_encode($normalizedData, JSON_THROW_ON_ERROR);
+            return json_encode($normalizedData, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION);
         } catch (\JsonException $e) {
             throw new EncodingException('Failed to encode data to JSON', previous: $e);
         }

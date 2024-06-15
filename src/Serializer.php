@@ -20,7 +20,7 @@ use Vuryss\Serializer\Normalizer\DateTimeNormalizer;
 use Vuryss\Serializer\Normalizer\EnumNormalizer;
 use Vuryss\Serializer\Normalizer\ObjectNormalizer;
 
-readonly class Serializer implements SerializerInterface
+class Serializer implements SerializerInterface
 {
     private Normalizer $normalizer;
     private Denormalizer $denormalizer;

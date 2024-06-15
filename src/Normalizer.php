@@ -6,9 +6,6 @@ namespace Vuryss\Serializer;
 
 use Vuryss\Serializer\Exception\NormalizerNotFoundException;
 
-/**
- * @internal
- */
 final readonly class Normalizer
 {
     /**

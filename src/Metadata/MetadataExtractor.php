@@ -19,7 +19,6 @@ use Vuryss\Serializer\SerializerException;
 
 class MetadataExtractor implements MetadataExtractorInterface
 {
-    // TODO: Cache
     private static function getPropertyInfoInstance(): PropertyInfoExtractorInterface
     {
         $reflectionExtractor = new ReflectionExtractor();
@@ -216,9 +215,6 @@ class MetadataExtractor implements MetadataExtractorInterface
         };
     }
 
-    /**
-     * @throws UnsupportedType
-     */
     private function mapObjectType(Type $extractedType, SerializerContext $serializerContext): DataType
     {
         $className = $extractedType->getClassName();
@@ -244,7 +240,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
         }
 
-        throw new UnsupportedType(sprintf('Cannot resolve class: %s', $className));
+        return new DataType(BuiltInType::OBJECT, attributes: $serializerContext->attributes);
     }
 
     private function getPropertyReadAccess(\ReflectionProperty $reflectionProperty): ReadAccess

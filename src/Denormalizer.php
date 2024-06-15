@@ -7,9 +7,6 @@ namespace Vuryss\Serializer;
 use Vuryss\Serializer\Exception\DenormalizerNotFoundException;
 use Vuryss\Serializer\Metadata\DataType;
 
-/**
- * @internal
- */
 final readonly class Denormalizer
 {
     /**

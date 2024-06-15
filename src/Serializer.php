@@ -73,9 +73,6 @@ readonly class Serializer implements SerializerInterface
         );
     }
 
-    /**
-     * @throws SerializerException
-     */
     public function serialize(mixed $data): string
     {
         $normalizedData = $this->normalize($data);
@@ -87,21 +84,7 @@ readonly class Serializer implements SerializerInterface
         }
     }
 
-    /**
-     * Deserializes data into the given type.
-     *
-     * @template TObject of object
-     * @template TType of null|class-string<TObject>
-     *
-     * @psalm-param TType $className
-     *
-     * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
-     *
-     * @phpstan-return ($className is class-string<TObject> ? TObject : mixed)
-     *
-     * @throws SerializerException
-     */
-    public function deserialize(string $data, ?string $className = null): mixed
+    public function deserialize(string $data, ?string $type = null): mixed
     {
         try {
             /** @var scalar|array|object|null $decoded */
@@ -110,7 +93,7 @@ readonly class Serializer implements SerializerInterface
             throw new EncodingException('Failed to decode JSON data', previous: $e);
         }
 
-        return $this->denormalize($decoded, $className);
+        return $this->denormalize($decoded, $type);
     }
 
     /**

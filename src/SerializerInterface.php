@@ -8,4 +8,27 @@ interface SerializerInterface
 {
     public const string ATTRIBUTE_DATETIME_FORMAT = 'datetime-format';
     public const string ATTRIBUTE_SKIP_NULL_VALUES = 'skip-null-values';
+
+    /**
+     * Serializes data into a string.
+     *
+     * @throws SerializerException
+     */
+    public function serialize(mixed $data): string;
+
+    /**
+     * Deserializes data into the given type.
+     *
+     * @template TObject of object
+     * @template TType of null|class-string<TObject>
+     *
+     * @psalm-param TType $type
+     *
+     * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
+     *
+     * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
+     *
+     * @throws SerializerException
+     */
+    public function deserialize(string $data, ?string $type = null): mixed;
 }

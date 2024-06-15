@@ -58,3 +58,22 @@ test('Serializer without null values', function () {
 
     expect($serializer->serialize($data))->toBe($expected);
 });
+
+test('Serializing array of objects', function () {
+    $serializer = new Serializer();
+
+    $person1 = new Person();
+
+    $person2 = new Person();
+    $person2->firstName = 'Maria';
+    $person2->lastName = 'Valentina';
+    $person2->age = 36;
+    $person2->isStudent = false;
+
+
+    $data = [$person1, $person2];
+
+    $serialized = $serializer->serialize($data);
+
+    expect($serialized)->toBe('[{"firstName":"John","lastName":"Doe","age":25,"isStudent":true},{"firstName":"Maria","lastName":"Valentina","age":36,"isStudent":false}]');
+});

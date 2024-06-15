@@ -24,7 +24,7 @@ test('Deserializing into data structures', function ($expected, $serialized) {
     [['key' => ['nested' => ['deeply' => 'nested']]], '{"key":{"nested":{"deeply":"nested"}}}'],
 ]);
 
-test('Deserializing object, skipping optional arguments in constructor', function() {
+test('Deserializing object, skipping optional arguments in constructor', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
 
     $monitor = $serializer->deserialize(
@@ -36,6 +36,26 @@ test('Deserializing object, skipping optional arguments in constructor', functio
         ->and($monitor->make)->toBe('Asus')
         ->and($monitor->is4k)->toBeTrue()
         ->and($monitor->size)->toBe(24);
+});
+
+test('Deserializing array of objects', function () {
+    $serialized = '[{"firstName":"John","lastName":"Doe","age":25,"isStudent":true},{"firstName":"Maria","lastName":"Valentina","age":36,"isStudent":false}]';
+
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $data = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\Person::class . '[]');
+
+    expect($data)->toBeArray()->toHaveCount(2)
+        ->and($data[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+        ->and($data[0]->firstName)->toBe('John')
+        ->and($data[0]->lastName)->toBe('Doe')
+        ->and($data[0]->age)->toBe(25)
+        ->and($data[0]->isStudent)->toBeTrue()
+        ->and($data[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+        ->and($data[1]->firstName)->toBe('Maria')
+        ->and($data[1]->lastName)->toBe('Valentina')
+        ->and($data[1]->age)->toBe(36)
+        ->and($data[1]->isStudent)->toBeFalse();
 });
 
 test('Complex deserialization & serialization', function () {

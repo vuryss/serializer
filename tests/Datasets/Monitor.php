@@ -10,6 +10,5 @@ class Monitor
         public string $make = 'Dell',
         public bool $is4k = true,
         public int $size = 27,
-    ) {
-    }
+    ) {}
 }

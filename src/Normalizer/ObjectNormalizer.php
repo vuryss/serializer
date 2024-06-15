@@ -17,7 +17,6 @@ class ObjectNormalizer implements NormalizerInterface
 
         $classMetadata = $normalizer->getMetadataExtractor()->extractClassMetadata($data::class);
         $normalizedData = [];
-        $skipNullValues = $attributes[SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES] ?? false;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
             if (ReadAccess::NONE === $propertyMetadata->readAccess) {
@@ -32,11 +31,17 @@ class ObjectNormalizer implements NormalizerInterface
                 $value = $data->{$propertyMetadata->getterMethod}();
             }
 
-            if (null === $value && true === $skipNullValues) {
-                continue;
+            $localAttributes = array_merge($attributes, $propertyMetadata->attributes);
+
+            if (null === $value) {
+                $skipNullValues = $localAttributes[SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES] ?? false;
+
+                if (true === $skipNullValues) {
+                    continue;
+                }
             }
 
-            $normalizedData[$propertyMetadata->serializedName] = $normalizer->normalize($value, $propertyMetadata->attributes);
+            $normalizedData[$propertyMetadata->serializedName] = $normalizer->normalize($value, $localAttributes);
         }
 
         return $normalizedData;

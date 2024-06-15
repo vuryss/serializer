@@ -37,6 +37,7 @@ test('Serializer with null values', function () {
     $data = new \Vuryss\Serializer\Tests\Datasets\NullValues();
     $expected = json_encode([
         'nullableString' => null,
+        'alwaysEnabledNull' => null,
         'nullableInt' => null,
     ]);
 
@@ -51,6 +52,9 @@ test('Serializer without null values', function () {
     );
 
     $data = new \Vuryss\Serializer\Tests\Datasets\NullValues();
+    $expected = json_encode([
+        'alwaysEnabledNull' => null,
+    ]);
 
-    expect($serializer->serialize($data))->toBe('[]');
+    expect($serializer->serialize($data))->toBe($expected);
 });

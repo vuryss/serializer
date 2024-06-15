@@ -58,6 +58,24 @@ test('Deserializing array of objects', function () {
         ->and($data[1]->isStudent)->toBeFalse();
 });
 
+test('Deserializing empty array type', function () {
+    $serialized = '[{"firstName":"John","lastName":"Doe","age":25,"isStudent":true},{"firstName":"Maria","lastName":"Valentina","age":36,"isStudent":false}]';
+
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $data = $serializer->deserialize($serialized, '[]');
+
+    expect($data)->toBeArray()->toHaveCount(2)
+        ->and($data[0]['firstName'])->toBe('John')
+        ->and($data[0]['lastName'])->toBe('Doe')
+        ->and($data[0]['age'])->toBe(25)
+        ->and($data[0]['isStudent'])->toBeTrue()
+        ->and($data[1]['firstName'])->toBe('Maria')
+        ->and($data[1]['lastName'])->toBe('Valentina')
+        ->and($data[1]['age'])->toBe(36)
+        ->and($data[1]['isStudent'])->toBeFalse();
+});
+
 test('Complex deserialization & serialization', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
     $object = $serializer->deserialize(Car::getJsonSerialized(), Car::class);

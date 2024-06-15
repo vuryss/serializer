@@ -70,7 +70,13 @@ class DataType
         }
 
         if (str_ends_with($type, '[]')) {
-            return new self(BuiltInType::ARRAY, listType: [self::fromUserType(substr($type, 0, -2))]);
+            $subType = substr($type, 0, -2);
+
+            if ('' === $subType) {
+                return new self(BuiltInType::ARRAY);
+            }
+
+            return new self(BuiltInType::ARRAY, listType: [self::fromUserType($subType)]);
         }
 
         throw new UnsupportedType(sprintf('Unsupported type: %s', $type));

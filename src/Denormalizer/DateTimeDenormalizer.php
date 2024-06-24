@@ -35,9 +35,10 @@ class DateTimeDenormalizer implements DenormalizerInterface
 
         if (false === $dateTime) {
             throw new DeserializationImpossibleException(sprintf(
-                'Cannot denormalize data "%s" at path "%s" into DateTimeImmutable',
+                'Cannot denormalize date string "%s" at path "%s" into DateTimeImmutable. Expected format: "%s"',
                 $data,
                 $path->toString(),
+                $format,
             ));
         }
 

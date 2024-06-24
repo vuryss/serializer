@@ -134,6 +134,10 @@ class ObjectDenormalizer implements DenormalizerInterface
             }
         }
 
+        if (1 === count($types) && null !== $lastException) {
+            throw $lastException;
+        }
+
         throw new DeserializationImpossibleException(sprintf(
             'Cannot denormalize value "%s" at path "%s" into any of the given types',
             get_debug_type($value),

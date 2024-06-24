@@ -133,6 +133,29 @@ test('Complex deserialization & serialization', function () {
     expect($string)->json()->toMatchArray(json_decode(Car::getJsonSerialized(), true));
 });
 
+test('Deserializing with custom set of denormalizers', function () {
+    $serializer = new \Vuryss\Serializer\Serializer(
+        denormalizers: [
+            new \Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer(),
+            new \Vuryss\Serializer\Denormalizer\ObjectDenormalizer(),
+        ]
+    );
+
+    $object = $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true}', \Vuryss\Serializer\Tests\Datasets\Person::class);
+
+    expect($object)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+        ->and($object->firstName)->toBe('John')
+        ->and($object->lastName)->toBe('Doe')
+        ->and($object->age)->toBe(25)
+        ->and($object->isStudent)->toBeTrue();
+});
+
+test('Cannot deserialize from invalid json', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true', \Vuryss\Serializer\Tests\Datasets\Person::class);
+})->throws(\Vuryss\Serializer\Exception\EncodingException::class, 'Failed to decode JSON data');
+
 test('Deserializing into mixed value field', function (mixed $expected, string $serialized) {
     $serializer = new \Vuryss\Serializer\Serializer();
     $object = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\MixedValues::class);

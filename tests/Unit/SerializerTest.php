@@ -83,6 +83,35 @@ test('Serializing array of objects', function () {
     expect($serialized)->toBe('[{"firstName":"John","lastName":"Doe","age":25,"isStudent":true},{"firstName":"Maria","lastName":"Valentina","age":36,"isStudent":false}]');
 });
 
+test('Serializer with subset of normalizers', function () {
+    $serializer = new Serializer(
+        normalizers: [
+            new \Vuryss\Serializer\Normalizer\BasicTypesNormalizer(),
+            new \Vuryss\Serializer\Normalizer\ObjectNormalizer(),
+        ]
+    );
+
+    $person = new Person();
+    $person->firstName = 'John';
+    $person->lastName = 'Doe';
+    $person->age = 25;
+    $person->isStudent = true;
+
+    $serialized = $serializer->serialize($person);
+
+    expect($serialized)->toBe('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true}');
+});
+
+test('Cannot serialize resources', function () {
+    $serializer = new Serializer();
+    $resource = fopen(__FILE__, 'r');
+
+    $serializer->serialize($resource);
+})->throws(
+    \Vuryss\Serializer\Exception\NormalizerNotFoundException::class,
+    'No normalizer found for the given data: resource (stream)'
+);
+
 test('Serializing of mixed values', function ($value, $serialized) {
     $serializer = new Serializer();
 

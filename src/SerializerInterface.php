@@ -20,7 +20,7 @@ interface SerializerInterface
      * Deserializes data into the given type.
      *
      * @template TObject of object
-     * @template TType of null|class-string<TObject>
+     * @template TType of null|class-string<TObject>|string
      *
      * @psalm-param TType $type
      *

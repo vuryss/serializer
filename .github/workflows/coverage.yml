@@ -1,4 +1,4 @@
-name: Codecov code coverage
+name: Code coverage
 on: [push, pull_request]
 jobs:
   run:
@@ -7,7 +7,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up php 8.3
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b
         with:
           php-version: '8.3'
       - name: Install dependencies
@@ -15,6 +15,11 @@ jobs:
       - name: Run tests and collect coverage
         run: vendor/bin/pest --coverage-clover coverage.xml
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to codacy
+        uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-report: coverage.xml

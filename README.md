@@ -2,7 +2,8 @@
 
 [![Tests](https://github.com/vuryss/serializer/workflows/Tests/badge.svg)](https://github.com/vuryss/serializer/actions?query=workflow:"Tests")
 [![codecov](https://codecov.io/gh/vuryss/serializer/graph/badge.svg?token=kK0ZHh3raA)](https://codecov.io/gh/vuryss/serializer)
-[![Latest Stable Version](http://poser.pugx.org/vuryss/serializer/v)](https://packagist.org/packages/vuryss/serializer)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/760e3d4f985248fd8bb47b947873b847)](https://app.codacy.com/gh/vuryss/serializer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+![GitHub Release](https://img.shields.io/github/v/release/vuryss/serializer)
 [![License](http://poser.pugx.org/vuryss/serializer/license)](https://packagist.org/packages/vuryss/serializer)
 [![PHP Version Require](http://poser.pugx.org/vuryss/serializer/require/php)](https://packagist.org/packages/vuryss/serializer)
 
@@ -41,7 +42,7 @@ $person = $serializer->deserialize($json, Person::class);
 
 ### Caching - optional, but highly recommended, otherwise the library will be slow
 
-Supports PSR-6 CacheItemPoolInterface: https://www.php-fig.org/psr/psr-6/#cacheitempoolinterface
+Supports PSR-6 CacheItemPoolInterface: <https://www.php-fig.org/psr/psr-6/#cacheitempoolinterface>
 
 No need to chain in-memory cache with external cache, the library will do it for you.
 Cache will be called once per used class (used in serialization or deserialization), then will be cached in memory until the script ends. 
@@ -107,6 +108,7 @@ $serializer = new Serializer(
 ```
 
 ### Handling of NULL values
+
 - By default, NULL values are included in the serialized value.
 
 To disable this you can use the `SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES` attribute:

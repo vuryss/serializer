@@ -9,6 +9,8 @@ Symfony serializer was very flexible, but also very slow. This library tries to 
 
 ### Serialization
 
+- Properties are serialized if they are either public or have a getter method.
+
 ```php
 $person = new Person();
 $person->firstName = 'Maria';
@@ -23,14 +25,33 @@ $json = $serializer->serialize($person);
 
 ### Deserialization
 
+- Properties are deserialized if they are public, instantiable in public constructor or have a setter method.
+
 ```php
 $json = '{"firstName":"Maria","lastName":"Valentina","age":36,"isStudent":false}';
 $serializer = new Serializer();
 $person = $serializer->deserialize($json, Person::class);
 ```
 
-### Custom object property serialized name (works in both serialization and deserialization)
-    
+### Caching - optional, but highly recommended, otherwise the library will be slow
+
+Supports PSR-6 CacheItemPoolInterface: https://www.php-fig.org/psr/psr-6/#cacheitempoolinterface
+
+No need to chain in-memory cache with external cache, the library will do it for you.
+Cache will be called once per used class (used in serialization or deserialization), then will be cached in memory until the script ends. 
+
+```php
+$pst6cache = new CacheItemPool(); // Some PSR-6 cache implementation
+$serializer = new Serializer(
+    metadataExtractor: new CachedMetadataExtractor(
+        new MetadataExtractor(),
+        $pst6cache,
+    ),
+);
+```
+
+### Custom object property serialized name
+
 ```php
 class SomeClass
 {
@@ -39,9 +60,48 @@ class SomeClass
 }
 ```
 
-### Notes:
-- Properties are serialized if they are either public or have a getter method.
-- Properties are deserialized if they are public, instantiable in public constructor or have a setter method.
+### Custom date format
+
+Per property:
+```php
+class SomeClass
+{
+    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d'])]
+    public DateTime $someDate;
+}
+```
+
+Or globally:
+```php
+$serializer = new Serializer(
+    attributes: [
+        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
+    ]
+);
+```
+
+### Handling of NULL values
+- By default, NULL values are included in the serialized value.
+
+To disable this you can use the `SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES` attribute:
+
+Per property:
+```php
+class SomeClass
+{
+    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true])]
+    public ?string $someProperty;
+}
+```
+
+Or globally:
+```php
+$serializer = new Serializer(
+    attributes: [
+        SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true,
+    ]
+);
+```
 
 ## Build, run & test locally
 

@@ -9,6 +9,7 @@ use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
 use Vuryss\Serializer\Denormalizer\DateTimeDenormalizer;
 use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
 use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
+use Vuryss\Serializer\Denormalizer\MixedTypeDenormalizer;
 use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
 use Vuryss\Serializer\Exception\EncodingException;
 use Vuryss\Serializer\Metadata\CachedMetadataExtractor;
@@ -63,6 +64,7 @@ class Serializer implements SerializerInterface
                 new DateTimeDenormalizer(),
                 new ObjectDenormalizer(),
                 new InterfaceDenormalizer(),
+                new MixedTypeDenormalizer(),
             ]
             : $denormalizers;
 

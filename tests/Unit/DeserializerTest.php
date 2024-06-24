@@ -132,3 +132,21 @@ test('Complex deserialization & serialization', function () {
 
     expect($string)->json()->toMatchArray(json_decode(Car::getJsonSerialized(), true));
 });
+
+test('Deserializing into mixed value field', function (mixed $expected, string $serialized) {
+    $serializer = new \Vuryss\Serializer\Serializer();
+    $object = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\MixedValues::class);
+
+    expect($object)
+        ->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\MixedValues::class)
+        ->and($object->mixedValue)
+        ->toBe($expected);
+})->with([
+    'int' => [654, '{"mixedValue":654}'],
+    'float' => [654.321, '{"mixedValue":654.321}'],
+    'string' => ['string', '{"mixedValue":"string"}'],
+    'bool' => [true, '{"mixedValue":true}'],
+    'null' => [null, '{"mixedValue":null}'],
+    'array' => [['array', 'of', 'values'], '{"mixedValue":["array","of","values"]}'],
+    'object' => [['key' => 'value'], '{"mixedValue":{"key":"value"}}'],
+]);

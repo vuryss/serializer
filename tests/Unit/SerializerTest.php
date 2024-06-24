@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @noinspection PhpUnhandledExceptionInspection
+ */
+
+declare(strict_types=1);
 
 use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\Tests\Datasets\ClassWithNestedClass;
@@ -77,3 +82,23 @@ test('Serializing array of objects', function () {
 
     expect($serialized)->toBe('[{"firstName":"John","lastName":"Doe","age":25,"isStudent":true},{"firstName":"Maria","lastName":"Valentina","age":36,"isStudent":false}]');
 });
+
+test('Serializing of mixed values', function ($value, $serialized) {
+    $serializer = new Serializer();
+
+    $mixedValueObject = new \Vuryss\Serializer\Tests\Datasets\MixedValues();
+    $mixedValueObject->mixedValue = 123;
+
+    $serialized = $serializer->serialize($mixedValueObject);
+
+    expect($serialized)->toBe('{"mixedValue":123}');
+})->with([
+    'int' => [123, '{"mixedValue":123}'],
+    'float' => [123.45, '{"mixedValue":123.45}'],
+    'string' => ['string', '{"mixedValue":"string"}'],
+    'bool' => [true, '{"mixedValue":true}'],
+    'null' => [null, '{"mixedValue":null}'],
+    'array' => [[1, 2, 3], '{"mixedValue":[1,2,3]}'],
+    'object' => [new stdClass(), '{"mixedValue":{}}'],
+    'object with properties' => [(object) ['property' => 'value'], '{"mixedValue":{"property":"value"}}'],
+]);

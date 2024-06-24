@@ -130,6 +130,12 @@ class MetadataExtractor implements MetadataExtractorInterface
         );
 
         if (null === $extractedTypes) {
+            $reflectionType = $reflectionProperty->getType();
+
+            if ($reflectionType instanceof \ReflectionNamedType && 'mixed' === $reflectionType->getName()) {
+                return [new DataType(BuiltInType::MIXED, attributes: $serializerContext->attributes)];
+            }
+
             throw new MetadataExtractionException(
                 sprintf(
                     'Failed to extract types of property "%s" of class "%s"',

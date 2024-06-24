@@ -16,6 +16,8 @@ use Vuryss\Serializer\SerializerException;
 use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\Dates;
 
+use Vuryss\Serializer\Tests\Datasets\InvalidDateFormatProperty;
+
 use function Pest\Faker\fake;
 
 test('Dates are deserialized and serialized correctly', function () {
@@ -96,4 +98,15 @@ test('Cannot accept invalid date format', function () {
 })->throws(
     InvalidAttributeUsageException::class,
     'DateTime format attribute must be a string'
+);
+
+test('Cannot serialize with invalid date format', function () {
+    $serializer = new Serializer();
+    $invalidObject = new InvalidDateFormatProperty();
+    $invalidObject->someDate = fake()->dateTime();
+
+    $serializer->serialize($invalidObject);
+})->throws(
+    InvalidAttributeUsageException::class,
+    'DateTime format attribute must be a string',
 );

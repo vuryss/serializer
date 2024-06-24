@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\Tests\Datasets\ClassWithNestedClass;
+use Vuryss\Serializer\Tests\Datasets\MultipleSerializerContext;
 use Vuryss\Serializer\Tests\Datasets\Person;
 use Vuryss\Serializer\Tests\Datasets\SerializedName;
+use Vuryss\Serializer\Tests\Datasets\UntypedProperty;
 
 test('Serializing data structures', function ($data, $expected) {
     $serializer = new Serializer();
@@ -131,3 +133,24 @@ test('Serializing of mixed values', function ($value, $serialized) {
     'object' => [new stdClass(), '{"mixedValue":{}}'],
     'object with properties' => [(object) ['property' => 'value'], '{"mixedValue":{"property":"value"}}'],
 ]);
+
+test('Cannot serialize untyped properties', function () {
+    $serializer = new Serializer();
+    $object = new UntypedProperty();
+    $object->property = 'value';
+
+    $serializer->serialize($object);
+})->throws(
+    \Vuryss\Serializer\Exception\MetadataExtractionException::class,
+    'Failed to extract types of property "property" of class "Vuryss\Serializer\Tests\Datasets\UntypedProperty"'
+);
+
+test('Multiple serializer context attributes are not supported', function () {
+    $serializer = new Serializer();
+    $object = new MultipleSerializerContext();
+
+    $serializer->serialize($object);
+})->throws(
+    \Vuryss\Serializer\Exception\InvalidAttributeUsageException::class,
+    'Property "name" of class "Vuryss\Serializer\Tests\Datasets\MultipleSerializerContext" has more than one SerializerContext attribute'
+);

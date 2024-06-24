@@ -10,4 +10,6 @@ class Person
     public string $lastName = 'Doe';
     public int $age = 25;
     public bool $isStudent = true;
+
+    private string $unUsableProperty = 'unUsableProperty';
 }

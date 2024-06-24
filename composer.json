@@ -2,7 +2,6 @@
     "name": "vuryss/serializer",
     "description": "A fast, extensible PHP data structures serializer & deserializer",
     "type": "library",
-    "version": "1.0.0",
     "require": {
         "php": "^8.3",
         "symfony/property-info": "^7.1",

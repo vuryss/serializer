@@ -1,6 +1,9 @@
 # Fast serialization library
 
 [![codecov](https://codecov.io/gh/vuryss/serializer/graph/badge.svg?token=kK0ZHh3raA)](https://codecov.io/gh/vuryss/serializer)
+[![Latest Stable Version](http://poser.pugx.org/vuryss/serializer/v)](https://packagist.org/packages/vuryss/serializer)
+[![License](http://poser.pugx.org/vuryss/serializer/license)](https://packagist.org/packages/vuryss/serializer)
+[![PHP Version Require](http://poser.pugx.org/vuryss/serializer/require/php)](https://packagist.org/packages/vuryss/serializer)
 
 Serializes and deserializes complex data structures to and from json.
 Ideas taken from Symfony's Serializer component, Serde and others.

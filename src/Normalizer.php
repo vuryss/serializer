@@ -10,7 +10,7 @@ final readonly class Normalizer
 {
     /**
      * @param array<NormalizerInterface> $normalizers
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, scalar|string[]> $attributes
      */
     public function __construct(
         private array $normalizers,
@@ -19,7 +19,7 @@ final readonly class Normalizer
     ) {}
 
     /**
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, scalar|string[]> $attributes
      *
      * @throws SerializerException
      */

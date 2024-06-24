@@ -30,7 +30,7 @@ class Serializer implements SerializerInterface
     /**
      * @param array<NormalizerInterface> $normalizers
      * @param array<DenormalizerInterface> $denormalizers
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, scalar|string[]> $attributes
      */
     public function __construct(
         array $normalizers = [],
@@ -75,9 +75,9 @@ class Serializer implements SerializerInterface
         );
     }
 
-    public function serialize(mixed $data): string
+    public function serialize(mixed $data, array $attributes = []): string
     {
-        $normalizedData = $this->normalize($data);
+        $normalizedData = $this->normalize($data, $attributes);
 
         try {
             return json_encode($normalizedData, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION);
@@ -99,11 +99,13 @@ class Serializer implements SerializerInterface
     }
 
     /**
+     * @param array<string, scalar|string[]> $attributes
+     *
      * @throws SerializerException
      */
-    public function normalize(mixed $data): mixed
+    public function normalize(mixed $data, array $attributes): mixed
     {
-        return $this->normalizer->normalize($data, []);
+        return $this->normalizer->normalize($data, $attributes);
     }
 
     /**

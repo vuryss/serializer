@@ -66,6 +66,26 @@ class SomeClass
 }
 ```
 
+### Serialization groups
+
+```php
+class SomeClass
+{
+    #[SerializerContext(groups: ['group1'])]
+    public string $property1;
+
+    // Has implicit group 'default'
+    public string $property2;
+}
+
+    
+$serializer = new Serializer();
+$object = new SomeClass();
+$object->property1 = 'value1';
+$object->property2 = 'value2';
+$serializer->serialize($object, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']]); // {"property1":"value1"}
+```
+
 ### Custom date format
 
 Per property:

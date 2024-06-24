@@ -8,12 +8,14 @@ namespace Vuryss\Serializer\Attribute;
 class SerializerContext
 {
     /**
-     * @param array<string, array<string, class-string>> $typeMap
+     * @param array<string, array<string, class-string>>|null $typeMap
+     * @param array<string> $groups
      * @param array<string, string|int|float|bool> $attributes
      */
     public function __construct(
         public ?string $name = null,
         public ?array $typeMap = null,
+        public array $groups = [],
         public array $attributes = [],
     ) {}
 }

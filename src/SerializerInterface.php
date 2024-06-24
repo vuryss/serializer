@@ -8,13 +8,16 @@ interface SerializerInterface
 {
     public const string ATTRIBUTE_DATETIME_FORMAT = 'datetime-format';
     public const string ATTRIBUTE_SKIP_NULL_VALUES = 'skip-null-values';
+    public const string ATTRIBUTE_GROUPS = 'groups';
 
     /**
      * Serializes data into a string.
      *
+     * @param array<string, scalar|string[]> $attributes
+     *
      * @throws SerializerException
      */
-    public function serialize(mixed $data): string;
+    public function serialize(mixed $data, array $attributes = []): string;
 
     /**
      * Deserializes data into the given type.

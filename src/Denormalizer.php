@@ -11,7 +11,7 @@ final readonly class Denormalizer
 {
     /**
      * @param array<DenormalizerInterface> $denormalizers
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, scalar|string[]> $attributes
      */
     public function __construct(
         private array $denormalizers,

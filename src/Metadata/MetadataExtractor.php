@@ -108,6 +108,7 @@ class MetadataExtractor implements MetadataExtractorInterface
                 $propertyName,
                 $serializerContext,
             ),
+            groups: [] === $serializerContext->groups ? ['default'] : $serializerContext->groups,
             attributes: $serializerContext->attributes,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),

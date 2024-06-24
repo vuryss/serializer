@@ -9,7 +9,7 @@ interface NormalizerInterface
     /**
      * @template T of object|array|scalar|null
      *
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, scalar|string[]> $attributes
      *
      * @return T|T[]
      * @throws SerializerException

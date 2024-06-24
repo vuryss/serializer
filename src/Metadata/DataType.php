@@ -14,7 +14,7 @@ class DataType
      * @param class-string|null $className
      * @param array<DataType> $listType
      * @param array<string, array<string, class-string>> $typeMap
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, scalar|string[]> $attributes
      */
     public function __construct(
         public BuiltInType $type,

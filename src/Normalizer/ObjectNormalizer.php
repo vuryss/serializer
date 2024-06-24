@@ -17,9 +17,15 @@ class ObjectNormalizer implements NormalizerInterface
 
         $classMetadata = $normalizer->getMetadataExtractor()->extractClassMetadata($data::class);
         $normalizedData = [];
+        /** @var null|string[] $groups */
+        $groups = $attributes[SerializerInterface::ATTRIBUTE_GROUPS] ?? null;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
             if (ReadAccess::NONE === $propertyMetadata->readAccess) {
+                continue;
+            }
+
+            if (null !== $groups && [] === array_intersect($groups, $propertyMetadata->groups)) {
                 continue;
             }
 

@@ -2,6 +2,7 @@
     "name": "vuryss/serializer",
     "description": "A fast, extensible PHP data structures serializer & deserializer",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": "^8.3",
         "symfony/property-info": "^7.1",

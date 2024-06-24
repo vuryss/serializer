@@ -1,5 +1,6 @@
 # Fast serialization library
 
+[![Tests](https://github.com/vuryss/serializer/workflows/Tests/badge.svg)](https://github.com/vuryss/serializer/actions?query=workflow:"Tests")
 [![codecov](https://codecov.io/gh/vuryss/serializer/graph/badge.svg?token=kK0ZHh3raA)](https://codecov.io/gh/vuryss/serializer)
 [![Latest Stable Version](http://poser.pugx.org/vuryss/serializer/v)](https://packagist.org/packages/vuryss/serializer)
 [![License](http://poser.pugx.org/vuryss/serializer/license)](https://packagist.org/packages/vuryss/serializer)

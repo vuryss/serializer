@@ -1,0 +1,16 @@
+name: Execute tests
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up php 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Install dependencies
+        run: composer self-update && composer install && composer dump-autoload
+      - name: Run tests and collect coverage
+        run: vendor/bin/pest

@@ -20,7 +20,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: clover.xml
       - name: Upload coverage to codacy
-        uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699
+        uses: codacy/codacy-coverage-reporter-action@a38818475bb21847788496e9f0fddaa4e84955ba
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-report: clover.xml

@@ -23,12 +23,8 @@ class ObjectDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): object {
-        assert(null !== $type->className && class_exists($type->className));
+        assert(is_array($data) && null !== $type->className && class_exists($type->className));
         $className = $type->className;
-
-        if (!is_array($data)) {
-            throw new DeserializationImpossibleException('Data must be an array');
-        }
 
         $classMetadata = $denormalizer->getMetadataExtractor()->extractClassMetadata($className);
         $constructorParameters = [];

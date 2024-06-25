@@ -86,7 +86,7 @@ class Serializer implements SerializerInterface
         }
     }
 
-    public function deserialize(string $data, ?string $type = null): mixed
+    public function deserialize(string $data, ?string $type = null, array $attributes = []): mixed
     {
         try {
             /** @var scalar|array|object|null $decoded */
@@ -95,7 +95,7 @@ class Serializer implements SerializerInterface
             throw new EncodingException('Failed to decode JSON data', previous: $e);
         }
 
-        return $this->denormalize($decoded, $type);
+        return $this->denormalize($decoded, $type, $attributes);
     }
 
     /**
@@ -111,12 +111,14 @@ class Serializer implements SerializerInterface
     /**
      * Denormalized data into the given type.
      *
+     * @param array<string, scalar|string[]> $attributes
+     *
      * @throws SerializerException
      */
-    public function denormalize(mixed $data, ?string $type): mixed
+    public function denormalize(mixed $data, ?string $type, array $attributes = []): mixed
     {
         $dataType = null === $type ? DataType::fromData($data) : DataType::fromUserType($type);
 
-        return $this->denormalizer->denormalize($data, $dataType, new Path());
+        return $this->denormalizer->denormalize($data, $dataType, new Path(), $attributes);
     }
 }

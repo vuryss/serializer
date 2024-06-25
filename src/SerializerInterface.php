@@ -25,6 +25,8 @@ interface SerializerInterface
      * @template TObject of object
      * @template TType of null|class-string<TObject>|string
      *
+     * @param array<string, scalar|string[]> $attributes
+     *
      * @psalm-param TType $type
      *
      * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
@@ -33,5 +35,5 @@ interface SerializerInterface
      *
      * @throws SerializerException
      */
-    public function deserialize(string $data, ?string $type = null): mixed;
+    public function deserialize(string $data, ?string $type = null, array $attributes = []): mixed;
 }

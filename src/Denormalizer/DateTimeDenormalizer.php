@@ -15,8 +15,13 @@ use Vuryss\Serializer\SerializerInterface;
 
 class DateTimeDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): \DateTimeInterface
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): \DateTimeInterface {
         assert(is_string($data));
 
         $format = $type->attributes[SerializerInterface::ATTRIBUTE_DATETIME_FORMAT] ?? \DateTimeInterface::RFC3339;

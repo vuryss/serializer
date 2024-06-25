@@ -14,8 +14,13 @@ use Vuryss\Serializer\SerializerException;
 
 class ArrayDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): array
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): array {
         assert(is_array($data));
 
         $denormalized = [];
@@ -28,7 +33,8 @@ class ArrayDenormalizer implements DenormalizerInterface
                     $value,
                     $type->listType,
                     $denormalizer,
-                    $path
+                    $path,
+                    $attributes,
                 );
             } finally {
                 $path->pop();
@@ -45,13 +51,16 @@ class ArrayDenormalizer implements DenormalizerInterface
 
     /**
      * @param array<DataType> $types
+     * @param array<string, scalar|string[]> $attributes
+     *
      * @throws SerializerException
      */
     private function tryToDenormalizeTypesInSequence(
         mixed $data,
         array $types,
         Denormalizer $denormalizer,
-        Path $path
+        Path $path,
+        array $attributes,
     ): mixed {
         if ([] === $types) {
             $types = [DataType::fromData($data)];
@@ -61,7 +70,7 @@ class ArrayDenormalizer implements DenormalizerInterface
 
         foreach ($types as $type) {
             try {
-                return $denormalizer->denormalize($data, $type, $path);
+                return $denormalizer->denormalize($data, $type, $path, $attributes);
             } catch (SerializerException $e) {
                 $lastException = $e;
                 continue;

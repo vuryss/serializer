@@ -12,11 +12,17 @@ use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\WriteAccess;
 use Vuryss\Serializer\Path;
 use Vuryss\Serializer\SerializerException;
+use Vuryss\Serializer\SerializerInterface;
 
 class ObjectDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): object
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): object {
         assert(null !== $type->className && class_exists($type->className));
         $className = $type->className;
 
@@ -28,9 +34,15 @@ class ObjectDenormalizer implements DenormalizerInterface
         $constructorParameters = [];
         $directAssignmentProperties = [];
         $setterProperties = [];
+        /** @var null|string[] $groups */
+        $groups = $attributes[SerializerInterface::ATTRIBUTE_GROUPS] ?? null;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
             if (!array_key_exists($propertyMetadata->serializedName, $data)) {
+                continue;
+            }
+
+            if (null !== $groups && [] === array_intersect($groups, $propertyMetadata->groups)) {
                 continue;
             }
 
@@ -41,7 +53,8 @@ class ObjectDenormalizer implements DenormalizerInterface
                     $data[$propertyMetadata->serializedName],
                     $propertyMetadata->types,
                     $denormalizer,
-                    $path
+                    $path,
+                    $attributes,
                 );
             } finally {
                 $path->pop();
@@ -116,16 +129,22 @@ class ObjectDenormalizer implements DenormalizerInterface
 
     /**
      * @param array<DataType> $types
+     * @param array<string, scalar|string[]> $attributes
      *
      * @throws SerializerException
      */
-    private function tryToDenormalize(mixed $value, array $types, Denormalizer $denormalizer, Path $path): mixed
-    {
+    private function tryToDenormalize(
+        mixed $value,
+        array $types,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): mixed {
         $lastException = null;
 
         foreach ($types as $type) {
             try {
-                return $denormalizer->denormalize($value, $type, $path);
+                return $denormalizer->denormalize($value, $type, $path, $attributes);
             } catch (SerializerException $e) {
                 $lastException = $e;
                 continue;

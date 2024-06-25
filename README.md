@@ -13,6 +13,27 @@ Ideas taken from Symfony's Serializer component, Serde and others.
 
 Symfony serializer was very flexible, but also very slow. This library tries to be as fast as possible.
 
+Supports modern PHP projects with fully typed properties. Older codebases with no types would not work.
+
+- [Fast serialization library](#fast-serialization-library)
+    * [Installation](#installation)
+    * [Features](#features)
+        + [Serialization](#serialization)
+        + [Deserialization](#deserialization)
+        + [Caching - optional, but highly recommended, otherwise the library will be slow](#caching---optional--but-highly-recommended--otherwise-the-library-will-be-slow)
+        + [Custom object property serialized name](#custom-object-property-serialized-name)
+        + [Serialization groups](#serialization-groups)
+        + [Deserialization groups](#deserialization-groups)
+        + [Custom date format](#custom-date-format)
+        + [Handling of NULL values](#handling-of-null-values)
+    * [Build, run & test locally](#build--run---test-locally)
+
+## Installation
+
+```bash
+composer require vuryss/serializer
+```
+
 ## Features
 
 ### Serialization

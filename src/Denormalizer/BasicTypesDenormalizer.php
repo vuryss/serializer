@@ -13,8 +13,13 @@ use Vuryss\Serializer\Path;
 
 class BasicTypesDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): mixed
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): mixed {
         return match ($type->type) {
             BuiltInType::STRING => is_string($data) ? $data : $this->error($data, 'string', $path),
             BuiltInType::INTEGER => is_int($data) ? $data : $this->error($data, 'integer', $path),

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\SerializerInterface;
+use Vuryss\Serializer\Tests\Datasets\Group\TopLevelClass;
 
 test('Serializing only values under specified groups', function ($groups, $expected) {
     $subLevel2 = new \Vuryss\Serializer\Tests\Datasets\Group\SubLevel2();
@@ -368,3 +369,1306 @@ test('Serializing only values under specified groups', function ($groups, $expec
         ],
     ],
 ]);
+
+test('Deserializing values from all groups', function () {
+    $fullData = [
+        'nestedPropGroup1' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup1And2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropNoGroup' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'propGroup1' => 'topLevelPropGroup1',
+        'propGroup2' => 'topLevelPropGroup2',
+        'propGroup1And2' => 'topLevelPropGroup1And2',
+        'propNoGroup' => 'topLevelPropNoGroup',
+    ];
+    $serializer = new Serializer();
+    $object = $serializer->deserialize(
+        json_encode($fullData),
+        TopLevelClass::class,
+        [SerializerInterface::ATTRIBUTE_GROUPS => null],
+    );
+
+    expect(isset($object->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->propGroup1))->toBeTrue()
+        ->and(isset($object->propGroup2))->toBeTrue()
+        ->and(isset($object->propGroup1And2))->toBeTrue()
+        ->and(isset($object->propNoGroup))->toBeTrue();
+});
+
+test('Deserializing values only in group1', function () {
+    $fullData = [
+        'nestedPropGroup1' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup1And2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropNoGroup' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'propGroup1' => 'topLevelPropGroup1',
+        'propGroup2' => 'topLevelPropGroup2',
+        'propGroup1And2' => 'topLevelPropGroup1And2',
+        'propNoGroup' => 'topLevelPropNoGroup',
+    ];
+    $serializer = new Serializer();
+    $object = $serializer->deserialize(
+        json_encode($fullData),
+        TopLevelClass::class,
+        [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']],
+    );
+
+    expect(isset($object->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->propGroup1))->toBeTrue()
+        ->and(isset($object->propGroup2))->toBeFalse()
+        ->and(isset($object->propGroup1And2))->toBeTrue()
+        ->and(isset($object->propNoGroup))->toBeFalse()
+    ;
+});
+
+test('Deserializing values only group2', function () {
+    $fullData = [
+        'nestedPropGroup1' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup1And2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropNoGroup' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'propGroup1' => 'topLevelPropGroup1',
+        'propGroup2' => 'topLevelPropGroup2',
+        'propGroup1And2' => 'topLevelPropGroup1And2',
+        'propNoGroup' => 'topLevelPropNoGroup',
+    ];
+    $serializer = new Serializer();
+    $object = $serializer->deserialize(
+        json_encode($fullData),
+        TopLevelClass::class,
+        [SerializerInterface::ATTRIBUTE_GROUPS => ['group2']],
+    );
+
+    expect(isset($object->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->propGroup1))->toBeFalse()
+        ->and(isset($object->propGroup2))->toBeTrue()
+        ->and(isset($object->propGroup1And2))->toBeTrue()
+        ->and(isset($object->propNoGroup))->toBeFalse()
+    ;
+});
+
+test('Deserializing values from group 1 and group 2', function () {
+    $fullData = [
+        'nestedPropGroup1' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup1And2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropNoGroup' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'propGroup1' => 'topLevelPropGroup1',
+        'propGroup2' => 'topLevelPropGroup2',
+        'propGroup1And2' => 'topLevelPropGroup1And2',
+        'propNoGroup' => 'topLevelPropNoGroup',
+    ];
+    $serializer = new Serializer();
+    $object = $serializer->deserialize(
+        json_encode($fullData),
+        TopLevelClass::class,
+        [SerializerInterface::ATTRIBUTE_GROUPS => ['group1', 'group2']],
+    );
+
+    expect(isset($object->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->propGroup1))->toBeTrue()
+        ->and(isset($object->propGroup2))->toBeTrue()
+        ->and(isset($object->propGroup1And2))->toBeTrue()
+        ->and(isset($object->propNoGroup))->toBeFalse()
+    ;
+});
+
+test('Deserializing values from group 1 and default group combination', function () {
+    $fullData = [
+        'nestedPropGroup1' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropGroup1And2' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'nestedPropNoGroup' => [
+            'nestedPropGroup1' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropGroup1And2' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'nestedPropNoGroup' => [
+                'propGroup1' => 'subLevel2PropGroup1',
+                'propGroup2' => 'subLevel2PropGroup2',
+                'propGroup1And2' => 'subLevel2PropGroup1And2',
+                'propNoGroup' => 'subLevel2PropNoGroup',
+            ],
+            'propGroup1' => 'subLevel1PropGroup1',
+            'propGroup2' => 'subLevel1PropGroup2',
+            'propGroup1And2' => 'subLevel1PropGroup1And2',
+            'propNoGroup' => 'subLevel1PropNoGroup',
+        ],
+        'propGroup1' => 'topLevelPropGroup1',
+        'propGroup2' => 'topLevelPropGroup2',
+        'propGroup1And2' => 'topLevelPropGroup1And2',
+        'propNoGroup' => 'topLevelPropNoGroup',
+    ];
+    $serializer = new Serializer();
+    $object = $serializer->deserialize(
+        json_encode($fullData),
+        TopLevelClass::class,
+        [SerializerInterface::ATTRIBUTE_GROUPS => ['group1', 'default']],
+    );
+
+    expect(isset($object->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropGroup1And2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->nestedPropNoGroup->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propGroup1And2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup2->propNoGroup))->toBeFalse()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropGroup1And2->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->nestedPropNoGroup->propGroup1))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->propGroup2))->toBeFalse()
+        ->and(isset($object->nestedPropNoGroup->propGroup1And2))->toBeTrue()
+        ->and(isset($object->nestedPropNoGroup->propNoGroup))->toBeTrue()
+
+        ->and(isset($object->propGroup1))->toBeTrue()
+        ->and(isset($object->propGroup2))->toBeFalse()
+        ->and(isset($object->propGroup1And2))->toBeTrue()
+        ->and(isset($object->propNoGroup))->toBeTrue();
+});

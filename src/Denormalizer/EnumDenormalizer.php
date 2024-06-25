@@ -13,8 +13,13 @@ use Vuryss\Serializer\Path;
 
 class EnumDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): \BackedEnum
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): \BackedEnum {
         assert(is_string($data) && null !== $type->className);
 
         /** @var \BackedEnum $enumClass */

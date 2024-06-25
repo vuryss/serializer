@@ -12,8 +12,13 @@ use Vuryss\Serializer\Path;
 
 class MixedTypeDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): mixed
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): mixed {
         return $data;
     }
 

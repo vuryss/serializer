@@ -13,8 +13,13 @@ use Vuryss\Serializer\Path;
 
 class InterfaceDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, DataType $type, Denormalizer $denormalizer, Path $path): mixed
-    {
+    public function denormalize(
+        mixed $data,
+        DataType $type,
+        Denormalizer $denormalizer,
+        Path $path,
+        array $attributes = [],
+    ): mixed {
         foreach ($type->typeMap as $field => $valueToClassName) {
             if (!array_key_exists($field, $data)) {
                 continue;
@@ -23,7 +28,7 @@ class InterfaceDenormalizer implements DenormalizerInterface
             $className = $valueToClassName[$data[$field]];
             $dataType = new DataType(BuiltInType::OBJECT, $className);
 
-            return $denormalizer->denormalize($data, $dataType, $path);
+            return $denormalizer->denormalize($data, $dataType, $path, $attributes);
         }
 
         throw new DeserializationImpossibleException(sprintf(

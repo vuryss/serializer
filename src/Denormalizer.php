@@ -22,15 +22,17 @@ final readonly class Denormalizer
     /**
      * Denormalized data into the given type.
      *
+     * @param array<string, scalar|string[]> $attributes
+     *
      * @throws SerializerException
      */
-    public function denormalize(mixed $data, DataType $dataType, Path $path): mixed
+    public function denormalize(mixed $data, DataType $dataType, Path $path, array $attributes): mixed
     {
         $dataType->attributes += $this->attributes;
         $denormalizer = $this->resolveDenormalizer($data, $dataType, $path);
 
         /** @psalm-suppress MixedReturnStatement */
-        return $denormalizer->denormalize($data, $dataType, $this, $path);
+        return $denormalizer->denormalize($data, $dataType, $this, $path, $attributes);
     }
 
     public function getMetadataExtractor(): MetadataExtractorInterface

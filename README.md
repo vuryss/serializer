@@ -3,6 +3,7 @@
 [![Tests](https://github.com/vuryss/serializer/workflows/Tests/badge.svg)](https://github.com/vuryss/serializer/actions?query=workflow:"Tests")
 [![codecov](https://codecov.io/gh/vuryss/serializer/graph/badge.svg?token=kK0ZHh3raA)](https://codecov.io/gh/vuryss/serializer)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/760e3d4f985248fd8bb47b947873b847)](https://app.codacy.com/gh/vuryss/serializer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/vuryss/serializer/badge)](https://www.codefactor.io/repository/github/vuryss/serializer)
 ![GitHub Release](https://img.shields.io/github/v/release/vuryss/serializer)
 [![License](http://poser.pugx.org/vuryss/serializer/license)](https://packagist.org/packages/vuryss/serializer)
 [![PHP Version Require](http://poser.pugx.org/vuryss/serializer/require/php)](https://packagist.org/packages/vuryss/serializer)

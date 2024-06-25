@@ -20,13 +20,13 @@ Supports modern PHP projects with fully typed properties. Older codebases with n
     * [Features](#features)
         + [Serialization](#serialization)
         + [Deserialization](#deserialization)
-        + [Caching - optional, but highly recommended, otherwise the library will be slow](#caching---optional--but-highly-recommended--otherwise-the-library-will-be-slow)
+        + [Caching - optional, but highly recommended, otherwise the library will be slow](#caching---optional-but-highly-recommended-otherwise-the-library-will-be-slow)
         + [Custom object property serialized name](#custom-object-property-serialized-name)
         + [Serialization groups](#serialization-groups)
         + [Deserialization groups](#deserialization-groups)
         + [Custom date format](#custom-date-format)
         + [Handling of NULL values](#handling-of-null-values)
-    * [Build, run & test locally](#build--run---test-locally)
+    * [Build, run & test locally](#build-run--test-locally)
 
 ## Installation
 

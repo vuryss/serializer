@@ -88,6 +88,26 @@ $object->property2 = 'value2';
 $serializer->serialize($object, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']]); // {"property1":"value1"}
 ```
 
+### Deserialization groups
+
+```php
+class SomeClass
+{
+    #[SerializerContext(groups: ['group1'])]
+    public string $property1;
+
+    // Has implicit group 'default'
+    public string $property2;
+}
+
+    
+$serializer = new Serializer();
+$data = '{"property1":"value1","property2":"value2"}';
+$object = $serializer->deserialize($data, SomeClass::class, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']]);
+isset($object->property1); // true
+isset($object->property2); // false
+```
+
 ### Custom date format
 
 Per property:

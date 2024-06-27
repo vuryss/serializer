@@ -25,6 +25,7 @@ Supports modern PHP projects with fully typed properties. Older codebases with n
     - [Serialization groups](#serialization-groups)
     - [Deserialization groups](#deserialization-groups)
     - [Custom date format](#custom-date-format)
+    - [Ignore property](#ignore-property)
     - [Handling of NULL values](#handling-of-null-values)
   - [Build, run & test locally](#build-run--test-locally)
 

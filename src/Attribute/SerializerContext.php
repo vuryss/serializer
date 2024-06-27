@@ -15,6 +15,7 @@ class SerializerContext
     public function __construct(
         public ?string $name = null,
         public ?array $typeMap = null,
+        public bool $ignore = false,
         public array $groups = [],
         public array $attributes = [],
     ) {}

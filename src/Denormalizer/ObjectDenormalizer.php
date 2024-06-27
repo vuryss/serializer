@@ -34,11 +34,11 @@ class ObjectDenormalizer implements DenormalizerInterface
         $groups = $attributes[SerializerInterface::ATTRIBUTE_GROUPS] ?? null;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
-            if (!array_key_exists($propertyMetadata->serializedName, $data)) {
-                continue;
-            }
-
-            if (null !== $groups && [] === array_intersect($groups, $propertyMetadata->groups)) {
+            if (
+                $propertyMetadata->ignore
+                || !array_key_exists($propertyMetadata->serializedName, $data)
+                || (null !== $groups && [] === array_intersect($groups, $propertyMetadata->groups))
+            ) {
                 continue;
             }
 

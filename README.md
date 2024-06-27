@@ -149,6 +149,19 @@ $serializer = new Serializer(
 );
 ```
 
+### Ignore property
+
+Those properties will not be included in the serialized values during serialization and will not be populated with 
+provided values during deserialization.
+
+```php
+class SomeClass
+{
+    #[SerializerContext(ignore: true)]
+    public string $someProperty;
+}
+```
+
 ### Handling of NULL values
 
 - By default, NULL values are included in the serialized value.

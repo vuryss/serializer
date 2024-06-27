@@ -112,6 +112,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             attributes: $serializerContext->attributes,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
+            ignore: $serializerContext->ignore,
         );
     }
 

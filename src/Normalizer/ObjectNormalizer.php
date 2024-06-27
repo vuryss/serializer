@@ -21,21 +21,18 @@ class ObjectNormalizer implements NormalizerInterface
         $groups = $attributes[SerializerInterface::ATTRIBUTE_GROUPS] ?? null;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
-            if (ReadAccess::NONE === $propertyMetadata->readAccess) {
+            if (
+                $propertyMetadata->ignore
+                || ReadAccess::NONE === $propertyMetadata->readAccess
+                || (null !== $groups && [] === array_intersect($groups, $propertyMetadata->groups))
+            ) {
                 continue;
             }
 
-            if (null !== $groups && [] === array_intersect($groups, $propertyMetadata->groups)) {
-                continue;
-            }
-
-            if (ReadAccess::DIRECT === $propertyMetadata->readAccess) {
-                /** @var scalar|null|object|array $value */
-                $value = $data->{$name};
-            } else {
-                /** @var scalar|null|object|array $value */
-                $value = $data->{$propertyMetadata->getterMethod}();
-            }
+            /** @var scalar|null|object|array $value */
+            $value = (ReadAccess::DIRECT === $propertyMetadata->readAccess)
+                ? $data->{$name}
+                : $data->{$propertyMetadata->getterMethod}();
 
             $localAttributes = array_merge($attributes, $propertyMetadata->attributes);
 

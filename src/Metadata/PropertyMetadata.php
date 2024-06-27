@@ -22,6 +22,7 @@ class PropertyMetadata
         public array $attributes,
         public ReadAccess $readAccess,
         public WriteAccess $writeAccess,
+        public bool $ignore,
     ) {
         if (ReadAccess::GETTER == $this->readAccess) {
             $this->getterMethod = 'get' . ucfirst($this->name);

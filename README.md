@@ -25,6 +25,7 @@ Supports modern PHP projects with fully typed properties. Older codebases with n
     - [Serialization groups](#serialization-groups)
     - [Deserialization groups](#deserialization-groups)
     - [Custom date format](#custom-date-format)
+    - [Ignore property](#ignore-property)
     - [Handling of NULL values](#handling-of-null-values)
   - [Build, run & test locally](#build-run--test-locally)
 
@@ -147,6 +148,19 @@ $serializer = new Serializer(
         SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
     ]
 );
+```
+
+### Ignore property
+
+Those properties will not be included in the serialized values during serialization and will not be populated with 
+provided values during deserialization.
+
+```php
+class SomeClass
+{
+    #[SerializerContext(ignore: true)]
+    public string $someProperty;
+}
 ```
 
 ### Handling of NULL values

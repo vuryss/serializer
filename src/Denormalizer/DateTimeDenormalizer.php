@@ -32,19 +32,24 @@ class DateTimeDenormalizer implements DenormalizerInterface
 
         $className = match ($type->className) {
             \DateTimeImmutable::class => \DateTimeImmutable::class,
-            \DateTime::class => \DateTime::class,
+            \DateTime::class, \DateTimeInterface::class => \DateTime::class,
             default => throw new \InvalidArgumentException('Unsupported class name'),
         };
 
         $dateTime = $className::createFromFormat($format, $data);
 
+        // Fallback to automatic parsing
         if (false === $dateTime) {
-            throw new DeserializationImpossibleException(sprintf(
-                'Cannot denormalize date string "%s" at path "%s" into DateTimeImmutable. Expected format: "%s"',
-                $data,
-                $path->toString(),
-                $format,
-            ));
+            try {
+                $dateTime = new $className($data);
+            } catch (\Exception $e) {
+                throw new DeserializationImpossibleException(sprintf(
+                    'Cannot denormalize date string "%s" at path "%s" into DateTimeImmutable. Expected format: "%s"',
+                    $data,
+                    $path->toString(),
+                    $format,
+                ), previous: $e);
+            }
         }
 
         return $dateTime;
@@ -53,7 +58,7 @@ class DateTimeDenormalizer implements DenormalizerInterface
     public function supportsDenormalization(mixed $data, DataType $type): bool
     {
         return is_string($data)
-            && BuiltInType::OBJECT === $type->type
+            && (BuiltInType::OBJECT === $type->type || BuiltInType::INTERFACE === $type->type)
             && is_a($type->className, \DateTimeInterface::class, true)
         ;
     }

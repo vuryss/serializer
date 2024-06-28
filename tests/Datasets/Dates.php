@@ -19,4 +19,6 @@ class Dates
     public \DateTime $dateTimeFormat1;
 
     public \DateTimeImmutable $globalDateTimeFormat;
+
+    public \DateTimeInterface $interfaceDateTime;
 }

@@ -74,7 +74,7 @@ class ObjectDenormalizer implements DenormalizerInterface
 
         $instance = count($constructorParameters) > 0
             ? $this->initializeWithConstructor($className, $classMetadata->constructor, $constructorParameters)
-            : new $className();
+            : $this->initializeWithConstructor($className, $classMetadata->constructor, []);
 
         foreach ($directAssignmentProperties as $name => $value) {
             $instance->{$name} = $value;

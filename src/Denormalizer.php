@@ -27,6 +27,11 @@ final class Denormalizer
     private array $classSpecificDenormalizers = [];
 
     /**
+     * @var array<AdvancedDenormalizerInterface>
+     */
+    private array $advancedDenormalizers = [];
+
+    /**
      * @param array<DenormalizerInterface> $denormalizers
      * @param array<string, scalar|string[]> $attributes
      */
@@ -45,6 +50,10 @@ final class Denormalizer
             foreach ($denormalizer->getSupportedClassNames() as $className) {
                 $this->classSpecificDenormalizers[$className] = $denormalizer;
             }
+
+            if ($denormalizer instanceof AdvancedDenormalizerInterface) {
+                $this->advancedDenormalizers[] = $denormalizer;
+            }
         }
     }
 
@@ -58,6 +67,12 @@ final class Denormalizer
     public function denormalize(mixed $data, DataType $dataType, Path $path, array $attributes): mixed
     {
         $dataType->attributes += $this->attributes;
+
+        foreach ($this->advancedDenormalizers as $denormalizer) {
+            if ($denormalizer->supportsDenormalization($data, $dataType)) {
+                return $denormalizer->denormalize($data, $dataType, $this, $path, $attributes);
+            }
+        }
 
         return match ($dataType->type) {
             BuiltInType::STRING,

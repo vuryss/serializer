@@ -30,22 +30,14 @@ class Serializer implements SerializerInterface
     ) {
         $this->metadataExtractor = $metadataExtractor ?? new CachedMetadataExtractor(new MetadataExtractor());
 
-        $normalizers = [] === $normalizers
-            ? [new DateTimeNormalizer()]
-            : $normalizers;
-
         $this->normalizer = new Normalizer(
-            normalizers: $normalizers,
+            normalizers: [] === $normalizers ? [new DateTimeNormalizer()] : $normalizers,
             metadataExtractor: $this->metadataExtractor,
             attributes: $attributes,
         );
 
-        $denormalizers = [] === $denormalizers
-            ? [new DateTimeDenormalizer()]
-            : $denormalizers;
-
         $this->denormalizer = new Denormalizer(
-            denormalizers: $denormalizers,
+            denormalizers: [] === $denormalizers ? [new DateTimeDenormalizer()] : $denormalizers,
             metadataExtractor: $this->metadataExtractor,
             attributes: $attributes,
         );

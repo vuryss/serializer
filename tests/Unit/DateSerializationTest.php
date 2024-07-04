@@ -115,3 +115,12 @@ test('Cannot serialize with invalid date format', function () {
     InvalidAttributeUsageException::class,
     'DateTime format attribute must be a string',
 );
+
+test('Cannot deserialize with non-string values', function () {
+    $serializer = new Serializer();
+
+    $serializer->deserialize('{"uglyUsaDate":123}', Dates::class);
+})->throws(
+    DeserializationImpossibleException::class,
+    'Expected date-time string at path "$.uglyUsaDate", got "integer"'
+);

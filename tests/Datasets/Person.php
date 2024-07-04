@@ -6,7 +6,7 @@ namespace Vuryss\Serializer\Tests\Datasets;
 
 use Vuryss\Serializer\Attribute\SerializerContext;
 
-class Person
+class Person implements PersonInterface
 {
     public string $firstName = 'John';
     public string $lastName = 'Doe';

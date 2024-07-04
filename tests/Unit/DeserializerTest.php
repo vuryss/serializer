@@ -2,10 +2,12 @@
 
 /** @noinspection PhpUnhandledExceptionInspection */
 
+use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Airbag;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Car;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Engine;
 use Vuryss\Serializer\Tests\Datasets\Complex1\FuelType;
+use Vuryss\Serializer\Tests\Datasets\SampleWIthUnknownClassName;
 
 test('Deserializing into data structures', function ($expected, $serialized) {
     $serializer = new \Vuryss\Serializer\Serializer();
@@ -170,3 +172,28 @@ test('Deserializing into mixed value field', function (mixed $expected, string $
     'array' => [['array', 'of', 'values'], '{"mixedValue":["array","of","values"]}'],
     'object' => [['key' => 'value'], '{"mixedValue":{"key":"value"}}'],
 ]);
+
+test('Deserializing into array, requires array data', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $serializer->deserialize('{"data":"not-array"}', \Vuryss\Serializer\Tests\Datasets\SampleWithArray::class);
+})->throws(DeserializationImpossibleException::class, 'Expected type "array" at path "$.data", got "string"');
+
+test('Deserializing into interface requires array(object) data', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $serializer->deserialize('{"person":"not-array"}', \Vuryss\Serializer\Tests\Datasets\SampleWithInterface::class);
+})->throws(DeserializationImpossibleException::class, 'Expected type "array" at path "$.person", got "string"');
+
+test('Deserializing into non-defined object not supported yet', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $serializer->deserialize('{"unknownClass":{}}', SampleWIthUnknownClassName::class);
+})->throws(
+    DeserializationImpossibleException::class,
+    'Cannot denormalize data at path "$.unknownClass" into object because class name cannot be resolved'
+);
+
+test('Cannot deserialize if we don\'t have access to the property', function () {
+
+});

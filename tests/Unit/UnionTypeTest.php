@@ -39,3 +39,23 @@ test('Can deserialize into union types - case 2', function () {
         ->and($object1->param2->paramA)->toBe($data1['paramA'])
     ;
 });
+
+test('Union type deserialization fails when no types match', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+    $data = [
+        'param1' => [
+            'paramA' => 'string',
+        ],
+        'param2' => [
+            'paramB' => 1,
+        ],
+    ];
+
+    $data['param1']['paramA'] = 1;
+    $data['param2']['paramB'] = 'string';
+
+    $serializer->deserialize(json_encode($data), TestClass::class);
+})->throws(
+    \Vuryss\Serializer\Exception\DeserializationImpossibleException::class,
+    'Cannot denormalize value "array" at path "$.param1" into any of the given types'
+);

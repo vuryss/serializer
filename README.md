@@ -207,3 +207,10 @@ Run tests:
 ```bash
 composer test
 ```
+
+Run tests with coverage
+
+```bash
+composer test:coverage
+```
+HTML coverage report is saved under `coverage` directory.

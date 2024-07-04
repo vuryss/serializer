@@ -8,6 +8,10 @@ declare(strict_types=1);
 
 test('Support for advanced denormalizers', function () {
     $serializer = new \Vuryss\Serializer\Serializer(
+        normalizers: [
+            new \Vuryss\Serializer\Tests\Datasets\BuiltInObjectTypeNormalizer(),
+            new \Vuryss\Serializer\Normalizer\DateTimeNormalizer(),
+        ],
         denormalizers: [
             new \Vuryss\Serializer\Tests\Datasets\BuiltInObjectTypeDenormalizer(),
             new \Vuryss\Serializer\Denormalizer\DateTimeDenormalizer(),
@@ -31,4 +35,9 @@ test('Support for advanced denormalizers', function () {
         ->age->toBe(76)
         ->isStudent->toBeFalse()
     ;
+
+    $serialized = $serializer->serialize($person);
+
+    expect($serialized)->toBe(json_encode($data));
+
 });

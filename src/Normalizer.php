@@ -17,6 +17,11 @@ final class Normalizer
     private array $classSpecificNormalizers = [];
 
     /**
+     * @var array<AdvancedNormalizerInterface>
+     */
+    private array $advancedNormalizers = [];
+
+    /**
      * @param array<NormalizerInterface> $normalizers
      * @param array<string, scalar|string[]> $attributes
      */
@@ -30,6 +35,10 @@ final class Normalizer
         foreach ($this->normalizers as $normalizer) {
             foreach ($normalizer->getSupportedClassNames() as $className) {
                 $this->classSpecificNormalizers[$className] = $normalizer;
+            }
+
+            if ($normalizer instanceof AdvancedNormalizerInterface) {
+                $this->advancedNormalizers[] = $normalizer;
             }
         }
     }
@@ -46,6 +55,12 @@ final class Normalizer
         }
 
         $attributes = $attributes + $this->attributes;
+
+        foreach ($this->advancedNormalizers as $normalizer) {
+            if ($normalizer->supportsNormalization($data)) {
+                return $normalizer->normalize($data, $this, $attributes);
+            }
+        }
 
         if (is_array($data)) {
             foreach ($data as $key => $value) {

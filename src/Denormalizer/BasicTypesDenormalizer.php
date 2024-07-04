@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Denormalizer;
 
-use Vuryss\Serializer\Denormalizer;
-use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\InvalidTypeException;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Path;
 
-class BasicTypesDenormalizer implements DenormalizerInterface
+class BasicTypesDenormalizer
 {
+    /**
+     * @throws InvalidTypeException
+     */
     public function denormalize(
         mixed $data,
         DataType $type,
-        Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
     ): mixed {
         return match ($type->type) {
             BuiltInType::STRING => is_string($data) ? $data : $this->error($data, 'string', $path),
@@ -26,15 +25,8 @@ class BasicTypesDenormalizer implements DenormalizerInterface
             BuiltInType::FLOAT => is_float($data) || is_int($data) ? $data : $this->error($data, 'float', $path),
             BuiltInType::BOOLEAN => is_bool($data) ? $data : $this->error($data, 'boolean', $path),
             BuiltInType::NULL => null === $data ? null : $this->error($data, 'null', $path),
+            BuiltInType::MIXED => $data,
             default => throw new \InvalidArgumentException('Unsupported type'),
-        };
-    }
-
-    public function supportsDenormalization(mixed $data, DataType $type): bool
-    {
-        return match ($type->type) {
-            BuiltInType::STRING, BuiltInType::INTEGER, BuiltInType::FLOAT, BuiltInType::BOOLEAN, BuiltInType::NULL => true,
-            default => false,
         };
     }
 

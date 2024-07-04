@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer;
 
-use Vuryss\Serializer\Denormalizer\ArrayDenormalizer;
-use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
 use Vuryss\Serializer\Denormalizer\DateTimeDenormalizer;
-use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
-use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
-use Vuryss\Serializer\Denormalizer\MixedTypeDenormalizer;
-use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
 use Vuryss\Serializer\Exception\EncodingException;
 use Vuryss\Serializer\Metadata\CachedMetadataExtractor;
 use Vuryss\Serializer\Metadata\DataType;
@@ -47,15 +41,7 @@ class Serializer implements SerializerInterface
         );
 
         $denormalizers = [] === $denormalizers
-            ? [
-                new BasicTypesDenormalizer(),
-                new ArrayDenormalizer(),
-                new EnumDenormalizer(),
-                new DateTimeDenormalizer(),
-                new ObjectDenormalizer(),
-                new InterfaceDenormalizer(),
-                new MixedTypeDenormalizer(),
-            ]
+            ? [new DateTimeDenormalizer()]
             : $denormalizers;
 
         $this->denormalizer = new Denormalizer(

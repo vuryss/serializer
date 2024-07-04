@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Denormalizer;
-use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
-use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\WriteAccess;
 use Vuryss\Serializer\Path;
 use Vuryss\Serializer\SerializerException;
 use Vuryss\Serializer\SerializerInterface;
 
-class ObjectDenormalizer implements DenormalizerInterface
+class ObjectDenormalizer
 {
+    /**
+     * @throws SerializerException
+     */
     public function denormalize(
         mixed $data,
         DataType $type,
@@ -23,10 +24,22 @@ class ObjectDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): object {
-        assert(is_array($data) && null !== $type->className && class_exists($type->className));
-        $className = $type->className;
+        if (!is_array($data)) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Expected type "array" at path "%s", got "%s"',
+                $path->toString(),
+                get_debug_type($data),
+            ));
+        }
 
-        $classMetadata = $denormalizer->getMetadataExtractor()->extractClassMetadata($className);
+        if (null === $type->className) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Cannot denormalize data at path "%s" into object because class name cannot be resolved',
+                $path->toString(),
+            ));
+        }
+
+        $classMetadata = $denormalizer->getMetadataExtractor()->extractClassMetadata($type->className);
         $constructorParameters = [];
         $directAssignmentProperties = [];
         $setterProperties = [];
@@ -73,8 +86,8 @@ class ObjectDenormalizer implements DenormalizerInterface
         }
 
         $instance = count($constructorParameters) > 0
-            ? $this->initializeWithConstructor($className, $classMetadata->constructor, $constructorParameters)
-            : $this->initializeWithConstructor($className, $classMetadata->constructor, []);
+            ? $this->initializeWithConstructor($type->className, $classMetadata->constructor, $constructorParameters)
+            : $this->initializeWithConstructor($type->className, $classMetadata->constructor, []);
 
         foreach ($directAssignmentProperties as $name => $value) {
             $instance->{$name} = $value;
@@ -85,11 +98,6 @@ class ObjectDenormalizer implements DenormalizerInterface
         }
 
         return $instance;
-    }
-
-    public function supportsDenormalization(mixed $data, DataType $type): bool
-    {
-        return is_array($data) && BuiltInType::OBJECT === $type->type && null !== $type->className;
     }
 
     /**

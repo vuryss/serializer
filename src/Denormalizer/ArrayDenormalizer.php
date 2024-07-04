@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Denormalizer;
-use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
-use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Path;
 use Vuryss\Serializer\SerializerException;
 
-class ArrayDenormalizer implements DenormalizerInterface
+class ArrayDenormalizer
 {
+    /**
+     * @throws SerializerException
+     */
     public function denormalize(
         mixed $data,
         DataType $type,
@@ -21,7 +22,13 @@ class ArrayDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): array {
-        assert(is_array($data));
+        if (!is_array($data)) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Expected type "array" at path "%s", got "%s"',
+                $path->toString(),
+                gettype($data)
+            ));
+        }
 
         $denormalized = [];
 
@@ -42,11 +49,6 @@ class ArrayDenormalizer implements DenormalizerInterface
         }
 
         return $denormalized;
-    }
-
-    public function supportsDenormalization(mixed $data, DataType $type): bool
-    {
-        return is_array($data) && BuiltInType::ARRAY === $type->type;
     }
 
     /**

@@ -135,10 +135,7 @@ test('Complex deserialization & serialization', function () {
 
 test('Deserializing with custom set of denormalizers', function () {
     $serializer = new \Vuryss\Serializer\Serializer(
-        denormalizers: [
-            new \Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer(),
-            new \Vuryss\Serializer\Denormalizer\ObjectDenormalizer(),
-        ]
+        denormalizers: [],
     );
 
     $object = $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true}', \Vuryss\Serializer\Tests\Datasets\Person::class);

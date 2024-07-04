@@ -4,23 +4,29 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Denormalizer;
 
-use Vuryss\Serializer\Denormalizer;
-use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Metadata\DataType;
-use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Path;
 
-class EnumDenormalizer implements DenormalizerInterface
+class EnumDenormalizer
 {
+    /**
+     * @throws DeserializationImpossibleException
+     */
     public function denormalize(
         mixed $data,
         DataType $type,
-        Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
     ): \BackedEnum {
-        assert(is_string($data) && null !== $type->className);
+        assert(null !== $type->className);
+
+        if (!is_string($data)) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Expected type "string" at path "%s", got "%s"',
+                $path->toString(),
+                gettype($data),
+            ));
+        }
 
         /** @var \BackedEnum $enumClass */
         $enumClass = $type->className;
@@ -36,10 +42,5 @@ class EnumDenormalizer implements DenormalizerInterface
         }
 
         return $enum;
-    }
-
-    public function supportsDenormalization(mixed $data, DataType $type): bool
-    {
-        return is_string($data) && BuiltInType::ENUM === $type->type && null !== $type->className;
     }
 }

@@ -8,7 +8,6 @@ use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
-use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Path;
 use Vuryss\Serializer\SerializerInterface;
@@ -22,7 +21,13 @@ class DateTimeDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): \DateTimeInterface {
-        assert(is_string($data));
+        if (!is_string($data)) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Expected date-time string at path "%s", got "%s"',
+                $path->toString(),
+                gettype($data),
+            ));
+        }
 
         $format = $type->attributes[SerializerInterface::ATTRIBUTE_DATETIME_FORMAT] ?? \DateTimeInterface::RFC3339;
 
@@ -55,11 +60,8 @@ class DateTimeDenormalizer implements DenormalizerInterface
         return $dateTime;
     }
 
-    public function supportsDenormalization(mixed $data, DataType $type): bool
+    public function getSupportedClassNames(): array
     {
-        return is_string($data)
-            && (BuiltInType::OBJECT === $type->type || BuiltInType::INTERFACE === $type->type)
-            && is_a($type->className, \DateTimeInterface::class, true)
-        ;
+        return [\DateTimeInterface::class, \DateTimeImmutable::class, \DateTime::class];
     }
 }

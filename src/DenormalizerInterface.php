@@ -21,5 +21,5 @@ interface DenormalizerInterface
         array $attributes = [],
     ): mixed;
 
-    public function supportsDenormalization(mixed $data, DataType $type): bool;
+    public function getSupportedClassNames(): array;
 }

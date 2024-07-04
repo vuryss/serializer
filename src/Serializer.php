@@ -15,11 +15,7 @@ use Vuryss\Serializer\Exception\EncodingException;
 use Vuryss\Serializer\Metadata\CachedMetadataExtractor;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\MetadataExtractor;
-use Vuryss\Serializer\Normalizer\ArrayNormalizer;
-use Vuryss\Serializer\Normalizer\BasicTypesNormalizer;
 use Vuryss\Serializer\Normalizer\DateTimeNormalizer;
-use Vuryss\Serializer\Normalizer\EnumNormalizer;
-use Vuryss\Serializer\Normalizer\ObjectNormalizer;
 
 class Serializer implements SerializerInterface
 {
@@ -41,13 +37,7 @@ class Serializer implements SerializerInterface
         $this->metadataExtractor = $metadataExtractor ?? new CachedMetadataExtractor(new MetadataExtractor());
 
         $normalizers = [] === $normalizers
-            ? [
-                new BasicTypesNormalizer(),
-                new ArrayNormalizer(),
-                new EnumNormalizer(),
-                new DateTimeNormalizer(),
-                new ObjectNormalizer(),
-            ]
+            ? [new DateTimeNormalizer()]
             : $normalizers;
 
         $this->normalizer = new Normalizer(

@@ -16,5 +16,8 @@ interface NormalizerInterface
      */
     public function normalize(mixed $data, Normalizer $normalizer, array $attributes): mixed;
 
-    public function supportsNormalization(mixed $data): bool;
+    /**
+     * @return array<class-string>
+     */
+    public function getSupportedClassNames(): array;
 }

@@ -24,8 +24,8 @@ class DateTimeNormalizer implements NormalizerInterface
         return $data->format($format);
     }
 
-    public function supportsNormalization(mixed $data): bool
+    public function getSupportedClassNames(): array
     {
-        return $data instanceof \DateTimeInterface;
+        return [\DateTimeImmutable::class, \DateTime::class];
     }
 }

@@ -87,10 +87,7 @@ test('Serializing array of objects', function () {
 
 test('Serializer with subset of normalizers', function () {
     $serializer = new Serializer(
-        normalizers: [
-            new \Vuryss\Serializer\Normalizer\BasicTypesNormalizer(),
-            new \Vuryss\Serializer\Normalizer\ObjectNormalizer(),
-        ]
+        normalizers: []
     );
 
     $person = new Person();
@@ -111,7 +108,7 @@ test('Cannot serialize resources', function () {
     $serializer->serialize($resource);
 })->throws(
     \Vuryss\Serializer\Exception\NormalizerNotFoundException::class,
-    'No normalizer found for the given data: resource (stream)'
+    'Cannot serialize data of type: resource'
 );
 
 test('Serializing of mixed values', function ($value, $serialized) {

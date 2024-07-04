@@ -6,11 +6,13 @@ namespace Vuryss\Serializer\Normalizer;
 
 use Vuryss\Serializer\Metadata\ReadAccess;
 use Vuryss\Serializer\Normalizer;
-use Vuryss\Serializer\NormalizerInterface;
 use Vuryss\Serializer\SerializerInterface;
 
-class ObjectNormalizer implements NormalizerInterface
+class ObjectNormalizer
 {
+    /**
+     * @throws \Vuryss\Serializer\SerializerException
+     */
     public function normalize(mixed $data, Normalizer $normalizer, array $attributes): array
     {
         assert(is_object($data));
@@ -48,10 +50,5 @@ class ObjectNormalizer implements NormalizerInterface
         }
 
         return $normalizedData;
-    }
-
-    public function supportsNormalization(mixed $data): bool
-    {
-        return is_object($data);
     }
 }

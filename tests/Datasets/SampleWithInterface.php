@@ -6,5 +6,5 @@ namespace Vuryss\Serializer\Tests\Datasets;
 
 class SampleWithInterface
 {
-    private PersonInterface $person;
+    public PersonInterface $person;
 }

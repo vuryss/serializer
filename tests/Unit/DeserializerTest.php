@@ -2,6 +2,7 @@
 
 /** @noinspection PhpUnhandledExceptionInspection */
 
+use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Airbag;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Car;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Engine;
@@ -173,3 +174,17 @@ test('Deserializing into mixed value field', function (mixed $expected, string $
     'array' => [['array', 'of', 'values'], '{"mixedValue":["array","of","values"]}'],
     'object' => [['key' => 'value'], '{"mixedValue":{"key":"value"}}'],
 ]);
+
+test('Deserialize with explicit basic type', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+
+    $result = $serializer->deserialize('123', 'integer');
+    expect($result)->toBe(123);
+});
+
+test('Cannot deserialize resource', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+    $opendir = opendir(sys_get_temp_dir());
+    $serializer->denormalize($opendir, null);
+    closedir($opendir);
+})->throws(DeserializationImpossibleException::class, 'Resource type is not supported');

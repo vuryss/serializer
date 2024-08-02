@@ -188,3 +188,8 @@ test('Cannot deserialize resource', function () {
     $serializer->denormalize($opendir, null);
     closedir($opendir);
 })->throws(DeserializationImpossibleException::class, 'Resource type is not supported');
+
+test('Cannot deserialize if none of the values matches the union type declared', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+    $serializer->deserialize('{"value":[]}', \Vuryss\Serializer\Tests\Datasets\MultipleTypes::class);
+})->throws(DeserializationImpossibleException::class, 'Cannot denormalize value "array" at path "$.value" into any of the given types');

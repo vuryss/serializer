@@ -25,6 +25,7 @@ class DateTimeDenormalizer implements DenormalizerInterface
         assert(is_string($data));
 
         $format = $type->attributes[SerializerInterface::ATTRIBUTE_DATETIME_FORMAT] ?? \DateTimeInterface::RFC3339;
+        $isStrict = $type->attributes[SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT] ?? false;
 
         if (!is_string($format)) {
             throw new InvalidAttributeUsageException('DateTime format attribute must be a string');
@@ -37,6 +38,15 @@ class DateTimeDenormalizer implements DenormalizerInterface
         };
 
         $dateTime = $className::createFromFormat($format, $data);
+
+        if (false === $dateTime && $isStrict) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Cannot denormalize date string "%s" at path "%s" into DateTimeImmutable. Expected format: "%s"',
+                $data,
+                $path->toString(),
+                $format,
+            ));
+        }
 
         // Fallback to automatic parsing
         if (false === $dateTime) {

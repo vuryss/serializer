@@ -7,6 +7,7 @@ namespace Vuryss\Serializer;
 interface SerializerInterface
 {
     public const string ATTRIBUTE_DATETIME_FORMAT = 'datetime-format';
+    public const string ATTRIBUTE_DATETIME_FORMAT_STRICT = 'datetime-format-strict';
     public const string ATTRIBUTE_SKIP_NULL_VALUES = 'skip-null-values';
     public const string ATTRIBUTE_GROUPS = 'groups';
 

@@ -68,7 +68,7 @@ test('Cannot deserialize dates with invalid format', function () {
     $date4 = fake()->dateTime();
 
     $data = [
-        'uglyUsaDate' => 'invalid date',
+        'uglyUsaDate' => '2024-05-21',
         'immutableDate' => $date2->format('Y-m-d'),
         'dateTimeFormat1' => $date3->format(\DateTimeInterface::RFC3339_EXTENDED),
         'globalDateTimeFormat' => $date4->format(\DateTimeInterface::RFC2822),
@@ -77,8 +77,52 @@ test('Cannot deserialize dates with invalid format', function () {
     $serializer->deserialize(json_encode($data), Dates::class);
 })->throws(
     DeserializationImpossibleException::class,
-    'Cannot denormalize date string "invalid date" at path "$.uglyUsaDate" into DateTimeImmutable. Expected format: "m/d/Y"'
+    'Cannot denormalize date string "2024-05-21" at path "$.uglyUsaDate" into DateTimeImmutable. Expected format: "m/d/Y"'
 );
+
+test('Cannot deserialize into invalid format even with fallback', function () {
+    $serializer = new Serializer();
+
+    $date2 = fake()->dateTime();
+    $date3 = fake()->dateTime();
+    $date4 = fake()->dateTime();
+
+    $data = [
+        'uglyUsaDate' => $date2->format('m/d/Y'),
+        'immutableDate' => 'invalid-date',
+        'dateTimeFormat1' => $date3->format(\DateTimeInterface::RFC3339_EXTENDED),
+        'globalDateTimeFormat' => $date4->format(\DateTimeInterface::RFC2822),
+    ];
+
+    $serializer->deserialize(json_encode($data), Dates::class);
+})->throws(
+    DeserializationImpossibleException::class,
+    'Cannot denormalize date string "invalid-date" at path "$.immutableDate" into DateTimeImmutable. Expected format: "Y-m-d"'
+);
+
+test('Can deserialize dates with fallback to support all date formats', function () {
+    $serializer = new Serializer(
+        attributes: [
+            SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
+        ]
+    );
+
+    $date1 = fake()->dateTime();
+    $date2 = fake()->dateTime();
+
+    $data = [
+        'uglyUsaDate' => $date1->format('m/d/Y'),
+        'immutableDate' => $date2->format(\DateTimeInterface::COOKIE),
+    ];
+
+    $dates = $serializer->deserialize(json_encode($data), Dates::class);
+
+    expect($dates->uglyUsaDate)->toBeInstanceOf(\DateTime::class)
+        ->and($dates->uglyUsaDate->format('m/d/Y'))->toBe($date1->format('m/d/Y'))
+        ->and($dates->immutableDate)->toBeInstanceOf(\DateTimeImmutable::class)
+        ->and($dates->immutableDate->format('Y-m-d'))->toBe($date2->format('Y-m-d'))
+    ;
+});
 
 test('Cannot accept invalid date format', function () {
     $serializer = new Serializer(

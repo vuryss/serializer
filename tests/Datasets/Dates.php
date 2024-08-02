@@ -9,7 +9,12 @@ use Vuryss\Serializer\SerializerInterface;
 
 class Dates
 {
-    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'm/d/Y'])]
+    #[SerializerContext(
+        attributes: [
+            SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'm/d/Y',
+            SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT => true,
+        ]
+    )]
     public \DateTime $uglyUsaDate;
 
     #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d'])]

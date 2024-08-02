@@ -15,18 +15,20 @@ Symfony serializer was very flexible, but also very slow. This library tries to 
 Supports modern PHP projects with fully typed properties. Older codebases with no types would not work.
 
 - [Fast serialization library](#fast-serialization-library)
-  - [Installation](#installation)
-  - [Features](#features)
-    - [Serialization](#serialization)
-    - [Deserialization](#deserialization)
-    - [Caching - optional, but highly recommended, otherwise the library will be slow](#caching---optional-but-highly-recommended-otherwise-the-library-will-be-slow)
-    - [Custom object property serialized name](#custom-object-property-serialized-name)
-    - [Serialization groups](#serialization-groups)
-    - [Deserialization groups](#deserialization-groups)
-    - [Custom date format](#custom-date-format)
-    - [Ignore property](#ignore-property)
-    - [Handling of NULL values](#handling-of-null-values)
-  - [Build, run & test locally](#build-run--test-locally)
+  * [Installation](#installation)
+  * [Features](#features)
+    + [Serialization](#serialization)
+    + [Deserialization](#deserialization)
+    + [Caching - optional, but highly recommended, otherwise the library will be slow](#caching---optional--but-highly-recommended--otherwise-the-library-will-be-slow)
+    + [Custom object property serialized name](#custom-object-property-serialized-name)
+    + [Serialization groups](#serialization-groups)
+    + [Deserialization groups](#deserialization-groups)
+    + [Custom date format](#custom-date-format)
+    + [Enforce date format](#enforce-date-format)
+    + [Ignore property](#ignore-property)
+    + [Handling of NULL values](#handling-of-null-values)
+    + [Support for json serializable objects](#support-for-json-serializable-objects)
+  * [Build, run & test locally](#build--run---test-locally)
 
 ## Installation
 

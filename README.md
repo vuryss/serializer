@@ -207,3 +207,9 @@ Run tests:
 ```bash
 composer test
 ```
+
+HTML Coverage locally:
+
+```bash
+XDEBUG_MODE=coverage vendor/bin/pest --coverage --coverage-html=coverage
+```

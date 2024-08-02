@@ -154,3 +154,12 @@ test('Multiple serializer context attributes are not supported', function () {
     \Vuryss\Serializer\Exception\InvalidAttributeUsageException::class,
     'Property "name" of class "Vuryss\Serializer\Tests\Datasets\MultipleSerializerContext" has more than one SerializerContext attribute'
 );
+
+test('Serializer respects json-normalizable interface', function () {
+    $serializer = new Serializer();
+    $object = new \Vuryss\Serializer\Tests\Datasets\SampleJsonSerializable();
+
+    $result = $serializer->serialize($object);
+
+    expect($result)->toBe('{"some-key":"some-value","other-key":123,"nested":{"nested-key":"nested-value"}}');
+});

@@ -25,6 +25,10 @@ final readonly class Normalizer
      */
     public function normalize(mixed $data, array $attributes): mixed
     {
+        if ($data instanceof \JsonSerializable) {
+            return $data->jsonSerialize();
+        }
+
         $normalizer = $this->resolveNormalizer($data);
 
         $attributes = $attributes + $this->attributes;

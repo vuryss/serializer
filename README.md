@@ -5,8 +5,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/760e3d4f985248fd8bb47b947873b847)](https://app.codacy.com/gh/vuryss/serializer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/vuryss/serializer/badge)](https://www.codefactor.io/repository/github/vuryss/serializer)
 ![GitHub Release](https://img.shields.io/github/v/release/vuryss/serializer)
-[![License](http://poser.pugx.org/vuryss/serializer/license)](https://packagist.org/packages/vuryss/serializer)
-[![PHP Version Require](http://poser.pugx.org/vuryss/serializer/require/php)](https://packagist.org/packages/vuryss/serializer)
+![GitHub License](https://img.shields.io/github/license/vuryss/serializer)
 
 Serializes and deserializes complex data structures to and from json.
 Ideas taken from Symfony's Serializer component, Serde and others.
@@ -132,6 +131,10 @@ isset($object->property2); // false
 
 ### Custom date format
 
+On serialization the format will always be respected. On deserialization the format will be used to parse the date.
+However on deserialization by default if the date is not in the provided format, it will be parsed as is, given that 
+DateTime constructor can parse it.
+
 Per property:
 ```php
 class SomeClass
@@ -146,6 +149,33 @@ Or globally:
 $serializer = new Serializer(
     attributes: [
         SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
+    ]
+);
+```
+
+### Enforce date format
+
+If strict data time format is required during deserialization then, you can use the 
+`SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT` attribute:
+
+Per property:
+```php
+class SomeClass
+{
+    #[SerializerContext(attributes: [
+        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d',
+        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT => true
+    ])]
+    public DateTime $someDate;
+}
+```
+
+Or globally:
+```php
+$serializer = new Serializer(
+    attributes: [
+        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d',
+        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT => true
     ]
 );
 ```
@@ -186,6 +216,10 @@ $serializer = new Serializer(
     ]
 );
 ```
+
+### Support for json serializable objects
+
+If an object implements the `JsonSerializable` interface, the `jsonSerialize` method will be called and the result will be serialized.
 
 ## Build, run & test locally
 

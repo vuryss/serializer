@@ -85,19 +85,7 @@ class MetadataExtractor implements MetadataExtractorInterface
         \ReflectionProperty $reflectionProperty,
         string $propertyName
     ): PropertyMetadata {
-        $serializerContexts = $reflectionProperty->getAttributes(SerializerContext::class);
-
-        if (count($serializerContexts) > 1) {
-            throw new InvalidAttributeUsageException(
-                sprintf(
-                    'Property "%s" of class "%s" has more than one SerializerContext attribute',
-                    $reflectionProperty->getName(),
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                ),
-            );
-        }
-
-        $serializerContext = isset($serializerContexts[0]) ? $serializerContexts[0]->newInstance() : new SerializerContext();
+        $serializerContext = $this->getSerializerContext($reflectionProperty);
 
         return new PropertyMetadata(
             name: $propertyName,
@@ -315,5 +303,57 @@ class MetadataExtractor implements MetadataExtractorInterface
         }
 
         return new ConstructorMetadata(isPublic: $isPublic, arguments: $arguments);
+    }
+
+    /**
+     * @throws InvalidAttributeUsageException
+     */
+    public function getSerializerContext(\ReflectionProperty $reflectionProperty): SerializerContext
+    {
+        $symfonySerializedName = null;
+        $symfonySerializerGroups = [];
+        $serializerContexts = $reflectionProperty->getAttributes(SerializerContext::class);
+
+        if (count($serializerContexts) > 1) {
+            throw new InvalidAttributeUsageException(
+                sprintf(
+                    'Property "%s" of class "%s" has more than one SerializerContext attribute',
+                    $reflectionProperty->getName(),
+                    $reflectionProperty->getDeclaringClass()->getName(),
+                ),
+            );
+        }
+
+        if (class_exists('\Symfony\Component\Serializer\Attribute\SerializedName')) {
+            $symfonySerializedNameAttribute = $reflectionProperty->getAttributes(
+                \Symfony\Component\Serializer\Attribute\SerializedName::class
+            );
+
+            if (isset($symfonySerializedNameAttribute[0])) {
+                $symfonySerializedName = $symfonySerializedNameAttribute[0]->newInstance()->getSerializedName();
+            }
+        }
+
+        if (class_exists('\Symfony\Component\Serializer\Attribute\Groups')) {
+            $symfonySerializerGroupsAttribute = $reflectionProperty->getAttributes(
+                \Symfony\Component\Serializer\Attribute\Groups::class
+            );
+
+            foreach ($symfonySerializerGroupsAttribute as $attribute) {
+                $symfonySerializerGroups = $attribute->newInstance()->getGroups();
+            }
+        }
+
+        $serializerContext = isset($serializerContexts[0]) ? $serializerContexts[0]->newInstance() : new SerializerContext();
+
+        if (null === $serializerContext->name && null !== $symfonySerializedName) {
+            $serializerContext->name = $symfonySerializedName;
+        }
+
+        if ([] === $serializerContext->groups && [] !== $symfonySerializerGroups) {
+            $serializerContext->groups = $symfonySerializerGroups;
+        }
+
+        return $serializerContext;
     }
 }

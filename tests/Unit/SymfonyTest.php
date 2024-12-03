@@ -19,7 +19,7 @@ test('Can serialize with Symfony serializer attributes', function () {
 });
 
 test('Can deserialized with Symfony serializer attributes', function () {
-    $json = '{"some_property":51,"another_property":71,"some_field":"foobar","another_field":"barfoo","this_has_priority":"nope","and_another_field":"111"}';
+    $json = '{"some_property":51,"another_property":71,"some_field":"foobar","another_field":"barfoo","this_has_priority":"nope","and_another_field":"111","ignored":"some-value"}';
     $serializer = new \Vuryss\Serializer\Serializer();
     $person = $serializer->deserialize($json, \Vuryss\Serializer\Tests\Datasets\Symfony\SymfonyAnnotatedObject::class);
 
@@ -28,7 +28,8 @@ test('Can deserialized with Symfony serializer attributes', function () {
         ->and($person->someField)->toBe('foobar')
         ->and($person->anotherField)->toBe('barfoo')
         ->and($person->yetAnotherField)->toBe('nope')
-        ->and($person->andAnotherField)->toBe('111');
+        ->and($person->andAnotherField)->toBe('111')
+        ->and($person->ignored)->toBe('ignored');
 
     $person = $serializer->deserialize($json, \Vuryss\Serializer\Tests\Datasets\Symfony\SymfonyAnnotatedObject::class, ['groups' => ['group1']]);
 
@@ -37,7 +38,8 @@ test('Can deserialized with Symfony serializer attributes', function () {
         ->and($person->someField)->toBe('foobar')
         ->and($person->anotherField)->toBe('bar')
         ->and($person->yetAnotherField)->toBe('nope')
-        ->and($person->andAnotherField)->toBe('111');
+        ->and($person->andAnotherField)->toBe('111')
+        ->and($person->ignored)->toBe('ignored');
 
     $person = $serializer->deserialize($json, \Vuryss\Serializer\Tests\Datasets\Symfony\SymfonyAnnotatedObject::class, ['groups' => ['group2']]);
 
@@ -46,5 +48,6 @@ test('Can deserialized with Symfony serializer attributes', function () {
         ->and($person->someField)->toBe('foo')
         ->and($person->anotherField)->toBe('barfoo')
         ->and($person->yetAnotherField)->toBe('really?')
-        ->and($person->andAnotherField)->toBe('blah');
+        ->and($person->andAnotherField)->toBe('blah')
+        ->and($person->ignored)->toBe('ignored');
 });

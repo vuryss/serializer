@@ -313,6 +313,7 @@ class MetadataExtractor implements MetadataExtractorInterface
         $symfonySerializedName = null;
         $symfonySerializerGroups = [];
         $serializerContexts = $reflectionProperty->getAttributes(SerializerContext::class);
+        $isSymfonyIgnored = false;
 
         if (count($serializerContexts) > 1) {
             throw new InvalidAttributeUsageException(
@@ -344,6 +345,16 @@ class MetadataExtractor implements MetadataExtractorInterface
             }
         }
 
+        if (class_exists('\Symfony\Component\Serializer\Attribute\Ignore')) {
+            $symfonySerializerIgnoreAttribute = $reflectionProperty->getAttributes(
+                \Symfony\Component\Serializer\Attribute\Ignore::class
+            );
+
+            if (isset($symfonySerializerIgnoreAttribute[0])) {
+                $isSymfonyIgnored = true;
+            }
+        }
+
         $serializerContext = isset($serializerContexts[0]) ? $serializerContexts[0]->newInstance() : new SerializerContext();
 
         if (null === $serializerContext->name && null !== $symfonySerializedName) {
@@ -352,6 +363,10 @@ class MetadataExtractor implements MetadataExtractorInterface
 
         if ([] === $serializerContext->groups && [] !== $symfonySerializerGroups) {
             $serializerContext->groups = $symfonySerializerGroups;
+        }
+
+        if ($isSymfonyIgnored) {
+            $serializerContext->ignore = true;
         }
 
         return $serializerContext;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Tests\Datasets\Symfony;
 
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Vuryss\Serializer\Attribute\SerializerContext;
 
@@ -35,5 +36,8 @@ class SymfonyAnnotatedObject
         #[SerializedName('and_another_field')]
         #[SerializerContext(groups: ['group1'])]
         public string $andAnotherField = 'blah',
+
+        #[Ignore]
+        public string $ignored = 'ignored',
     ) {}
 }

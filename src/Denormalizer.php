@@ -31,7 +31,6 @@ final readonly class Denormalizer
         $dataType->attributes += $this->attributes;
         $denormalizer = $this->resolveDenormalizer($data, $dataType, $path);
 
-        /** @psalm-suppress MixedReturnStatement */
         return $denormalizer->denormalize($data, $dataType, $this, $path, $attributes);
     }
 

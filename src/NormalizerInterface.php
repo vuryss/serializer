@@ -7,11 +7,9 @@ namespace Vuryss\Serializer;
 interface NormalizerInterface
 {
     /**
-     * @template T of object|array|scalar|null
-     *
      * @param array<string, scalar|string[]> $attributes
      *
-     * @return T|T[]
+     * @phpstan-return object|scalar|null|array<mixed>
      * @throws SerializerException
      */
     public function normalize(mixed $data, Normalizer $normalizer, array $attributes): mixed;

@@ -9,6 +9,10 @@ use Vuryss\Serializer\NormalizerInterface;
 
 class BasicTypesNormalizer implements NormalizerInterface
 {
+    /**
+     * @inheritDoc
+     * @phpstan-param scalar|null $data
+     */
     public function normalize(mixed $data, Normalizer $normalizer, array $attributes): mixed
     {
         return $data;

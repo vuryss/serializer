@@ -45,7 +45,7 @@ class MetadataExtractor implements MetadataExtractorInterface
 
         try {
             $reflectionClass = new \ReflectionClass($class);
-        } catch (\ReflectionException $e) {
+        } catch (\ReflectionException $e) { // @phpstan-ignore-line (it is thrown by ReflectionClass)
             throw new MetadataExtractionException(sprintf('Failed to reflect class "%s"', $class), previous: $e);
         }
 
@@ -281,6 +281,9 @@ class MetadataExtractor implements MetadataExtractorInterface
         return WriteAccess::NONE;
     }
 
+    /**
+     * @param \ReflectionClass<object> $reflectionClass
+     */
     private function extractConstructorMetadata(\ReflectionClass $reflectionClass): ConstructorMetadata
     {
         $constructor = $reflectionClass->getConstructor();

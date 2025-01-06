@@ -69,6 +69,7 @@ class DateTimeDenormalizer implements DenormalizerInterface
     {
         return is_string($data)
             && (BuiltInType::OBJECT === $type->type || BuiltInType::INTERFACE === $type->type)
+            && null !== $type->className
             && is_a($type->className, \DateTimeInterface::class, true)
         ;
     }

@@ -20,9 +20,8 @@ class EnumDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): \BackedEnum {
-        assert(is_string($data) && null !== $type->className);
+        assert(is_string($data) && null !== $type->className && is_subclass_of($type->className, \BackedEnum::class));
 
-        /** @var \BackedEnum $enumClass */
         $enumClass = $type->className;
         $enum = $enumClass::tryFrom($data);
 

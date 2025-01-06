@@ -34,7 +34,10 @@ class CachedMetadataExtractor implements MetadataExtractorInterface
                     $cacheItem = $this->externalCache->getItem($cacheKey);
 
                     if ($cacheItem->isHit()) {
-                        $this->cache[$class] = $cacheItem->get();
+                        /** @var ClassMetadata $cachedData */
+                        $cachedData = $cacheItem->get();
+
+                        $this->cache[$class] = $cachedData;
 
                         return $this->cache[$class];
                     }

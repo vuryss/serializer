@@ -11,6 +11,10 @@ use Vuryss\Serializer\SerializerInterface;
 
 class ObjectNormalizer implements NormalizerInterface
 {
+    /**
+     * @inheritdoc
+     * @phpstan-return array<mixed>
+     */
     public function normalize(mixed $data, Normalizer $normalizer, array $attributes): array
     {
         assert(is_object($data));
@@ -29,7 +33,6 @@ class ObjectNormalizer implements NormalizerInterface
                 continue;
             }
 
-            /** @var scalar|null|object|array $value */
             $value = (ReadAccess::DIRECT === $propertyMetadata->readAccess)
                 ? $data->{$name}
                 : $data->{$propertyMetadata->getterMethod}();

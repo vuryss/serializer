@@ -89,7 +89,7 @@ class Serializer implements SerializerInterface
     public function deserialize(string $data, ?string $type = null, array $attributes = []): mixed
     {
         try {
-            /** @var scalar|array|object|null $decoded */
+            /** @var scalar|array<mixed>|object|null $decoded */
             $decoded = json_decode($data, associative: true, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new EncodingException('Failed to decode JSON data', previous: $e);

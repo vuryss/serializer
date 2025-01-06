@@ -94,6 +94,7 @@ class ObjectDenormalizer implements DenormalizerInterface
 
     /**
      * @param class-string $className
+     * @param array<string, mixed> $constructorParameters
      *
      * @throws SerializerException
      */

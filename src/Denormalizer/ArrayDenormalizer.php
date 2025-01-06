@@ -14,6 +14,10 @@ use Vuryss\Serializer\SerializerException;
 
 class ArrayDenormalizer implements DenormalizerInterface
 {
+    /**
+     * @inheritDoc
+     * @phpstan-return array<mixed>
+     */
     public function denormalize(
         mixed $data,
         DataType $type,

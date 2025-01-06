@@ -13,6 +13,10 @@ use Vuryss\Serializer\Path;
 
 class InterfaceDenormalizer implements DenormalizerInterface
 {
+    /**
+     * @inheritDoc
+     * @phpstan-param array<mixed> $data
+     */
     public function denormalize(
         mixed $data,
         DataType $type,

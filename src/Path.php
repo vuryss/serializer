@@ -6,6 +6,9 @@ namespace Vuryss\Serializer;
 
 class Path
 {
+    /**
+     * @var array<string>
+     */
     private array $segments = [];
 
     public function toString(): string

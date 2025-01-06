@@ -223,6 +223,13 @@ $serializer = new Serializer(
 
 If an object implements the `JsonSerializable` interface, the `jsonSerialize` method will be called and the result will be serialized.
 
+### Support for Symfony Serializer attributes
+
+This library aims to be a drop-in replacement for Symfony Serializer. It supports the following attributes:
+- Groups
+- SerializedName
+- Ignore
+
 ## Build, run & test locally
 
 To enter the prepared container environment:

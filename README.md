@@ -28,6 +28,7 @@ Supports modern PHP projects with fully typed properties. Older codebases with n
     + [Ignore property](#ignore-property)
     + [Handling of NULL values](#handling-of-null-values)
     + [Support for json serializable objects](#support-for-json-serializable-objects)
+    + [Support for Symfony Serializer attributes](#support-for-symfony-serializer-attributes)
   * [Build, run & test locally](#build--run---test-locally)
 
 ## Installation

@@ -4,19 +4,19 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "^8.3",
-        "symfony/property-info": "^7.0",
-        "phpdocumentor/reflection-docblock": "^5.4.1",
-        "phpstan/phpdoc-parser": "^2.0",
-        "psr/cache": "^3.0"
+        "php": "^8.4",
+        "phpdocumentor/reflection-docblock": "^5.6.1",
+        "phpstan/phpdoc-parser": "^2.1",
+        "psr/cache": "^3.0",
+        "symfony/type-info": "^7.2.5"
     },
     "require-dev": {
-        "pestphp/pest": "^2.35.1",
+        "pestphp/pest": "^2.36.0",
         "pestphp/pest-plugin-faker": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "friendsofphp/php-cs-fixer": "^3.74",
         "mockery/mockery": "^1.6.12",
-        "symfony/serializer": "^7.0",
-        "phpstan/phpstan": "^2.1"
+        "symfony/serializer": "^7.2.5",
+        "phpstan/phpstan": "^2.1.11"
     },
     "autoload": {
         "psr-4": {
@@ -26,7 +26,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "^7.0"
+            "require": "^7.2"
         }
     },
     "autoload-dev": {
@@ -40,6 +40,7 @@
         }
     },
     "scripts": {
-        "test": "pest"
+        "test": "pest",
+        "coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage-html coverage"
     }
 }

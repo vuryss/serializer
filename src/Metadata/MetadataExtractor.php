@@ -4,34 +4,32 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Metadata;
 
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
-use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
-use Symfony\Component\PropertyInfo\Type;
+use Symfony\Component\TypeInfo\Exception\UnsupportedException;
+use Symfony\Component\TypeInfo\Type;
+use Symfony\Component\TypeInfo\TypeIdentifier;
+use Symfony\Component\TypeInfo\TypeResolver\TypeResolver;
+use Vuryss\Serializer\Attribute\DiscriminatorMap;
 use Vuryss\Serializer\Attribute\SerializerContext;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Exception\MetadataExtractionException;
-use Vuryss\Serializer\Exception\UnsupportedType;
 use Vuryss\Serializer\MetadataExtractorInterface;
 use Vuryss\Serializer\SerializerException;
 
 class MetadataExtractor implements MetadataExtractorInterface
 {
-    private static function getPropertyInfoInstance(): PropertyInfoExtractorInterface
-    {
-        $reflectionExtractor = new ReflectionExtractor();
-        $phpDocExtractor = new PhpDocExtractor();
-        $phpStanExtractor = new PhpStanExtractor();
+    private const array INTERFACE_OVERWRITE = [
+        \DateTimeInterface::class => \DateTime::class,
+    ];
 
-        return new PropertyInfoExtractor(
-            listExtractors: [$reflectionExtractor],
-            typeExtractors: [$phpStanExtractor, $phpDocExtractor, $reflectionExtractor],
-            descriptionExtractors: [$phpDocExtractor],
-            accessExtractors: [$reflectionExtractor],
-            initializableExtractors: [$reflectionExtractor],
-        );
+    private static ?TypeResolver $typeResolver = null;
+
+    private static function getTypeResolver(): TypeResolver
+    {
+        if (null === self::$typeResolver) {
+            self::$typeResolver = TypeResolver::create();
+        }
+
+        return self::$typeResolver;
     }
 
     /**
@@ -41,34 +39,15 @@ class MetadataExtractor implements MetadataExtractorInterface
      */
     public function extractClassMetadata(string $class): ClassMetadata
     {
-        $propertyInfoExtractor = self::getPropertyInfoInstance();
-
-        try {
-            $reflectionClass = new \ReflectionClass($class);
-        } catch (\ReflectionException $e) { // @phpstan-ignore-line (it is thrown by ReflectionClass)
-            throw new MetadataExtractionException(sprintf('Failed to reflect class "%s"', $class), previous: $e);
-        }
-
+        $reflectionClass = Util::reflectionClass($class);
         $properties = [];
 
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $propertyName = $reflectionProperty->getName();
-            try {
-                $properties[$propertyName] = $this->extractPropertyMetadata(
-                    $propertyInfoExtractor,
-                    $reflectionClass->getProperty($propertyName),
-                    $propertyName
-                );
-            } catch (\ReflectionException $e) {
-                throw new MetadataExtractionException(
-                    sprintf(
-                        'Failed to reflect property "%s" of class "%s"',
-                        $propertyName,
-                        $class,
-                    ),
-                    previous: $e,
-                );
-            }
+            $properties[$propertyName] = $this->extractPropertyMetadata(
+                reflectionProperty: Util::reflectionProperty($reflectionClass, $propertyName),
+                propertyName: $propertyName
+            );
         }
 
         return new ClassMetadata(
@@ -81,21 +60,20 @@ class MetadataExtractor implements MetadataExtractorInterface
      * @throws SerializerException
      */
     private function extractPropertyMetadata(
-        PropertyInfoExtractorInterface $propertyInfoExtractor,
         \ReflectionProperty $reflectionProperty,
-        string $propertyName
+        string $propertyName,
     ): PropertyMetadata {
         $serializerContext = $this->getSerializerContext($reflectionProperty);
+        try {
+            $resolvedType = self::getTypeResolver()->resolve($reflectionProperty);
+        } catch (UnsupportedException $e) {
+            throw new MetadataExtractionException($e->getMessage(), previous: $e);
+        }
 
         return new PropertyMetadata(
             name: $propertyName,
             serializedName: $serializerContext->name ?? $propertyName,
-            types: $this->resolveType(
-                $propertyInfoExtractor,
-                $reflectionProperty,
-                $propertyName,
-                $serializerContext,
-            ),
+            types: $this->mapType($resolvedType, $serializerContext),
             groups: [] === $serializerContext->groups ? ['default'] : $serializerContext->groups,
             attributes: $serializerContext->attributes,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
@@ -105,138 +83,153 @@ class MetadataExtractor implements MetadataExtractorInterface
     }
 
     /**
-     * @return DataType[]
-     * @throws SerializerException
+     * @return array<DataType>
+     * @throws MetadataExtractionException
      */
-    private function resolveType(
-        PropertyInfoExtractorInterface $propertyInfoExtractor,
-        \ReflectionProperty $reflectionProperty,
-        string $propertyName,
-        SerializerContext $serializerContext,
-    ): array {
-        $extractedTypes = $propertyInfoExtractor->getTypes(
-            $reflectionProperty->getDeclaringClass()->getName(),
-            $propertyName
-        );
+    private function mapType(Type $type, SerializerContext $serializerContext): array
+    {
+        switch ($type::class) {
+            case Type\BackedEnumType::class:
+                $className = $type->getClassName();
 
-        if (null === $extractedTypes) {
-            $reflectionType = $reflectionProperty->getType();
+                if (!class_exists($className)) {
+                    throw new MetadataExtractionException(sprintf(
+                        'Backed enum "%s" does not exist.', $className,
+                    ));
+                }
 
-            if ($reflectionType instanceof \ReflectionNamedType && 'mixed' === $reflectionType->getName()) {
-                return [new DataType(BuiltInType::MIXED, attributes: $serializerContext->attributes)];
-            }
+                return [
+                    new DataType(
+                        type: BuiltInType::ENUM,
+                        className: $className,
+                        attributes: $serializerContext->attributes
+                    )
+                ];
 
-            throw new MetadataExtractionException(
-                sprintf(
-                    'Failed to extract types of property "%s" of class "%s"',
-                    $reflectionProperty->getName(),
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                ),
-            );
+            case Type\EnumType::class:
+                throw new MetadataExtractionException(
+                    sprintf(
+                        'Non-backed enum type "%s" is not supported. Use a backed enum instead.',
+                        $type->getClassName(),
+                    )
+                );
+
+            case Type\ObjectType::class:
+                return [
+                    $this->mapObjectType($type, $serializerContext)
+                ];
+
+            case Type\BuiltinType::class:
+                return [
+                    new DataType(
+                        type: BuiltInType::fromTypeIdentifier($type),
+                        className: null,
+                        attributes: $serializerContext->attributes
+                    )
+                ];
+
+            case Type\CollectionType::class:
+                return [
+                    new DataType(
+                        type: BuiltInType::ARRAY,
+                        listType: $this->mapType($type->getWrappedType(), $serializerContext),
+                        attributes: $serializerContext->attributes
+                    )
+                ];
+
+            case Type\GenericType::class:
+                $wrappedType = $type->getWrappedType();
+                $variableTypes = $type->getVariableTypes();
+
+                if ($wrappedType instanceof Type\BuiltinType && TypeIdentifier::ARRAY === $wrappedType->getTypeIdentifier()) {
+                    return $this->mapType($variableTypes[1], $serializerContext);
+                }
+
+                // TODO: May be add better handling for generic types in the future?
+                return [
+                    new DataType(
+                        type: BuiltInType::OBJECT,
+                        attributes: $serializerContext->attributes
+                    )
+                ];
+
+            case Type\IntersectionType::class:
+                throw new MetadataExtractionException(
+                    sprintf('Intersection type "%s" is not supported.', $type)
+                );
+
+            case Type\NullableType::class:
+                return [
+                    new DataType(
+                        type: BuiltInType::NULL,
+                        attributes: $serializerContext->attributes
+                    ),
+                    ...$this->mapType($type->getWrappedType(), $serializerContext),
+                ];
+
+            case Type\TemplateType::class:
+                return [
+                    new DataType(
+                        type: BuiltInType::OBJECT,
+                        attributes: $serializerContext->attributes,
+                    ),
+                ];
+
+            case Type\UnionType::class:
+                $types = [];
+
+                foreach ($type->getTypes() as $type) {
+                    $types = array_merge($types, $this->mapType($type, $serializerContext));
+                }
+
+                return $types;
+
+
+            default: throw new MetadataExtractionException(sprintf(
+                'Type "%s" is not supported.',
+                $type::class,
+            ));
         }
-
-        $hasNullableType = false;
-        $shouldHaveNullableType = false;
-        $mappedTypes = [];
-
-        foreach ($extractedTypes as $extractedType) {
-            $mappedType = $this->mapType($extractedType, $reflectionProperty, $serializerContext);
-
-            if (BuiltInType::NULL === $mappedType->type) {
-                $hasNullableType = true;
-            }
-
-            if ($extractedType->isNullable()) {
-                $shouldHaveNullableType = true;
-            }
-
-            $mappedTypes[] = $mappedType;
-        }
-
-        if (!$hasNullableType && $shouldHaveNullableType) {
-            $mappedTypes[] = new DataType(BuiltInType::NULL, attributes: $serializerContext->attributes);
-        }
-
-        return $mappedTypes;
     }
 
     /**
-     * @throws UnsupportedType
+     * @template T
+     *
+     * @param Type\ObjectType<T> $extractedType
+     *
+     * @throws MetadataExtractionException
      */
-    private function mapType(
-        Type $extractedType,
-        \ReflectionProperty $reflectionProperty,
-        SerializerContext $serializerContext
-    ): DataType {
-        return match ($extractedType->getBuiltinType()) {
-            Type::BUILTIN_TYPE_INT => new DataType(BuiltInType::INTEGER, attributes: $serializerContext->attributes),
-            Type::BUILTIN_TYPE_FLOAT => new DataType(BuiltInType::FLOAT, attributes: $serializerContext->attributes),
-            Type::BUILTIN_TYPE_STRING => new DataType(BuiltInType::STRING, attributes: $serializerContext->attributes),
-            Type::BUILTIN_TYPE_BOOL, Type::BUILTIN_TYPE_FALSE, Type::BUILTIN_TYPE_TRUE => new DataType(
-                BuiltInType::BOOLEAN,
-                attributes: $serializerContext->attributes
-            ),
-            Type::BUILTIN_TYPE_RESOURCE => throw new UnsupportedType(
-                sprintf(
-                    'Property "%s" of class "%s" has an unsupported type: resource',
-                    $reflectionProperty->getName(),
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                ),
-            ),
-            Type::BUILTIN_TYPE_OBJECT => $this->mapObjectType($extractedType, $serializerContext),
-            Type::BUILTIN_TYPE_ARRAY, Type::BUILTIN_TYPE_ITERABLE => new DataType(
-                BuiltInType::ARRAY,
-                listType: array_map(
-                    fn(Type $type): DataType => $this->mapType($type, $reflectionProperty, $serializerContext),
-                    $extractedType->getCollectionValueTypes(),
-                ),
-                attributes: $serializerContext->attributes
-            ),
-            Type::BUILTIN_TYPE_NULL => new DataType(BuiltInType::NULL, attributes: $serializerContext->attributes),
-            Type::BUILTIN_TYPE_CALLABLE => throw new UnsupportedType(
-                sprintf(
-                    'Property "%s" of class "%s" has an unsupported type: callable',
-                    $reflectionProperty->getName(),
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                ),
-            ),
-            default => throw new UnsupportedType(
-                sprintf(
-                    'Property "%s" of class "%s" has an unsupported type: %s',
-                    $reflectionProperty->getName(),
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                    $extractedType->getBuiltinType(),
-                ),
-            ),
-        };
-    }
-
-    private function mapObjectType(Type $extractedType, SerializerContext $serializerContext): DataType
+    private function mapObjectType(Type\ObjectType $extractedType, SerializerContext $serializerContext): DataType
     {
+        /** @var class-string $className */
         $className = $extractedType->getClassName();
+        $reflectionClass = Util::reflectionClass($className);
 
-        if (null === $className) {
-            return new DataType(BuiltInType::OBJECT, attributes: $serializerContext->attributes);
-        }
+        if ($reflectionClass->isAbstract() || $reflectionClass->isInterface()) {
+            if (isset(self::INTERFACE_OVERWRITE[$className])) {
+                return new DataType(BuiltInType::OBJECT, self::INTERFACE_OVERWRITE[$className], attributes: $serializerContext->attributes);
+            }
 
-        if (enum_exists($className)) {
-            return new DataType(BuiltInType::ENUM, $className, attributes: $serializerContext->attributes);
-        }
+            if (null !== $serializerContext->typeMap) {
+                return new DataType(
+                    BuiltInType::INTERFACE,
+                    className: $className,
+                    typeMap: $serializerContext->typeMap,
+                    attributes: $serializerContext->attributes,
+                );
+            }
 
-        if (interface_exists($className)) {
+            $discriminatorMap = $this->extractDiscriminatorMap($reflectionClass);
+
             return new DataType(
                 BuiltInType::INTERFACE,
                 className: $className,
-                typeMap: $serializerContext->typeMap ?? [],
-                attributes: $serializerContext->attributes
+                typeMap: [$discriminatorMap->field => $discriminatorMap->map],
+                attributes: $serializerContext->attributes,
             );
         }
 
-        if (class_exists($className)) {
-            return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
-        }
-
-        return new DataType(BuiltInType::OBJECT, attributes: $serializerContext->attributes);
+        return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
     }
 
     private function getPropertyReadAccess(\ReflectionProperty $reflectionProperty): ReadAccess
@@ -328,7 +321,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             );
         }
 
-        if (class_exists('\Symfony\Component\Serializer\Attribute\SerializedName')) {
+        if (class_exists(\Symfony\Component\Serializer\Attribute\SerializedName::class)) {
             $symfonySerializedNameAttribute = $reflectionProperty->getAttributes(
                 \Symfony\Component\Serializer\Attribute\SerializedName::class
             );
@@ -338,7 +331,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             }
         }
 
-        if (class_exists('\Symfony\Component\Serializer\Attribute\Groups')) {
+        if (class_exists(\Symfony\Component\Serializer\Attribute\Groups::class)) {
             $symfonySerializerGroupsAttribute = $reflectionProperty->getAttributes(
                 \Symfony\Component\Serializer\Attribute\Groups::class
             );
@@ -348,7 +341,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             }
         }
 
-        if (class_exists('\Symfony\Component\Serializer\Attribute\Ignore')) {
+        if (class_exists(\Symfony\Component\Serializer\Attribute\Ignore::class)) {
             $symfonySerializerIgnoreAttribute = $reflectionProperty->getAttributes(
                 \Symfony\Component\Serializer\Attribute\Ignore::class
             );
@@ -373,5 +366,46 @@ class MetadataExtractor implements MetadataExtractorInterface
         }
 
         return $serializerContext;
+    }
+
+    /**
+     * @template T of object
+     *
+     * @param \ReflectionClass<T> $reflectionClass
+     *
+     * @throws MetadataExtractionException
+     */
+    private function extractDiscriminatorMap(\ReflectionClass $reflectionClass): DiscriminatorMapMetadata
+    {
+        $discriminatorMap = $reflectionClass->getAttributes(DiscriminatorMap::class);
+
+        if (1 === count($discriminatorMap)) {
+            $discriminatorMap = $discriminatorMap[0]->newInstance();
+
+            return new DiscriminatorMapMetadata(
+                field: $discriminatorMap->typeProperty,
+                map: $discriminatorMap->mapping,
+            );
+        }
+
+        $discriminatorMap = $reflectionClass->getAttributes(\Symfony\Component\Serializer\Attribute\DiscriminatorMap::class);
+
+        if (1 === count($discriminatorMap)) {
+            $discriminatorMap = $discriminatorMap[0]->newInstance();
+
+            return new DiscriminatorMapMetadata(
+                field: $discriminatorMap->getTypeProperty(),
+                /* @phpstan-ignore-next-line */
+                map: $discriminatorMap->getMapping(),
+            );
+        }
+
+
+        throw new MetadataExtractionException(
+            sprintf(
+                'Class "%s" does not have a valid DiscriminatorMap attribute. Cannot resolve data type of abstract class or interface.',
+                $reflectionClass->getName(),
+            )
+        );
     }
 }

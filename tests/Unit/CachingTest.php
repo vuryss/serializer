@@ -52,7 +52,7 @@ test('Saves to PSR-6 cache during serialization', function () {
 });
 
 test('Reads from PSR-6 cache', function () {
-    $classMetadata = (new MetadataExtractor())->extractClassMetadata(Person::class);
+    $classMetadata = new MetadataExtractor()->extractClassMetadata(Person::class);
 
     $psr6Cache = Mockery::mock(\Psr\Cache\CacheItemPoolInterface::class);
     $cacheItem = Mockery::mock(\Psr\Cache\CacheItemInterface::class);

@@ -3,10 +3,13 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
+use Vuryss\Serializer\Exception\MetadataExtractionException;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Airbag;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Car;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Engine;
 use Vuryss\Serializer\Tests\Datasets\Complex1\FuelType;
+use Vuryss\Serializer\Tests\Datasets\InvalidEnumWrapper;
+use Vuryss\Serializer\Tests\Datasets\InvalidIntersectionTypeWrapper;
 
 test('Deserializing into data structures', function ($expected, $serialized) {
     $serializer = new \Vuryss\Serializer\Serializer();
@@ -193,3 +196,40 @@ test('Cannot deserialize if none of the values matches the union type declared',
     $serializer = new \Vuryss\Serializer\Serializer();
     $serializer->deserialize('{"value":[]}', \Vuryss\Serializer\Tests\Datasets\MultipleTypes::class);
 })->throws(DeserializationImpossibleException::class, 'Cannot denormalize value "array" at path "$.value" into any of the given types');
+
+test(
+    'Cannot deserialize into non-existing class',
+    function() {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"value":123}', \Vuryss\Serializer\Tests\Datasets\InvalidClassReference::class);
+    }
+)
+->throws(
+    MetadataExtractionException::class,
+    'Class "Vuryss\Serializer\Tests\Datasets\InvalidClassName" does not exist.'
+);
+
+
+test(
+    'Cannot deserialize into non-backed enum',
+    function() {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"property":"string"}', InvalidEnumWrapper::class);
+    }
+)
+->throws(
+    MetadataExtractionException::class,
+    'Non-backed enum type "Vuryss\Serializer\Tests\Datasets\NonBackedEnum" is not supported. Use a backed enum instead.'
+);
+
+test(
+    'Cannot deserialize into intersection type',
+    function() {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"value":123}', InvalidIntersectionTypeWrapper::class);
+    }
+)
+->throws(
+    MetadataExtractionException::class,
+    'Intersection type "Vuryss\Serializer\Tests\Datasets\Monitor&Vuryss\Serializer\Tests\Datasets\Person" is not supported.'
+);

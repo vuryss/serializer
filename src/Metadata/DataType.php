@@ -79,6 +79,10 @@ class DataType
             return new self(BuiltInType::ARRAY, listType: [self::fromUserType($subType)]);
         }
 
+        if (interface_exists($type)) {
+            return new self(BuiltInType::INTERFACE, className: $type);
+        }
+
         throw new UnsupportedType(sprintf('Unsupported type: %s', $type));
     }
 }

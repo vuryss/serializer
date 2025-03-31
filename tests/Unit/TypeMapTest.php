@@ -17,8 +17,8 @@ test('Missing type map fails deserialization', function () {
     $serializer = new Serializer();
     $serializer->deserialize($json, MissingTypeMap::class);
 })->throws(
-    \Vuryss\Serializer\Exception\MetadataExtractionException::class,
-    'Class "Vuryss\Serializer\Tests\Datasets\TypeMap\MissingTypeMapInterface" does not have a valid DiscriminatorMap attribute. Cannot resolve data type of abstract class or interface.',
+    \Vuryss\Serializer\Exception\DeserializationImpossibleException::class,
+    'Cannot denormalize data at path "$.prop" into interface because no matching type map was found',
 );
 
 test('Type map with multiple properties', function () {

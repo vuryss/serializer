@@ -225,7 +225,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             return new DataType(
                 BuiltInType::INTERFACE,
                 className: $className,
-                typeMap: [$discriminatorMap->field => $discriminatorMap->map],
+                typeMap: $discriminatorMap ? [$discriminatorMap->field => $discriminatorMap->map] : [],
                 attributes: $serializerContext->attributes,
             );
         }
@@ -376,7 +376,7 @@ class MetadataExtractor implements MetadataExtractorInterface
      *
      * @throws MetadataExtractionException
      */
-    private function extractDiscriminatorMap(\ReflectionClass $reflectionClass): DiscriminatorMapMetadata
+    private function extractDiscriminatorMap(\ReflectionClass $reflectionClass): ?DiscriminatorMapMetadata
     {
         $discriminatorMap = $reflectionClass->getAttributes(DiscriminatorMap::class);
 
@@ -402,11 +402,6 @@ class MetadataExtractor implements MetadataExtractorInterface
         }
 
 
-        throw new MetadataExtractionException(
-            sprintf(
-                'Class "%s" does not have a valid DiscriminatorMap attribute. Cannot resolve data type of abstract class or interface.',
-                $reflectionClass->getName(),
-            )
-        );
+        return null;
     }
 }

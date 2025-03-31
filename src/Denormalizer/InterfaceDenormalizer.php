@@ -29,6 +29,14 @@ class InterfaceDenormalizer implements DenormalizerInterface
                 continue;
             }
 
+            if (!isset($valueToClassName[$data[$field]])) {
+                throw new DeserializationImpossibleException(sprintf(
+                    'Cannot denormalize data at path "%s" into interface because none of the mapped types match the value "%s"',
+                    $path->toString(),
+                    is_string($data[$field]) ? $data[$field] : get_debug_type($data[$field]),
+                ));
+            }
+
             $className = $valueToClassName[$data[$field]];
             $dataType = new DataType(BuiltInType::OBJECT, $className);
 

@@ -15,6 +15,12 @@ use Vuryss\Serializer\SerializerInterface;
 
 class DateTimeDenormalizer implements DenormalizerInterface
 {
+    private const array SUPPORTED_CLASS_NAMES = [
+        \DateTime::class            => true,
+        \DateTimeImmutable::class   => true,
+        \DateTimeInterface::class   => true,
+    ];
+
     public function denormalize(
         mixed $data,
         DataType $type,
@@ -69,8 +75,7 @@ class DateTimeDenormalizer implements DenormalizerInterface
     {
         return is_string($data)
             && (BuiltInType::OBJECT === $type->type || BuiltInType::INTERFACE === $type->type)
-            && null !== $type->className
-            && is_a($type->className, \DateTimeInterface::class, true)
+            && isset(self::SUPPORTED_CLASS_NAMES[$type->className])
         ;
     }
 }

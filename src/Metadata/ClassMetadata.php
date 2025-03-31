@@ -7,7 +7,7 @@ namespace Vuryss\Serializer\Metadata;
 class ClassMetadata
 {
     /**
-     * @param PropertyMetadata[] $properties
+     * @param array<string, PropertyMetadata> $properties
      */
     public function __construct(
         public array $properties,

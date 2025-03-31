@@ -3,10 +3,13 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
+use Vuryss\Serializer\Exception\MetadataExtractionException;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Airbag;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Car;
 use Vuryss\Serializer\Tests\Datasets\Complex1\Engine;
 use Vuryss\Serializer\Tests\Datasets\Complex1\FuelType;
+use Vuryss\Serializer\Tests\Datasets\InvalidEnumWrapper;
+use Vuryss\Serializer\Tests\Datasets\InvalidIntersectionTypeWrapper;
 
 test('Deserializing into data structures', function ($expected, $serialized) {
     $serializer = new \Vuryss\Serializer\Serializer();
@@ -193,3 +196,96 @@ test('Cannot deserialize if none of the values matches the union type declared',
     $serializer = new \Vuryss\Serializer\Serializer();
     $serializer->deserialize('{"value":[]}', \Vuryss\Serializer\Tests\Datasets\MultipleTypes::class);
 })->throws(DeserializationImpossibleException::class, 'Cannot denormalize value "array" at path "$.value" into any of the given types');
+
+test(
+    'Cannot deserialize into non-existing class',
+    function() {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"value":123}', \Vuryss\Serializer\Tests\Datasets\InvalidClassReference::class);
+    }
+)
+->throws(
+    MetadataExtractionException::class,
+    'Class "Vuryss\Serializer\Tests\Datasets\InvalidClassName" does not exist.'
+);
+
+
+test(
+    'Cannot deserialize into non-backed enum',
+    function() {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"property":"string"}', InvalidEnumWrapper::class);
+    }
+)
+->throws(
+    MetadataExtractionException::class,
+    'Non-backed enum type "Vuryss\Serializer\Tests\Datasets\NonBackedEnum" is not supported. Use a backed enum instead.'
+);
+
+test(
+    'Cannot deserialize into intersection type',
+    function() {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"value":123}', InvalidIntersectionTypeWrapper::class);
+    }
+)
+->throws(
+    MetadataExtractionException::class,
+    'Intersection type "Vuryss\Serializer\Tests\Datasets\Monitor&Vuryss\Serializer\Tests\Datasets\Person" is not supported.'
+);
+
+test(
+    'Deserializing different array types',
+    function () {
+        $serializer = new \Vuryss\Serializer\Serializer();
+
+        $data = [
+            'type1' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type2' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type3' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type4' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type5' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type6' => [
+                'key1' => ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                'key2' => ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+        ];
+
+        $object = $serializer->deserialize(json_encode($data), \Vuryss\Serializer\Tests\Datasets\ArrayTypes::class);
+
+        expect($object)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\ArrayTypes::class)
+            ->and($object->type1)->toBeArray()
+            ->and($object->type1[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+            ->and($object->type1[0]->firstName)->toBe('John')
+            ->and($object->type1[0]->lastName)->toBe('Doe')
+            ->and($object->type1[0]->age)->toBe(25)
+            ->and($object->type1[0]->isStudent)->toBeTrue()
+            ->and($object->type1[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+            ->and($object->type1[1]->firstName)->toBe('Maria')
+            ->and($object->type1[1]->lastName)->toBe('Valentina')
+            ->and($object->type1[1]->age)->toBe(36)
+            ->and($object->type1[1]->isStudent)->toBeFalse()
+            ->and($object->type1)->toHaveCount(2)
+            ->and($object->type2)->toBeArray()
+            ->and($object->type3)->toBeArray()
+            ->and($object->type4)->toBeArray()
+            ->and($object->type5)->toBeArray()
+            ->and($object->type6)->toBeArray()
+        ;
+    }
+);

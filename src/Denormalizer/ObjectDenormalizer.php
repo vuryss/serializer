@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Denormalizer;
 
-use DateTimeInterface;
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
@@ -17,6 +16,12 @@ use Vuryss\Serializer\SerializerInterface;
 
 class ObjectDenormalizer implements DenormalizerInterface
 {
+    private const array UNSUPPORTED_CLASS_NAMES = [
+        \DateTime::class            => true,
+        \DateTimeImmutable::class   => true,
+        \DateTimeInterface::class   => true,
+    ];
+
     public function denormalize(
         mixed $data,
         DataType $type,
@@ -90,10 +95,12 @@ class ObjectDenormalizer implements DenormalizerInterface
 
     public function supportsDenormalization(mixed $data, DataType $type): bool
     {
-        return is_array($data)
+        return
+            is_array($data)
             && BuiltInType::OBJECT === $type->type
             && null !== $type->className
-            && false === is_a($type->className, DateTimeInterface::class, true);
+            && !isset(self::UNSUPPORTED_CLASS_NAMES[$type->className])
+        ;
     }
 
     /**

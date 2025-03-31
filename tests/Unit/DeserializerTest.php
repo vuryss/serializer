@@ -233,3 +233,59 @@ test(
     MetadataExtractionException::class,
     'Intersection type "Vuryss\Serializer\Tests\Datasets\Monitor&Vuryss\Serializer\Tests\Datasets\Person" is not supported.'
 );
+
+test(
+    'Deserializing different array types',
+    function () {
+        $serializer = new \Vuryss\Serializer\Serializer();
+
+        $data = [
+            'type1' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type2' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type3' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type4' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type5' => [
+                ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+            'type6' => [
+                'key1' => ['firstName' => 'John', 'lastName' => 'Doe', 'age' => 25, 'isStudent' => true],
+                'key2' => ['firstName' => 'Maria', 'lastName' => 'Valentina', 'age' => 36, 'isStudent' => false],
+            ],
+        ];
+
+        $object = $serializer->deserialize(json_encode($data), \Vuryss\Serializer\Tests\Datasets\ArrayTypes::class);
+
+        expect($object)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\ArrayTypes::class)
+            ->and($object->type1)->toBeArray()
+            ->and($object->type1[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+            ->and($object->type1[0]->firstName)->toBe('John')
+            ->and($object->type1[0]->lastName)->toBe('Doe')
+            ->and($object->type1[0]->age)->toBe(25)
+            ->and($object->type1[0]->isStudent)->toBeTrue()
+            ->and($object->type1[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
+            ->and($object->type1[1]->firstName)->toBe('Maria')
+            ->and($object->type1[1]->lastName)->toBe('Valentina')
+            ->and($object->type1[1]->age)->toBe(36)
+            ->and($object->type1[1]->isStudent)->toBeFalse()
+            ->and($object->type1)->toHaveCount(2)
+            ->and($object->type2)->toBeArray()
+            ->and($object->type3)->toBeArray()
+            ->and($object->type4)->toBeArray()
+            ->and($object->type5)->toBeArray()
+            ->and($object->type6)->toBeArray()
+        ;
+    }
+);

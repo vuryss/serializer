@@ -141,17 +141,18 @@ class MetadataExtractor implements MetadataExtractorInterface
                 $wrappedType = $type->getWrappedType();
                 $variableTypes = $type->getVariableTypes();
 
-                if ($wrappedType instanceof Type\BuiltinType && TypeIdentifier::ARRAY === $wrappedType->getTypeIdentifier()) {
+                if (
+                    $wrappedType instanceof Type\BuiltinType
+                    /** @phpstan-ignore-next-line */
+                    && (TypeIdentifier::ARRAY === $wrappedType->getTypeIdentifier() || TypeIdentifier::ITERABLE === $wrappedType->getTypeIdentifier())
+                ) {
                     return $this->mapType($variableTypes[1], $serializerContext);
                 }
 
-                // TODO: May be add better handling for generic types in the future?
-                return [
-                    new DataType(
-                        type: BuiltInType::OBJECT,
-                        attributes: $serializerContext->attributes
-                    )
-                ];
+                throw new MetadataExtractionException(sprintf(
+                    'Generic type "%s" is not supported. Use a collection type instead.',
+                    $type
+                ));
 
             case Type\IntersectionType::class:
                 throw new MetadataExtractionException(

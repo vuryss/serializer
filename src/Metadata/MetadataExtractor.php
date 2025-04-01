@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Metadata;
 
-use Symfony\Component\TypeInfo\Exception\UnsupportedException;
-use Symfony\Component\TypeInfo\Type;
-use Symfony\Component\TypeInfo\TypeIdentifier;
-use Symfony\Component\TypeInfo\TypeResolver\TypeResolver;
-use Vuryss\Serializer\Attribute\DiscriminatorMap;
+use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
+use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Vuryss\Serializer\Attribute\SerializerContext;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Exception\MetadataExtractionException;
@@ -17,19 +17,30 @@ use Vuryss\Serializer\SerializerException;
 
 class MetadataExtractor implements MetadataExtractorInterface
 {
-    private const array INTERFACE_OVERWRITE = [
-        \DateTimeInterface::class => \DateTime::class,
-    ];
+    private static ?PropertyInfoExtractorInterface $propertyInfoExtractor = null;
 
-    private static ?TypeResolver $typeResolver = null;
-
-    private static function getTypeResolver(): TypeResolver
+    private static function getPropertyInfoInstance(): PropertyInfoExtractorInterface
     {
-        if (null === self::$typeResolver) {
-            self::$typeResolver = TypeResolver::create();
+        if (null === self::$propertyInfoExtractor) {
+            $reflectionExtractor = new ReflectionExtractor();
+            $phpDocExtractor = new PhpDocExtractor();
+            $phpStanExtractor = new PhpStanExtractor();
+
+            self::$propertyInfoExtractor = new PropertyInfoExtractor(
+                listExtractors: [$reflectionExtractor],
+                typeExtractors: [$phpStanExtractor, $phpDocExtractor, $reflectionExtractor],
+                descriptionExtractors: [$phpDocExtractor],
+                accessExtractors: [$reflectionExtractor],
+                initializableExtractors: [$reflectionExtractor],
+            );
         }
 
-        return self::$typeResolver;
+        return self::$propertyInfoExtractor;
+    }
+
+    public function __construct(
+        private readonly TypeMapper $typeMapper = new TypeMapper(),
+    ) {
     }
 
     /**
@@ -64,173 +75,47 @@ class MetadataExtractor implements MetadataExtractorInterface
         string $propertyName,
     ): PropertyMetadata {
         $serializerContext = $this->getSerializerContext($reflectionProperty);
-        try {
-            $resolvedType = self::getTypeResolver()->resolve($reflectionProperty);
-        } catch (UnsupportedException $e) {
-            throw new MetadataExtractionException($e->getMessage(), previous: $e);
+        $resolvedTypes = self::getPropertyInfoInstance()->getTypes(
+            class: $reflectionProperty->getDeclaringClass()->getName(),
+            property: $propertyName,
+        );
+
+        if (null === $resolvedTypes) {
+            $reflectionType = $reflectionProperty->getType();
+
+            if ($reflectionType instanceof \ReflectionNamedType && 'mixed' === $reflectionType->getName()) {
+                $types = [
+                    new DataType(
+                        BuiltInType::MIXED,
+                        attributes: $serializerContext->attributes,
+                    ),
+                ];
+            } else {
+                throw new MetadataExtractionException(sprintf(
+                    'Unable to resolve type for property "%s" of class "%s".',
+                    $propertyName,
+                    $reflectionProperty->getDeclaringClass()->getName(),
+                ));
+            }
+        } else {
+            $types = $this->typeMapper->mapTypes(
+                propertyInfoTypes: $resolvedTypes,
+                reflectionProperty: $reflectionProperty,
+                serializerContext: $serializerContext,
+            );
         }
+
 
         return new PropertyMetadata(
             name: $propertyName,
             serializedName: $serializerContext->name ?? $propertyName,
-            types: $this->mapType($resolvedType, $serializerContext),
+            types: $types,
             groups: [] === $serializerContext->groups ? ['default'] : $serializerContext->groups,
             attributes: $serializerContext->attributes,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
             ignore: $serializerContext->ignore,
         );
-    }
-
-    /**
-     * @return array<DataType>
-     * @throws MetadataExtractionException
-     */
-    private function mapType(Type $type, SerializerContext $serializerContext): array
-    {
-        switch ($type::class) {
-            case Type\BackedEnumType::class:
-                $className = $type->getClassName();
-
-                if (!class_exists($className)) {
-                    throw new MetadataExtractionException(sprintf(
-                        'Backed enum "%s" does not exist.', $className,
-                    ));
-                }
-
-                return [
-                    new DataType(
-                        type: BuiltInType::ENUM,
-                        className: $className,
-                        attributes: $serializerContext->attributes
-                    )
-                ];
-
-            case Type\EnumType::class:
-                throw new MetadataExtractionException(
-                    sprintf(
-                        'Non-backed enum type "%s" is not supported. Use a backed enum instead.',
-                        $type->getClassName(),
-                    )
-                );
-
-            case Type\ObjectType::class:
-                return [
-                    $this->mapObjectType($type, $serializerContext)
-                ];
-
-            case Type\BuiltinType::class:
-                return [
-                    new DataType(
-                        type: BuiltInType::fromTypeIdentifier($type),
-                        className: null,
-                        attributes: $serializerContext->attributes
-                    )
-                ];
-
-            case Type\CollectionType::class:
-                return [
-                    new DataType(
-                        type: BuiltInType::ARRAY,
-                        listType: $this->mapType($type->getWrappedType(), $serializerContext),
-                        attributes: $serializerContext->attributes
-                    )
-                ];
-
-            case Type\GenericType::class:
-                $wrappedType = $type->getWrappedType();
-                $variableTypes = $type->getVariableTypes();
-
-                if (
-                    $wrappedType instanceof Type\BuiltinType
-                    /** @phpstan-ignore-next-line */
-                    && (TypeIdentifier::ARRAY === $wrappedType->getTypeIdentifier() || TypeIdentifier::ITERABLE === $wrappedType->getTypeIdentifier())
-                ) {
-                    return $this->mapType($variableTypes[1], $serializerContext);
-                }
-
-                throw new MetadataExtractionException(sprintf(
-                    'Generic type "%s" is not supported. Use a collection type instead.',
-                    $type
-                ));
-
-            case Type\IntersectionType::class:
-                throw new MetadataExtractionException(
-                    sprintf('Intersection type "%s" is not supported.', $type)
-                );
-
-            case Type\NullableType::class:
-                return [
-                    new DataType(
-                        type: BuiltInType::NULL,
-                        attributes: $serializerContext->attributes
-                    ),
-                    ...$this->mapType($type->getWrappedType(), $serializerContext),
-                ];
-
-            case Type\TemplateType::class:
-                return [
-                    new DataType(
-                        type: BuiltInType::OBJECT,
-                        attributes: $serializerContext->attributes,
-                    ),
-                ];
-
-            case Type\UnionType::class:
-                $types = [];
-
-                foreach ($type->getTypes() as $type) {
-                    $types = array_merge($types, $this->mapType($type, $serializerContext));
-                }
-
-                return $types;
-
-
-            default: throw new MetadataExtractionException(sprintf(
-                'Type "%s" is not supported.',
-                $type::class,
-            ));
-        }
-    }
-
-    /**
-     * @template T
-     *
-     * @param Type\ObjectType<T> $extractedType
-     *
-     * @throws MetadataExtractionException
-     */
-    private function mapObjectType(Type\ObjectType $extractedType, SerializerContext $serializerContext): DataType
-    {
-        /** @var class-string $className */
-        $className = $extractedType->getClassName();
-        $reflectionClass = Util::reflectionClass($className);
-
-        if ($reflectionClass->isAbstract() || $reflectionClass->isInterface()) {
-            if (isset(self::INTERFACE_OVERWRITE[$className])) {
-                return new DataType(BuiltInType::OBJECT, self::INTERFACE_OVERWRITE[$className], attributes: $serializerContext->attributes);
-            }
-
-            if (null !== $serializerContext->typeMap) {
-                return new DataType(
-                    BuiltInType::INTERFACE,
-                    className: $className,
-                    typeMap: $serializerContext->typeMap,
-                    attributes: $serializerContext->attributes,
-                );
-            }
-
-            $discriminatorMap = $this->extractDiscriminatorMap($reflectionClass);
-
-            return new DataType(
-                BuiltInType::INTERFACE,
-                className: $className,
-                typeMap: $discriminatorMap ? [$discriminatorMap->field => $discriminatorMap->map] : [],
-                attributes: $serializerContext->attributes,
-            );
-        }
-
-        return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
     }
 
     private function getPropertyReadAccess(\ReflectionProperty $reflectionProperty): ReadAccess
@@ -254,11 +139,13 @@ class MetadataExtractor implements MetadataExtractorInterface
 
         if (null !== $constructor && $constructor->isPublic()) {
             $constructorParameters = $constructor->getParameters();
+            $isPropertyInConstructor = array_any(
+                $constructorParameters,
+                static fn (\ReflectionParameter $parameter): bool => $parameter->getName() === $reflectionProperty->getName(),
+            );
 
-            foreach ($constructorParameters as $constructorParameter) {
-                if ($constructorParameter->getName() === $reflectionProperty->getName()) {
-                    return WriteAccess::CONSTRUCTOR;
-                }
+            if ($isPropertyInConstructor) {
+                return WriteAccess::CONSTRUCTOR;
             }
         }
 
@@ -367,41 +254,5 @@ class MetadataExtractor implements MetadataExtractorInterface
         }
 
         return $serializerContext;
-    }
-
-    /**
-     * @template T of object
-     *
-     * @param \ReflectionClass<T> $reflectionClass
-     *
-     * @throws MetadataExtractionException
-     */
-    private function extractDiscriminatorMap(\ReflectionClass $reflectionClass): ?DiscriminatorMapMetadata
-    {
-        $discriminatorMap = $reflectionClass->getAttributes(DiscriminatorMap::class);
-
-        if (1 === count($discriminatorMap)) {
-            $discriminatorMap = $discriminatorMap[0]->newInstance();
-
-            return new DiscriminatorMapMetadata(
-                field: $discriminatorMap->typeProperty,
-                map: $discriminatorMap->mapping,
-            );
-        }
-
-        $discriminatorMap = $reflectionClass->getAttributes(\Symfony\Component\Serializer\Attribute\DiscriminatorMap::class);
-
-        if (1 === count($discriminatorMap)) {
-            $discriminatorMap = $discriminatorMap[0]->newInstance();
-
-            return new DiscriminatorMapMetadata(
-                field: $discriminatorMap->getTypeProperty(),
-                /* @phpstan-ignore-next-line */
-                map: $discriminatorMap->getMapping(),
-            );
-        }
-
-
-        return null;
     }
 }

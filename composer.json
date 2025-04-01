@@ -8,12 +8,12 @@
         "phpdocumentor/reflection-docblock": "^5.6.1",
         "phpstan/phpdoc-parser": "^2.1",
         "psr/cache": "^3.0",
-        "symfony/type-info": "^7.2.5"
+        "symfony/property-info": "^7.2.5"
     },
     "require-dev": {
         "pestphp/pest": "^2.36.0",
         "pestphp/pest-plugin-faker": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.74",
+        "friendsofphp/php-cs-fixer": "^3.75",
         "mockery/mockery": "^1.6.12",
         "symfony/serializer": "^7.2.5",
         "phpstan/phpstan": "^2.1.11"

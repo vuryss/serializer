@@ -142,7 +142,7 @@ test('Cannot serialize untyped properties', function () {
     $serializer->serialize($object);
 })->throws(
     \Vuryss\Serializer\Exception\MetadataExtractionException::class,
-    'Cannot resolve type for "Vuryss\Serializer\Tests\Datasets\UntypedProperty::$property".'
+    'Unable to resolve type for property "property" of class "Vuryss\Serializer\Tests\Datasets\UntypedProperty".'
 );
 
 test('Multiple serializer context attributes are not supported', function () {

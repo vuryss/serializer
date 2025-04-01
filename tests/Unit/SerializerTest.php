@@ -45,6 +45,7 @@ test('Serializer with null values', function () {
     $expected = json_encode([
         'nullableString' => null,
         'alwaysEnabledNull' => null,
+        'nullValue' => null,
         'nullableInt' => null,
     ]);
 

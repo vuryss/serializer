@@ -8,6 +8,7 @@ use Vuryss\Serializer\Denormalizer\ArrayDenormalizer;
 use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
 use Vuryss\Serializer\Denormalizer\DateTimeDenormalizer;
 use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
+use Vuryss\Serializer\Denormalizer\GenericObjectDenormalizer;
 use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
 use Vuryss\Serializer\Denormalizer\MixedTypeDenormalizer;
 use Vuryss\Serializer\Denormalizer\ObjectDenormalizer;
@@ -65,6 +66,7 @@ class Serializer implements SerializerInterface
                 new ObjectDenormalizer(),
                 new InterfaceDenormalizer(),
                 new MixedTypeDenormalizer(),
+                new GenericObjectDenormalizer(),
             ]
             : $denormalizers;
 

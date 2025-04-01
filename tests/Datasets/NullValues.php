@@ -17,6 +17,11 @@ class NullValues
     #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true])]
     public ?string $alwaysDisabledNull = null;
 
+    /**
+     * @var null
+     */
+    public null $nullValue = null;
+
     public function __construct(
         public ?int $nullableInt = null,
     ) {}

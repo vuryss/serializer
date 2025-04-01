@@ -20,7 +20,14 @@ class EnumDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): \BackedEnum {
-        assert(is_string($data) && null !== $type->className && is_subclass_of($type->className, \BackedEnum::class));
+        assert(is_string($data) && null !== $type->className);
+
+        if (!is_subclass_of($type->className, \BackedEnum::class)) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Class "%s" is not a backed enum. Cannot denormalize into enum that has no backing type',
+                $type->className,
+            ));
+        }
 
         $enumClass = $type->className;
         $enum = $enumClass::tryFrom($data);

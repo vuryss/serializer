@@ -29,10 +29,16 @@ class ObjectDenormalizer implements DenormalizerInterface
         Path $path,
         array $attributes = [],
     ): object {
-        assert(is_array($data) && null !== $type->className && class_exists($type->className));
-        $className = $type->className;
+        assert(is_array($data) && null !== $type->className);
 
-        $classMetadata = $denormalizer->getMetadataExtractor()->extractClassMetadata($className);
+        if (!class_exists($type->className)) {
+            throw new DeserializationImpossibleException(sprintf(
+                'Class "%s" does not exist',
+                $type->className
+            ));
+        }
+
+        $classMetadata = $denormalizer->getMetadataExtractor()->extractClassMetadata($type->className);
         $constructorParameters = [];
         $directAssignmentProperties = [];
         $setterProperties = [];
@@ -79,8 +85,8 @@ class ObjectDenormalizer implements DenormalizerInterface
         }
 
         $instance = count($constructorParameters) > 0
-            ? $this->initializeWithConstructor($className, $classMetadata->constructor, $constructorParameters)
-            : $this->initializeWithConstructor($className, $classMetadata->constructor, []);
+            ? $this->initializeWithConstructor($type->className, $classMetadata->constructor, $constructorParameters)
+            : $this->initializeWithConstructor($type->className, $classMetadata->constructor, []);
 
         foreach ($directAssignmentProperties as $name => $value) {
             $instance->{$name} = $value;

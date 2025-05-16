@@ -11,27 +11,27 @@ final readonly class Denormalizer
 {
     /**
      * @param array<DenormalizerInterface> $denormalizers
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context
      */
     public function __construct(
         private array $denormalizers,
         private MetadataExtractorInterface $metadataExtractor,
-        private array $attributes = [],
+        private array $context = [],
     ) {}
 
     /**
      * Denormalized data into the given type.
      *
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
-    public function denormalize(mixed $data, DataType $dataType, Path $path, array $attributes): mixed
+    public function denormalize(mixed $data, DataType $dataType, Path $path, array $context): mixed
     {
-        $dataType->attributes += $this->attributes;
+        $dataType->context += $this->context;
         $denormalizer = $this->resolveDenormalizer($data, $dataType, $path);
 
-        return $denormalizer->denormalize($data, $dataType, $this, $path, $attributes);
+        return $denormalizer->denormalize($data, $dataType, $this, $path, $context);
     }
 
     public function getMetadataExtractor(): MetadataExtractorInterface

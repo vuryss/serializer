@@ -13,6 +13,4 @@ use Vuryss\Serializer\Attribute\DiscriminatorMap;
         'type2' => Type2::class,
     ]
 )]
-interface DiscInterface
-{
-}
+interface DiscInterface {}

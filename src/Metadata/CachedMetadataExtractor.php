@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Metadata;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Vuryss\Serializer\ExceptionInterface;
 use Vuryss\Serializer\MetadataExtractorInterface;
-use Vuryss\Serializer\SerializerException;
 
 class CachedMetadataExtractor implements MetadataExtractorInterface
 {
@@ -22,7 +22,7 @@ class CachedMetadataExtractor implements MetadataExtractorInterface
 
     /**
      * @param class-string $class
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     public function extractClassMetadata(string $class): ClassMetadata
     {

@@ -9,7 +9,7 @@ use Vuryss\Serializer\NormalizerInterface;
 
 class EnumNormalizer implements NormalizerInterface
 {
-    public function normalize(mixed $data, Normalizer $normalizer, array $attributes): int|string
+    public function normalize(mixed $data, Normalizer $normalizer, array $context): int|string
     {
         assert($data instanceof \BackedEnum);
 

@@ -7,12 +7,12 @@ namespace Vuryss\Serializer;
 interface NormalizerInterface
 {
     /**
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context
      *
      * @phpstan-return object|scalar|null|array<mixed>
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
-    public function normalize(mixed $data, Normalizer $normalizer, array $attributes): mixed;
+    public function normalize(mixed $data, Normalizer $normalizer, array $context): mixed;
 
     public function supportsNormalization(mixed $data): bool;
 }

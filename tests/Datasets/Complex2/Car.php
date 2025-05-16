@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Vuryss\Serializer\Tests\Datasets\Complex1;
+namespace Vuryss\Serializer\Tests\Datasets\Complex2;
 
 use Vuryss\Serializer\Attribute\SerializerContext;
 use Vuryss\Serializer\Tests\Datasets\SerializableInterface;

@@ -13,6 +13,5 @@ readonly class DiscriminatorMapMetadata
     public function __construct(
         public string $field,
         public array $map,
-    ) {
-    }
+    ) {}
 }

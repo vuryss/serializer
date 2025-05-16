@@ -13,6 +13,4 @@ use Symfony\Component\Serializer\Attribute\DiscriminatorMap;
         'type2' => Type2::class,
     ]
 )]
-interface Disc2Interface
-{
-}
+interface Disc2Interface {}

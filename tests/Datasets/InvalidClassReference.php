@@ -8,6 +8,5 @@ readonly class InvalidClassReference
 {
     public function __construct(
         public InvalidClassName $invalidClassName,
-    ) {
-    }
+    ) {}
 }

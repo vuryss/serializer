@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Serializer;
+use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\DiscriminatorMap\Type1;
 use Vuryss\Serializer\Tests\Datasets\DiscriminatorMap\Type2;
 use Vuryss\Serializer\Tests\Datasets\DiscriminatorMap\WrapperClass;
@@ -17,7 +18,7 @@ test(
             'disc' => ['key' => 'type1', 'property' => 'some string'],
             'disc2' => ['key' => 'type2', 'property' => 123],
         ];
-        $instance = $serializer->deserialize(json_encode($data), WrapperClass::class);
+        $instance = $serializer->deserialize(json_encode($data), WrapperClass::class, SerializerInterface::FORMAT_JSON);
 
         expect($instance)
             ->toBeInstanceOf(WrapperClass::class)
@@ -32,7 +33,7 @@ test(
             'disc' => ['key' => 'type2', 'property' => 123],
             'disc2' => ['key' => 'type1', 'property' => 'some string'],
         ];
-        $instance = $serializer->deserialize(json_encode($data), WrapperClass::class);
+        $instance = $serializer->deserialize(json_encode($data), WrapperClass::class, SerializerInterface::FORMAT_JSON);
 
         expect($instance)
             ->toBeInstanceOf(WrapperClass::class)
@@ -54,7 +55,7 @@ test(
             'disc' => ['key' => 'type3', 'property' => 'some string'],
             'disc2' => ['key' => 'type2', 'property' => 123],
         ];
-        $serializer->deserialize(json_encode($data), WrapperClass::class);
+        $serializer->deserialize(json_encode($data), WrapperClass::class, SerializerInterface::FORMAT_JSON);
     }
 )
 ->throws(
@@ -71,7 +72,7 @@ test(
             'disc' => ['key2' => 'type1', 'property' => 'some string'],
             'disc2' => ['key' => 'type2', 'property' => 123],
         ];
-        $serializer->deserialize(json_encode($data), WrapperClass::class);
+        $serializer->deserialize(json_encode($data), WrapperClass::class, SerializerInterface::FORMAT_JSON);
     }
 )
 ->throws(

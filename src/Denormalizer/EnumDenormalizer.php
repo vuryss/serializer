@@ -18,7 +18,7 @@ class EnumDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): \BackedEnum {
         assert(is_string($data) && null !== $type->className);
 

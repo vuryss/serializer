@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Tests\Datasets;
 
 use Vuryss\Serializer\Attribute\SerializerContext;
-use Vuryss\Serializer\SerializerInterface;
+use Vuryss\Serializer\Context;
 
 class NullValues
 {
     public ?string $nullableString = null;
 
-    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => false])]
+    #[SerializerContext(context: [Context::SKIP_NULL_VALUES => false])]
     public ?string $alwaysEnabledNull = null;
 
-    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true])]
+    #[SerializerContext(context: [Context::SKIP_NULL_VALUES => true])]
     public ?string $alwaysDisabledNull = null;
 
     /**

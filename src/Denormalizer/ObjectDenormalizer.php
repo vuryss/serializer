@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Denormalizer;
 
+use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
+use Vuryss\Serializer\ExceptionInterface;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\WriteAccess;
 use Vuryss\Serializer\Path;
-use Vuryss\Serializer\SerializerException;
-use Vuryss\Serializer\SerializerInterface;
 
 class ObjectDenormalizer implements DenormalizerInterface
 {
@@ -27,7 +27,7 @@ class ObjectDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): object {
         assert(is_array($data) && null !== $type->className);
 
@@ -43,7 +43,7 @@ class ObjectDenormalizer implements DenormalizerInterface
         $directAssignmentProperties = [];
         $setterProperties = [];
         /** @var null|string[] $groups */
-        $groups = $attributes[SerializerInterface::ATTRIBUTE_GROUPS] ?? null;
+        $groups = $context[Context::GROUPS] ?? null;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
             if (
@@ -62,7 +62,7 @@ class ObjectDenormalizer implements DenormalizerInterface
                     $propertyMetadata->types,
                     $denormalizer,
                     $path,
-                    $attributes,
+                    $context,
                 );
             } finally {
                 $path->pop();
@@ -113,7 +113,7 @@ class ObjectDenormalizer implements DenormalizerInterface
      * @param class-string $className
      * @param array<string, mixed> $constructorParameters
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     private function initializeWithConstructor(
         string $className,
@@ -143,23 +143,23 @@ class ObjectDenormalizer implements DenormalizerInterface
 
     /**
      * @param array<DataType> $types
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     private function tryToDenormalize(
         mixed $value,
         array $types,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): mixed {
         $lastException = null;
 
         foreach ($types as $type) {
             try {
-                return $denormalizer->denormalize($value, $type, $path, $attributes);
-            } catch (SerializerException $e) {
+                return $denormalizer->denormalize($value, $type, $path, $context);
+            } catch (ExceptionInterface $e) {
                 $lastException = $e;
                 continue;
             }

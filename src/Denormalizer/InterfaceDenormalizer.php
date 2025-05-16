@@ -22,7 +22,7 @@ class InterfaceDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): mixed {
         foreach ($type->typeMap as $field => $valueToClassName) {
             if (!array_key_exists($field, $data)) {
@@ -40,7 +40,7 @@ class InterfaceDenormalizer implements DenormalizerInterface
             $className = $valueToClassName[$data[$field]];
             $dataType = new DataType(BuiltInType::OBJECT, $className);
 
-            return $denormalizer->denormalize($data, $dataType, $path, $attributes);
+            return $denormalizer->denormalize($data, $dataType, $path, $context);
         }
 
         throw new DeserializationImpossibleException(sprintf(

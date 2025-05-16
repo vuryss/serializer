@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 use Vuryss\Serializer\Metadata\CachedMetadataExtractor;
 use Vuryss\Serializer\Metadata\MetadataExtractor;
+use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\Person;
 
 test('Saves to PSR-6 cache during serialization', function () {
@@ -48,7 +49,7 @@ test('Saves to PSR-6 cache during serialization', function () {
     $person->age = 25;
     $person->isStudent = true;
 
-    $serializer->serialize($person);
+    $serializer->serialize($person, SerializerInterface::FORMAT_JSON);
 });
 
 test('Reads from PSR-6 cache', function () {
@@ -86,7 +87,7 @@ test('Reads from PSR-6 cache', function () {
     $person->age = 25;
     $person->isStudent = true;
 
-    $serializer->serialize($person);
+    $serializer->serialize($person, SerializerInterface::FORMAT_JSON);
 });
 
 test('Cache reading exception does not break serializer', function () {
@@ -111,5 +112,5 @@ test('Cache reading exception does not break serializer', function () {
     $person->age = 25;
     $person->isStudent = true;
 
-    $serializer->serialize($person);
+    $serializer->serialize($person, SerializerInterface::FORMAT_JSON);
 });

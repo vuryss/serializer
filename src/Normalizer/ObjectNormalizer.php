@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Normalizer;
 
+use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Metadata\ReadAccess;
 use Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\NormalizerInterface;
-use Vuryss\Serializer\SerializerInterface;
 
 class ObjectNormalizer implements NormalizerInterface
 {
@@ -15,14 +15,14 @@ class ObjectNormalizer implements NormalizerInterface
      * @inheritdoc
      * @phpstan-return array<mixed>
      */
-    public function normalize(mixed $data, Normalizer $normalizer, array $attributes): array
+    public function normalize(mixed $data, Normalizer $normalizer, array $context): array
     {
         assert(is_object($data));
 
         $classMetadata = $normalizer->getMetadataExtractor()->extractClassMetadata($data::class);
         $normalizedData = [];
         /** @var null|string[] $groups */
-        $groups = $attributes[SerializerInterface::ATTRIBUTE_GROUPS] ?? null;
+        $groups = $context[Context::GROUPS] ?? null;
 
         foreach ($classMetadata->properties as $name => $propertyMetadata) {
             if (
@@ -37,17 +37,17 @@ class ObjectNormalizer implements NormalizerInterface
                 ? $data->{$name}
                 : $data->{$propertyMetadata->getterMethod}();
 
-            $localAttributes = array_merge($attributes, $propertyMetadata->attributes);
+            $localContext = array_merge($context, $propertyMetadata->context);
 
             if (null === $value) {
-                $skipNullValues = $localAttributes[SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES] ?? false;
+                $skipNullValues = $localContext[Context::SKIP_NULL_VALUES] ?? false;
 
                 if (true === $skipNullValues) {
                     continue;
                 }
             }
 
-            $normalizedData[$propertyMetadata->serializedName] = $normalizer->normalize($value, $localAttributes);
+            $normalizedData[$propertyMetadata->serializedName] = $normalizer->normalize($value, $localContext);
         }
 
         return $normalizedData;
@@ -55,6 +55,6 @@ class ObjectNormalizer implements NormalizerInterface
 
     public function supportsNormalization(mixed $data): bool
     {
-        return is_object($data);
+        return is_object($data) && \stdClass::class !== $data::class;
     }
 }

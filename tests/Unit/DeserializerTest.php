@@ -3,28 +3,29 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
-use Vuryss\Serializer\Tests\Datasets\Complex1\Airbag;
-use Vuryss\Serializer\Tests\Datasets\Complex1\Car;
-use Vuryss\Serializer\Tests\Datasets\Complex1\Engine;
-use Vuryss\Serializer\Tests\Datasets\Complex1\FuelType;
+use Vuryss\Serializer\SerializerInterface;
+use Vuryss\Serializer\Tests\Datasets\Complex2\Airbag;
+use Vuryss\Serializer\Tests\Datasets\Complex2\Car;
+use Vuryss\Serializer\Tests\Datasets\Complex2\Engine;
+use Vuryss\Serializer\Tests\Datasets\Complex2\FuelType;
 use Vuryss\Serializer\Tests\Datasets\GenericObjectTypeWrapper;
 use Vuryss\Serializer\Tests\Datasets\InvalidEnumWrapper;
 
-test('Deserializing into data structures', function ($expected, $serialized) {
+test('Deserializing into data structures', function ($expected, $serialized, $type) {
     $serializer = new \Vuryss\Serializer\Serializer();
 
-    expect($serializer->deserialize($serialized))->toBe($expected);
+    expect($serializer->deserialize($serialized, $type, SerializerInterface::FORMAT_JSON))->toBe($expected);
 })->with([
-    [null, 'null'],
-    [true, 'true'],
-    [false, 'false'],
-    [1, '1'],
-    [1.1, '1.1'],
-    ['string', '"string"'],
-    [['list', 'of', 'data', false, true, null, 1, 1.2], '["list","of","data",false,true,null,1,1.2]'],
-    [['key' => 'value'], '{"key":"value"}'],
-    [['key' => ['nested' => 'value']], '{"key":{"nested":"value"}}'],
-    [['key' => ['nested' => ['deeply' => 'nested']]], '{"key":{"nested":{"deeply":"nested"}}}'],
+    [null, 'null', 'null'],
+    [true, 'true', 'boolean'],
+    [false, 'false', 'boolean'],
+    [1, '1', 'integer'],
+    [1.1, '1.1', 'float'],
+    ['string', '"string"', 'string'],
+    [['list', 'of', 'data', false, true, null, 1, 1.2], '["list","of","data",false,true,null,1,1.2]', 'array'],
+    [['key' => 'value'], '{"key":"value"}', 'array'],
+    [['key' => ['nested' => 'value']], '{"key":{"nested":"value"}}', 'array'],
+    [['key' => ['nested' => ['deeply' => 'nested']]], '{"key":{"nested":{"deeply":"nested"}}}', 'array'],
 ]);
 
 test('Deserializing object, skipping optional arguments in constructor', function () {
@@ -32,7 +33,8 @@ test('Deserializing object, skipping optional arguments in constructor', functio
 
     $monitor = $serializer->deserialize(
         json_encode(['make' => 'Asus', 'size' => 24]),
-        \Vuryss\Serializer\Tests\Datasets\Monitor::class
+        \Vuryss\Serializer\Tests\Datasets\Monitor::class,
+        SerializerInterface::FORMAT_JSON,
     );
 
     expect($monitor)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Monitor::class)
@@ -46,7 +48,7 @@ test('Deserializing array of objects', function () {
 
     $serializer = new \Vuryss\Serializer\Serializer();
 
-    $data = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\Person::class . '[]');
+    $data = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\Person::class . '[]', SerializerInterface::FORMAT_JSON);
 
     expect($data)->toBeArray()->toHaveCount(2)
         ->and($data[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
@@ -66,7 +68,7 @@ test('Deserializing empty array type', function () {
 
     $serializer = new \Vuryss\Serializer\Serializer();
 
-    $data = $serializer->deserialize($serialized, '[]');
+    $data = $serializer->deserialize($serialized, '[]', SerializerInterface::FORMAT_JSON);
 
     expect($data)->toBeArray()->toHaveCount(2)
         ->and($data[0]['firstName'])->toBe('John')
@@ -81,7 +83,7 @@ test('Deserializing empty array type', function () {
 
 test('Complex deserialization & serialization', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
-    $object = $serializer->deserialize(Car::getJsonSerialized(), Car::class);
+    $object = $serializer->deserialize(Car::getJsonSerialized(), Car::class, SerializerInterface::FORMAT_JSON);
 
     expect($object)->toBeInstanceOf(Car::class)
         ->and($object->licensePlate)->toBe('Y6492AH')
@@ -92,9 +94,9 @@ test('Complex deserialization & serialization', function () {
         ->and($object->multiValueField)->toBeInstanceOf(Engine::class)
         ->and($object->controlModules)->toBeArray()
         ->and($object->controlModules)->toHaveCount(2)
-        ->and($object->controlModules[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Complex1\ClimateControlModule::class)
+        ->and($object->controlModules[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Complex2\ClimateControlModule::class)
         ->and($object->controlModules[0]->maxTemperature)->toBe(30)
-        ->and($object->controlModules[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Complex1\EngineControlModule::class)
+        ->and($object->controlModules[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Complex2\EngineControlModule::class)
         ->and($object->controlModules[1]->fuelType)->toBe(FuelType::HYBRID)
     ;
 
@@ -131,7 +133,7 @@ test('Complex deserialization & serialization', function () {
             ->and($airbag->model)->toBeString();
     }
 
-    $string = $serializer->serialize($object);
+    $string = $serializer->serialize($object, SerializerInterface::FORMAT_JSON);
 
     expect($string)->json()->toMatchArray(json_decode(Car::getJsonSerialized(), true));
 });
@@ -144,7 +146,7 @@ test('Deserializing with custom set of denormalizers', function () {
         ]
     );
 
-    $object = $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true}', \Vuryss\Serializer\Tests\Datasets\Person::class);
+    $object = $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true}', \Vuryss\Serializer\Tests\Datasets\Person::class, SerializerInterface::FORMAT_JSON);
 
     expect($object)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\Person::class)
         ->and($object->firstName)->toBe('John')
@@ -156,12 +158,12 @@ test('Deserializing with custom set of denormalizers', function () {
 test('Cannot deserialize from invalid json', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
 
-    $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true', \Vuryss\Serializer\Tests\Datasets\Person::class);
-})->throws(\Vuryss\Serializer\Exception\EncodingException::class, 'Failed to decode JSON data');
+    $serializer->deserialize('{"firstName":"John","lastName":"Doe","age":25,"isStudent":true', \Vuryss\Serializer\Tests\Datasets\Person::class, SerializerInterface::FORMAT_JSON);
+})->throws(\Vuryss\Serializer\Exception\EncodingException::class, 'Failed to decode JSON data: Syntax error');
 
 test('Deserializing into mixed value field', function (mixed $expected, string $serialized) {
     $serializer = new \Vuryss\Serializer\Serializer();
-    $object = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\MixedValues::class);
+    $object = $serializer->deserialize($serialized, \Vuryss\Serializer\Tests\Datasets\MixedValues::class, SerializerInterface::FORMAT_JSON);
 
     expect($object)
         ->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\MixedValues::class)
@@ -180,7 +182,7 @@ test('Deserializing into mixed value field', function (mixed $expected, string $
 test('Deserialize with explicit basic type', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
 
-    $result = $serializer->deserialize('123', 'integer');
+    $result = $serializer->deserialize('123', 'integer', SerializerInterface::FORMAT_JSON);
     expect($result)->toBe(123);
 });
 
@@ -193,14 +195,14 @@ test('Cannot deserialize resource', function () {
 
 test('Cannot deserialize if none of the values matches the union type declared', function () {
     $serializer = new \Vuryss\Serializer\Serializer();
-    $serializer->deserialize('{"value":[]}', \Vuryss\Serializer\Tests\Datasets\MultipleTypes::class);
+    $serializer->deserialize('{"value":[]}', \Vuryss\Serializer\Tests\Datasets\MultipleTypes::class, SerializerInterface::FORMAT_JSON);
 })->throws(DeserializationImpossibleException::class, 'Cannot denormalize value "array" at path "$.value" into any of the given types');
 
 test(
     'Can deserialize into generic object',
     function () {
         $serializer = new \Vuryss\Serializer\Serializer();
-        $object = $serializer->deserialize('{"property":{"test": 123}}', GenericObjectTypeWrapper::class);
+        $object = $serializer->deserialize('{"property":{"test": 123}}', GenericObjectTypeWrapper::class, SerializerInterface::FORMAT_JSON);
 
         expect($object)->toBeInstanceOf(GenericObjectTypeWrapper::class)
             ->and($object->property)->toBeInstanceOf(stdClass::class)
@@ -210,9 +212,9 @@ test(
 
 test(
     'Cannot deserialize into non-existing class',
-    function() {
+    function () {
         $serializer = new \Vuryss\Serializer\Serializer();
-        $serializer->deserialize('{"invalidClassName":{"test":123}}', \Vuryss\Serializer\Tests\Datasets\InvalidClassReference::class);
+        $serializer->deserialize('{"invalidClassName":{"test":123}}', \Vuryss\Serializer\Tests\Datasets\InvalidClassReference::class, SerializerInterface::FORMAT_JSON);
     }
 )
 ->throws(
@@ -223,9 +225,9 @@ test(
 
 test(
     'Cannot deserialize into non-backed enum',
-    function() {
+    function () {
         $serializer = new \Vuryss\Serializer\Serializer();
-        $serializer->deserialize('{"property":"string"}', InvalidEnumWrapper::class);
+        $serializer->deserialize('{"property":"string"}', InvalidEnumWrapper::class, SerializerInterface::FORMAT_JSON);
     }
 )
 ->throws(
@@ -279,7 +281,7 @@ test(
             ],
         ];
 
-        $object = $serializer->deserialize(json_encode($data), \Vuryss\Serializer\Tests\Datasets\ArrayTypes::class);
+        $object = $serializer->deserialize(json_encode($data), \Vuryss\Serializer\Tests\Datasets\ArrayTypes::class, SerializerInterface::FORMAT_JSON);
 
         expect($object)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\ArrayTypes::class)
             ->and($object->type1)->toBeArray()

@@ -52,7 +52,7 @@ readonly class TypeMapper
         }
 
         if ($hasNullableType && !$hasAlreadyNullAsType) {
-            $internalTypes[] = new DataType(BuiltInType::NULL, attributes: $serializerContext->attributes);
+            $internalTypes[] = new DataType(BuiltInType::NULL, context: $serializerContext->context);
         }
 
         return $internalTypes;
@@ -68,12 +68,12 @@ readonly class TypeMapper
         SerializerContext $serializerContext
     ): DataType {
         return match ($propertyInfoType->getBuiltinType()) {
-            Type::BUILTIN_TYPE_INT => new DataType(BuiltInType::INTEGER, attributes: $serializerContext->attributes),
-            Type::BUILTIN_TYPE_FLOAT => new DataType(BuiltInType::FLOAT, attributes: $serializerContext->attributes),
-            Type::BUILTIN_TYPE_STRING => new DataType(BuiltInType::STRING, attributes: $serializerContext->attributes),
+            Type::BUILTIN_TYPE_INT => new DataType(BuiltInType::INTEGER, context: $serializerContext->context),
+            Type::BUILTIN_TYPE_FLOAT => new DataType(BuiltInType::FLOAT, context: $serializerContext->context),
+            Type::BUILTIN_TYPE_STRING => new DataType(BuiltInType::STRING, context: $serializerContext->context),
             Type::BUILTIN_TYPE_BOOL, Type::BUILTIN_TYPE_FALSE, Type::BUILTIN_TYPE_TRUE => new DataType(
                 BuiltInType::BOOLEAN,
-                attributes: $serializerContext->attributes
+                context: $serializerContext->context
             ),
             Type::BUILTIN_TYPE_RESOURCE => throw new UnsupportedType(
                 sprintf(
@@ -89,9 +89,9 @@ readonly class TypeMapper
                     fn(Type $type): DataType => $this->mapToInternalType($type, $reflectionProperty, $serializerContext),
                     $propertyInfoType->getCollectionValueTypes(),
                 ),
-                attributes: $serializerContext->attributes
+                context: $serializerContext->context
             ),
-            Type::BUILTIN_TYPE_NULL => new DataType(BuiltInType::NULL, attributes: $serializerContext->attributes),
+            Type::BUILTIN_TYPE_NULL => new DataType(BuiltInType::NULL, context: $serializerContext->context),
             Type::BUILTIN_TYPE_CALLABLE => throw new UnsupportedType(
                 sprintf(
                     'Property "%s" of class "%s" has an unsupported type: callable',
@@ -119,23 +119,23 @@ readonly class TypeMapper
         $className = $propertyInfoType->getClassName();
 
         if (null === $className) {
-            return new DataType(BuiltInType::OBJECT, attributes: $serializerContext->attributes);
+            return new DataType(BuiltInType::OBJECT, context: $serializerContext->context);
         }
 
         try {
             $reflectionClass = Util::reflectionClass($className);
         } catch (MetadataExtractionException) {
             // Probably a generic type, return just object
-            return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
+            return new DataType(BuiltInType::OBJECT, $className, context: $serializerContext->context);
         }
 
         if ($reflectionClass->isEnum()) {
-            return new DataType(BuiltInType::ENUM, $className, attributes: $serializerContext->attributes);
+            return new DataType(BuiltInType::ENUM, $className, context: $serializerContext->context);
         }
 
         if ($reflectionClass->isAbstract() || $reflectionClass->isInterface()) {
             if (isset(self::INTERFACE_OVERWRITE[$className])) {
-                return new DataType(BuiltInType::OBJECT, self::INTERFACE_OVERWRITE[$className], attributes: $serializerContext->attributes);
+                return new DataType(BuiltInType::OBJECT, self::INTERFACE_OVERWRITE[$className], context: $serializerContext->context);
             }
 
             if (null !== $serializerContext->typeMap) {
@@ -143,7 +143,7 @@ readonly class TypeMapper
                     BuiltInType::INTERFACE,
                     className: $className,
                     typeMap: $serializerContext->typeMap,
-                    attributes: $serializerContext->attributes,
+                    context: $serializerContext->context,
                 );
             }
 
@@ -153,11 +153,11 @@ readonly class TypeMapper
                 BuiltInType::INTERFACE,
                 className: $className,
                 typeMap: $discriminatorMap ? [$discriminatorMap->field => $discriminatorMap->map] : [],
-                attributes: $serializerContext->attributes,
+                context: $serializerContext->context,
             );
         }
 
-        return new DataType(BuiltInType::OBJECT, $className, attributes: $serializerContext->attributes);
+        return new DataType(BuiltInType::OBJECT, $className, context: $serializerContext->context);
     }
 
     /**

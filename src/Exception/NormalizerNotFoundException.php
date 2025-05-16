@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Exception;
 
-use Vuryss\Serializer\SerializerException;
+use Vuryss\Serializer\ExceptionInterface;
 
-class NormalizerNotFoundException extends \Exception implements SerializerException {}
+class NormalizerNotFoundException extends \Exception implements ExceptionInterface {}

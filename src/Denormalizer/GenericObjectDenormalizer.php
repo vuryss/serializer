@@ -17,7 +17,7 @@ readonly class GenericObjectDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): object {
         return (object) $data;
     }

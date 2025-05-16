@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Vuryss\Serializer\Serializer;
+use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\TypeSequence\WrapperClass;
 
 test(
@@ -20,7 +21,7 @@ test(
             ],
         ];
 
-        $instance = $serializer->deserialize(json_encode($data), WrapperClass::class);
+        $instance = $serializer->deserialize(json_encode($data), WrapperClass::class, SerializerInterface::FORMAT_JSON);
 
         expect($instance->property)->toBeArray()
             ->and($instance->property[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\TypeSequence\Car::class)

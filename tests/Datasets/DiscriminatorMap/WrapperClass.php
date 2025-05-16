@@ -9,6 +9,5 @@ readonly class WrapperClass
     public function __construct(
         public DiscInterface $disc,
         public Disc2Interface $disc2,
-    ) {
-    }
+    ) {}
 }

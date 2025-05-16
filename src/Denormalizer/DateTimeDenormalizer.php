@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Denormalizer;
 
+use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
@@ -11,7 +12,6 @@ use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Path;
-use Vuryss\Serializer\SerializerInterface;
 
 class DateTimeDenormalizer implements DenormalizerInterface
 {
@@ -26,12 +26,12 @@ class DateTimeDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): \DateTimeInterface {
         assert(is_string($data));
 
-        $format = $type->attributes[SerializerInterface::ATTRIBUTE_DATETIME_FORMAT] ?? \DateTimeInterface::RFC3339;
-        $isStrict = $type->attributes[SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT] ?? false;
+        $format = $type->context[Context::DATETIME_FORMAT] ?? \DateTimeInterface::RFC3339;
+        $isStrict = $type->context[Context::DATETIME_FORMAT_STRICT] ?? false;
 
         if (!is_string($format)) {
             throw new InvalidAttributeUsageException('DateTime format attribute must be a string');

@@ -12,8 +12,8 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Vuryss\Serializer\Attribute\SerializerContext;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Exception\MetadataExtractionException;
+use Vuryss\Serializer\ExceptionInterface;
 use Vuryss\Serializer\MetadataExtractorInterface;
-use Vuryss\Serializer\SerializerException;
 
 class MetadataExtractor implements MetadataExtractorInterface
 {
@@ -40,13 +40,12 @@ class MetadataExtractor implements MetadataExtractorInterface
 
     public function __construct(
         private readonly TypeMapper $typeMapper = new TypeMapper(),
-    ) {
-    }
+    ) {}
 
     /**
      * @param class-string $class
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     public function extractClassMetadata(string $class): ClassMetadata
     {
@@ -68,7 +67,7 @@ class MetadataExtractor implements MetadataExtractorInterface
     }
 
     /**
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     private function extractPropertyMetadata(
         \ReflectionProperty $reflectionProperty,
@@ -87,7 +86,7 @@ class MetadataExtractor implements MetadataExtractorInterface
                 $types = [
                     new DataType(
                         BuiltInType::MIXED,
-                        attributes: $serializerContext->attributes,
+                        context: $serializerContext->context,
                     ),
                 ];
             } else {
@@ -111,7 +110,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             serializedName: $serializerContext->name ?? $propertyName,
             types: $types,
             groups: [] === $serializerContext->groups ? ['default'] : $serializerContext->groups,
-            attributes: $serializerContext->attributes,
+            context: $serializerContext->context,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
             ignore: $serializerContext->ignore,
@@ -141,7 +140,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             $constructorParameters = $constructor->getParameters();
             $isPropertyInConstructor = array_any(
                 $constructorParameters,
-                static fn (\ReflectionParameter $parameter): bool => $parameter->getName() === $reflectionProperty->getName(),
+                static fn(\ReflectionParameter $parameter): bool => $parameter->getName() === $reflectionProperty->getName(),
             );
 
             if ($isPropertyInConstructor) {

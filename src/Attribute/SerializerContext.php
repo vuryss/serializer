@@ -10,13 +10,13 @@ class SerializerContext
     /**
      * @param array<string, array<string, class-string>>|null $typeMap
      * @param array<string> $groups
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, string|int|float|bool> $context
      */
     public function __construct(
         public ?string $name = null,
         public ?array $typeMap = null,
         public bool $ignore = false,
         public array $groups = [],
-        public array $attributes = [],
+        public array $context = [],
     ) {}
 }

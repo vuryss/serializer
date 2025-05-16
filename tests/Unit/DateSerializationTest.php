@@ -8,20 +8,20 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer\Unit;
 
+use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\Dates;
-
 use Vuryss\Serializer\Tests\Datasets\InvalidDateFormatProperty;
 
 use function Pest\Faker\fake;
 
 test('Dates are deserialized and serialized correctly', function () {
     $serializer = new Serializer(
-        attributes: [
-            SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
+        context: [
+            Context::DATETIME_FORMAT => \DateTimeInterface::RFC2822,
         ]
     );
 
@@ -39,7 +39,7 @@ test('Dates are deserialized and serialized correctly', function () {
         'interfaceDateTime' => $date5->format(\DateTimeInterface::RFC3339_EXTENDED),
     ];
 
-    $dates = $serializer->deserialize(json_encode($data), Dates::class);
+    $dates = $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
 
     expect($dates->uglyUsaDate)->toBeInstanceOf(\DateTime::class)
         ->and($dates->uglyUsaDate->format('m/d/Y'))->toBe($date1->format('m/d/Y'))
@@ -55,7 +55,7 @@ test('Dates are deserialized and serialized correctly', function () {
 
     $data['interfaceDateTime'] = $date5->format(\DateTimeInterface::RFC2822);
 
-    $json = $serializer->serialize($dates);
+    $json = $serializer->serialize($dates, SerializerInterface::FORMAT_JSON);
 
     expect($json)->json()->toBe($data);
 });
@@ -74,7 +74,7 @@ test('Cannot deserialize dates with invalid format', function () {
         'globalDateTimeFormat' => $date4->format(\DateTimeInterface::RFC2822),
     ];
 
-    $serializer->deserialize(json_encode($data), Dates::class);
+    $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
 })->throws(
     DeserializationImpossibleException::class,
     'Cannot denormalize date string "2024-05-21" at path "$.uglyUsaDate" into DateTimeImmutable. Expected format: "m/d/Y"'
@@ -94,7 +94,7 @@ test('Cannot deserialize into invalid format even with fallback', function () {
         'globalDateTimeFormat' => $date4->format(\DateTimeInterface::RFC2822),
     ];
 
-    $serializer->deserialize(json_encode($data), Dates::class);
+    $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
 })->throws(
     DeserializationImpossibleException::class,
     'Cannot denormalize date string "invalid-date" at path "$.immutableDate" into DateTimeImmutable. Expected format: "Y-m-d"'
@@ -102,8 +102,8 @@ test('Cannot deserialize into invalid format even with fallback', function () {
 
 test('Can deserialize dates with fallback to support all date formats', function () {
     $serializer = new Serializer(
-        attributes: [
-            SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
+        context: [
+            Context::DATETIME_FORMAT => \DateTimeInterface::RFC2822,
         ]
     );
 
@@ -115,7 +115,7 @@ test('Can deserialize dates with fallback to support all date formats', function
         'immutableDate' => $date2->format(\DateTimeInterface::COOKIE),
     ];
 
-    $dates = $serializer->deserialize(json_encode($data), Dates::class);
+    $dates = $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
 
     expect($dates->uglyUsaDate)->toBeInstanceOf(\DateTime::class)
         ->and($dates->uglyUsaDate->format('m/d/Y'))->toBe($date1->format('m/d/Y'))
@@ -126,8 +126,8 @@ test('Can deserialize dates with fallback to support all date formats', function
 
 test('Cannot accept invalid date format', function () {
     $serializer = new Serializer(
-        attributes: [
-            SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 123,
+        context: [
+            Context::DATETIME_FORMAT => 123,
         ]
     );
 
@@ -143,7 +143,7 @@ test('Cannot accept invalid date format', function () {
         'globalDateTimeFormat' => $date4->format(\DateTimeInterface::RFC2822),
     ];
 
-    $serializer->deserialize(json_encode($data), Dates::class);
+    $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
 })->throws(
     InvalidAttributeUsageException::class,
     'DateTime format attribute must be a string'
@@ -154,7 +154,7 @@ test('Cannot serialize with invalid date format', function () {
     $invalidObject = new InvalidDateFormatProperty();
     $invalidObject->someDate = fake()->dateTime();
 
-    $serializer->serialize($invalidObject);
+    $serializer->serialize($invalidObject, SerializerInterface::FORMAT_JSON);
 })->throws(
     InvalidAttributeUsageException::class,
     'DateTime format attribute must be a string',

@@ -166,3 +166,41 @@ test('Serializer respects json-normalizable interface', function () {
 
     expect($result)->toBe('{"some-key":"some-value","other-key":123,"nested":{"nested-key":"nested-value"}}');
 });
+
+test('Cannot serialize with unsupported format', function () {
+    $serializer = new Serializer();
+    $serializer->serialize('data', 'unsupported_format');
+})->throws(
+    \Vuryss\Serializer\Exception\UnsupportedFormatException::class,
+    'Unsupported format "unsupported_format". Only "json" is supported.'
+);
+
+test('Cannot deserialize with unsupported format', function () {
+    $serializer = new Serializer();
+    $serializer->deserialize('data', 'string', 'unsupported_format');
+})->throws(
+    \Vuryss\Serializer\Exception\UnsupportedFormatException::class,
+    'Unsupported format "unsupported_format". Only "json" is supported.'
+);
+
+test('Cannot deserialize non-string data', function () {
+    $serializer = new Serializer();
+    $serializer->deserialize(data: 123, type: 'string', format: SerializerInterface::FORMAT_JSON);
+})->throws(
+    \Vuryss\Serializer\Exception\UnsupportedFormatException::class,
+    'Expected string data, got "int"'
+);
+
+test('Throws encoding exception for invalid UTF-8 characters during serialize', function () {
+    $serializer = new Serializer();
+    // Simulate data that becomes invalid for json_encode after normalization
+    // This requires a bit of a setup, as basic types normalizer might handle it.
+    // Let's use a class with a public property.
+    $data = new class {
+        public string $value = "\xB1\x31"; // Invalid UTF-8 sequence
+    };
+    $serializer->serialize($data, SerializerInterface::FORMAT_JSON);
+})->throws(
+    \Vuryss\Serializer\Exception\EncodingException::class,
+    'Failed to encode data to JSON'
+);

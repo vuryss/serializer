@@ -10,6 +10,7 @@ use Vuryss\Serializer\Tests\Datasets\Complex2\Engine;
 use Vuryss\Serializer\Tests\Datasets\Complex2\FuelType;
 use Vuryss\Serializer\Tests\Datasets\GenericObjectTypeWrapper;
 use Vuryss\Serializer\Tests\Datasets\InvalidEnumWrapper;
+use Vuryss\Serializer\Tests\Datasets\WriteAccessNoneProperty;
 
 test('Deserializing into data structures', function ($expected, $serialized, $type) {
     $serializer = new \Vuryss\Serializer\Serializer();
@@ -304,3 +305,18 @@ test(
         ;
     }
 );
+
+test('Deserializing object with WriteAccess::NONE property', function () {
+    $serializer = new \Vuryss\Serializer\Serializer();
+    $jsonData = '{"readOnlyProperty": "attemptedChange", "constructorProperty": "setInConstructor"}';
+
+    $object = $serializer->deserialize(
+        data: $jsonData,
+        type: WriteAccessNoneProperty::class,
+        format: SerializerInterface::FORMAT_JSON
+    );
+
+    expect($object)->toBeInstanceOf(WriteAccessNoneProperty::class)
+        ->and($object->readOnlyProperty)->toBe('initialValue') // Should not change
+        ->and($object->constructorProperty)->toBe('setInConstructor');
+});

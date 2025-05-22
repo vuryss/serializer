@@ -12,8 +12,12 @@
     </testsuites>
     <source>
         <include>
-            <directory suffix=".php">./app</directory>
             <directory suffix=".php">./src</directory>
         </include>
     </source>
+    <coverage>
+        <report>
+            <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="true"/>
+        </report>
+    </coverage>
 </phpunit>

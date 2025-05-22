@@ -9,10 +9,16 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Unit;
 
 use Vuryss\Serializer\Context;
+use Vuryss\Serializer\Denormalizer\DateTimeDenormalizer;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\SerializerInterface;
+use Vuryss\Serializer\Metadata\DataType;
+use Vuryss\Serializer\Metadata\BuiltInType;
+use Vuryss\Serializer\Metadata\MetadataExtractor;
+use Vuryss\Serializer\Path;
+use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\Tests\Datasets\Dates;
 use Vuryss\Serializer\Tests\Datasets\InvalidDateFormatProperty;
 use Vuryss\Serializer\Tests\Datasets\DatesWithTimezoneProperty;
@@ -258,4 +264,24 @@ test('Throws exception for invalid target timezone string on property', function
 })->throws(
     DeserializationImpossibleException::class,
     'Invalid target timezone string "Another/InvalidZone" at path "$.dateTimeFormat1"'
+);
+
+test('DateTimeDenormalizer throws exception for unsupported class name directly', function () {
+    $denormalizer = new DateTimeDenormalizer();
+    $dataType = new DataType(
+        type: BuiltInType::OBJECT,
+        className: \stdClass::class // An unsupported class
+    );
+    $mainDenormalizer = new Denormalizer(denormalizers: [], metadataExtractor: new MetadataExtractor());
+
+    $denormalizer->denormalize(
+        data: '2024-01-01',
+        type: $dataType,
+        denormalizer: $mainDenormalizer,
+        path: new Path(),
+        context: []
+    );
+})->throws(
+    \InvalidArgumentException::class,
+    'Unsupported class name'
 );

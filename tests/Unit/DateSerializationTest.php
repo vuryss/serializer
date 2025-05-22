@@ -15,6 +15,8 @@ use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\Dates;
 use Vuryss\Serializer\Tests\Datasets\InvalidDateFormatProperty;
+use Vuryss\Serializer\Tests\Datasets\DatesWithTimezoneProperty;
+use Vuryss\Serializer\Tests\Datasets\DatesWithInvalidTimezoneProperty;
 
 use function Pest\Faker\fake;
 
@@ -77,7 +79,7 @@ test('Cannot deserialize dates with invalid format', function () {
     $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
 })->throws(
     DeserializationImpossibleException::class,
-    'Cannot denormalize date string "2024-05-21" at path "$.uglyUsaDate" into DateTimeImmutable. Expected format: "m/d/Y"'
+    'Cannot denormalize date string "2024-05-21" at path "$.uglyUsaDate" into DateTime. Expected format: "m/d/Y"'
 );
 
 test('Cannot deserialize into invalid format even with fallback', function () {
@@ -158,4 +160,102 @@ test('Cannot serialize with invalid date format', function () {
 })->throws(
     InvalidAttributeUsageException::class,
     'DateTime format attribute must be a string',
+);
+
+test('Dates are deserialized with global target timezone', function () {
+    $targetTimezone = 'America/New_York';
+    $serializer = new Serializer(
+        context: [
+            Context::DATETIME_TARGET_TIMEZONE => $targetTimezone,
+        ]
+    );
+
+    $dateString = '2024-05-22T10:00:00+00:00'; // UTC
+    $expectedDateTime = new \DateTimeImmutable($dateString);
+    $expectedDateTimeInNewYork = $expectedDateTime->setTimezone(new \DateTimeZone($targetTimezone));
+
+    $data = [
+        'immutableDate' => $dateString,
+    ];
+
+    $dates = $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
+
+    expect($dates->immutableDate)->toBeInstanceOf(\DateTimeImmutable::class)
+        ->and($dates->immutableDate->getTimezone()->getName())->toBe($targetTimezone)
+        ->and($dates->immutableDate->format(\DateTimeInterface::RFC3339))->toBe($expectedDateTimeInNewYork->format(\DateTimeInterface::RFC3339));
+});
+
+test('Dates are deserialized with per-property target timezone', function () {
+    $targetTimezoneProperty = 'Europe/Berlin';
+    $serializer = new Serializer();
+
+    // Original date in UTC
+    $dateStringUtc = '2024-05-22T12:00:00+00:00';
+    $utcDateTime = new \DateTimeImmutable($dateStringUtc);
+
+    // Expected date in Europe/Berlin for 'dateTimeFormat1'
+    $expectedBerlinDateTime = $utcDateTime->setTimezone(new \DateTimeZone($targetTimezoneProperty));
+
+    // For 'globalDateTimeFormat', no specific timezone is set on property, so it should remain as parsed (or use global if set)
+    // In this test, no global timezone is set, so it should parse as is (likely UTC or system default depending on string)
+    $dateStringForGlobal = '2024-05-23T15:00:00+02:00'; // A string with timezone info
+    $expectedGlobalDateTime = new \DateTimeImmutable($dateStringForGlobal);
+
+
+    $data = [
+        'dateTimeFormat1' => $dateStringUtc, // This will be converted
+        'globalDateTimeFormat' => $dateStringForGlobal, // This will use its own timezone or default if no TZ in string
+    ];
+
+    // We need a class with the SerializerContext attribute for dateTimeFormat1
+
+    $dates = $serializer->deserialize(json_encode($data), DatesWithTimezoneProperty::class, SerializerInterface::FORMAT_JSON);
+
+    expect($dates->dateTimeFormat1)->toBeInstanceOf(\DateTime::class) // Default for DateTimeInterface is DateTime
+        ->and($dates->dateTimeFormat1->getTimezone()->getName())->toBe($targetTimezoneProperty)
+        ->and($dates->dateTimeFormat1->format(\DateTimeInterface::RFC3339))->toBe($expectedBerlinDateTime->format(\DateTimeInterface::RFC3339))
+        ->and($dates->globalDateTimeFormat)->toBeInstanceOf(\DateTimeImmutable::class)
+        ->and($dates->globalDateTimeFormat->getTimezone()->getName())->toBe($expectedGlobalDateTime->getTimezone()->getName())
+        ->and($dates->globalDateTimeFormat->format(\DateTimeInterface::RFC3339))->toBe($expectedGlobalDateTime->format(\DateTimeInterface::RFC3339));
+});
+
+test('Date deserialization without target timezone works as before', function () {
+    $serializer = new Serializer();
+    $dateString = '2024-05-22T10:00:00+05:00'; // A date string with a specific timezone
+    $expectedDateTime = new \DateTimeImmutable($dateString);
+
+    $data = [
+        'immutableDate' => $dateString,
+    ];
+
+    $dates = $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
+
+    expect($dates->immutableDate)->toBeInstanceOf(\DateTimeImmutable::class)
+        ->and($dates->immutableDate->getTimezone()->getName())->toBe($expectedDateTime->getTimezone()->getName())
+        ->and($dates->immutableDate->format(\DateTimeInterface::RFC3339))->toBe($expectedDateTime->format(\DateTimeInterface::RFC3339));
+});
+
+test('Throws exception for invalid target timezone string globally', function () {
+    $serializer = new Serializer(
+        context: [
+            Context::DATETIME_TARGET_TIMEZONE => 'Invalid/Timezone',
+        ]
+    );
+
+    $data = ['immutableDate' => '2024-05-22T10:00:00Z'];
+    $serializer->deserialize(json_encode($data), Dates::class, SerializerInterface::FORMAT_JSON);
+})->throws(
+    DeserializationImpossibleException::class,
+    'Invalid target timezone string "Invalid/Timezone" at path "$.immutableDate"'
+);
+
+test('Throws exception for invalid target timezone string on property', function () {
+    $serializer = new Serializer();
+
+    $data = ['dateTimeFormat1' => '2024-05-22T10:00:00Z'];
+    $serializer->deserialize(json_encode($data), DatesWithInvalidTimezoneProperty::class, SerializerInterface::FORMAT_JSON);
+
+})->throws(
+    DeserializationImpossibleException::class,
+    'Invalid target timezone string "Another/InvalidZone" at path "$.dateTimeFormat1"'
 );

@@ -10,7 +10,8 @@ class SerializerContext
     /**
      * @param array<string, array<string, class-string>>|null $typeMap
      * @param array<string> $groups
-     * @param array<string, string|int|float|bool> $context
+     * @param array<string, mixed> $context
+     * @param string|null $datetimeTargetTimezone Target timezone for DateTimeInterface objects (e.g., 'America/New_York')
      */
     public function __construct(
         public ?string $name = null,
@@ -18,5 +19,6 @@ class SerializerContext
         public bool $ignore = false,
         public array $groups = [],
         public array $context = [],
+        public ?string $datetimeTargetTimezone = null,
     ) {}
 }

@@ -252,6 +252,10 @@ class MetadataExtractor implements MetadataExtractorInterface
             $serializerContext->ignore = true;
         }
 
+        if (null !== $serializerContext->datetimeTargetTimezone) {
+            $serializerContext->context[\Vuryss\Serializer\Context::DATETIME_TARGET_TIMEZONE] = $serializerContext->datetimeTargetTimezone;
+        }
+
         return $serializerContext;
     }
 }

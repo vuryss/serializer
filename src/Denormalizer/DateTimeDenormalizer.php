@@ -47,9 +47,10 @@ class DateTimeDenormalizer implements DenormalizerInterface
 
         if (false === $dateTime && $isStrict) {
             throw new DeserializationImpossibleException(sprintf(
-                'Cannot denormalize date string "%s" at path "%s" into DateTimeImmutable. Expected format: "%s"',
+                'Cannot denormalize date string "%s" at path "%s" into %s. Expected format: "%s"',
                 $data,
                 $path->toString(),
+                $className,
                 $format,
             ));
         }
@@ -60,10 +61,27 @@ class DateTimeDenormalizer implements DenormalizerInterface
                 $dateTime = new $className($data);
             } catch (\Exception $e) {
                 throw new DeserializationImpossibleException(sprintf(
-                    'Cannot denormalize date string "%s" at path "%s" into DateTimeImmutable. Expected format: "%s"',
+                    'Cannot denormalize date string "%s" at path "%s" into %s. Expected format: "%s"',
                     $data,
                     $path->toString(),
+                    $className,
                     $format,
+                ), previous: $e);
+            }
+        }
+
+        // Apply timezone conversion if specified
+        $targetTimezone = $type->context[Context::DATETIME_TARGET_TIMEZONE] ?? $context[Context::DATETIME_TARGET_TIMEZONE] ?? null;
+
+        if (is_string($targetTimezone) && $dateTime instanceof \DateTimeInterface) {
+            try {
+                $dateTime = $dateTime->setTimezone(new \DateTimeZone($targetTimezone));
+            } catch (\Exception $e) {
+                // Optionally, handle or log the exception if the timezone string is invalid
+                throw new DeserializationImpossibleException(sprintf(
+                    'Invalid target timezone string "%s" at path "%s"',
+                    $targetTimezone,
+                    $path->toString(),
                 ), previous: $e);
             }
         }

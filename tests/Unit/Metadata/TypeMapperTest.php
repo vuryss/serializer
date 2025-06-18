@@ -5,117 +5,115 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Tests\Unit\Metadata;
 
 use Mockery;
-use Mockery\MockInterface;
-use ReflectionProperty;
-use Symfony\Component\PropertyInfo\Type;
+use Symfony\Component\TypeInfo\Type;
+
+use Symfony\Component\TypeInfo\Type\BuiltinType as SymfonyBuiltinType;
+use Symfony\Component\TypeInfo\Type\NullableType;
+use Symfony\Component\TypeInfo\Type\ObjectType;
+use Symfony\Component\TypeInfo\Type\UnionType;
+use Symfony\Component\TypeInfo\TypeIdentifier;
 use Vuryss\Serializer\Attribute\SerializerContext;
-use Vuryss\Serializer\Exception\UnsupportedType;
+use Vuryss\Serializer\Exception\MetadataExtractionException;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Metadata\TypeMapper;
-use Vuryss\Serializer\Tests\Datasets\Person; // A sample class for reflection
 
-///**
-// * @property TypeMapper $typeMapper
-// * @property ReflectionProperty|MockInterface $mockReflectionProperty
-// * @property SerializerContext $mockSerializerContext
-// */
-//beforeEach(function () {
-//    $this->typeMapper = new TypeMapper();
-//    $this->mockReflectionProperty = Mockery::mock(ReflectionProperty::class);
-//    $this->mockReflectionProperty->shouldReceive('getName')->andReturn('testProperty');
-//
-//    $declaringClassMock = Mockery::mock(\ReflectionClass::class);
-//    $declaringClassMock->shouldReceive('getName')->andReturn(Person::class);
-//    $this->mockReflectionProperty->shouldReceive('getDeclaringClass')->andReturn($declaringClassMock);
-//
-//    $this->mockSerializerContext = new SerializerContext();
-//});
-//
-//afterEach(function () {
-//    Mockery::close();
-//});
-//
-//test('map types with nullable type adds null type', function () {
-//    $propertyInfoType = new Type(
-//        builtinType: Type::BUILTIN_TYPE_STRING,
-//        nullable: true
-//    );
-//
-//    $dataTypes = $this->typeMapper->mapTypes(
-//        type: [$propertyInfoType],
-//        reflectionProperty: $this->mockReflectionProperty,
-//        serializerContext: $this->mockSerializerContext
-//    );
-//
-//    expect($dataTypes)->toHaveCount(2)
-//        ->and($dataTypes[0]->type)->toBe(BuiltInType::STRING)
-//        ->and($dataTypes[1]->type)->toBe(BuiltInType::NULL);
-//});
-//
-//test('map types with explicit null type does not add duplicate null', function () {
-//    $propertyInfoTypes = [
-//        new Type(builtinType: Type::BUILTIN_TYPE_STRING, nullable: false),
-//        new Type(builtinType: Type::BUILTIN_TYPE_NULL, nullable: true), // Nullable flag on NULL type itself
-//    ];
-//
-//    $dataTypes = $this->typeMapper->mapTypes(
-//        type: $propertyInfoTypes,
-//        reflectionProperty: $this->mockReflectionProperty,
-//        serializerContext: $this->mockSerializerContext
-//    );
-//
-//    expect($dataTypes)->toHaveCount(2)
-//        ->and($dataTypes[0]->type)->toBe(BuiltInType::STRING)
-//        ->and($dataTypes[1]->type)->toBe(BuiltInType::NULL);
-//});
-//
-//test('map to internal type throws unsupported type for callable', function () {
-//    $propertyInfoType = new Type(builtinType: Type::BUILTIN_TYPE_CALLABLE);
-//
-//    // Internal method, but we test its contract via mapTypes
-//    $this->typeMapper->mapTypes(
-//        type: [$propertyInfoType],
-//        reflectionProperty: $this->mockReflectionProperty,
-//        serializerContext: $this->mockSerializerContext
-//    );
-//})->throws(
-//    UnsupportedType::class,
-//    'Property "testProperty" of class "Vuryss\Serializer\Tests\Datasets\Person" has an unsupported type: callable'
-//);
-//
-//test('map to internal type throws unsupported type for unknown built in', function () {
-//    // Mocking Type class to simulate an unknown built-in type
-//    $propertyInfoType = Mockery::mock(Type::class);
-//    $propertyInfoType->shouldReceive('getBuiltinType')->andReturn('unknown_symfony_type');
-//    $propertyInfoType->shouldReceive('isNullable')->andReturn(false);
-//    $propertyInfoType->shouldReceive('getClassName')->andReturn(null);
-//    $propertyInfoType->shouldReceive('getCollectionValueTypes')->andReturn([]);
-//
-//    $this->typeMapper->mapTypes(
-//        type: [$propertyInfoType],
-//        reflectionProperty: $this->mockReflectionProperty,
-//        serializerContext: $this->mockSerializerContext
-//    );
-//})->throws(
-//    UnsupportedType::class,
-//    'Property "testProperty" of class "Vuryss\Serializer\Tests\Datasets\Person" has an unsupported type: unknown_symfony_type'
-//);
-//
-//test('map object type for interface with overwrite', function () {
-//    $propertyInfoType = new Type(builtinType: Type::BUILTIN_TYPE_OBJECT, nullable: false, class: \DateTimeInterface::class);
-//    $dataTypes = $this->typeMapper->mapTypes([$propertyInfoType], $this->mockReflectionProperty, $this->mockSerializerContext);
-//
-//    expect($dataTypes)->toHaveCount(1)
-//        ->and($dataTypes[0]->type)->toBe(BuiltInType::OBJECT)
-//        ->and($dataTypes[0]->className)->toBe(\DateTime::class);
-//});
-//
-//test('map object type for generic object', function () {
-//    // Test for Type::BUILTIN_TYPE_OBJECT with no class name (generic object)
-//    $propertyInfoType = new Type(builtinType: Type::BUILTIN_TYPE_OBJECT, nullable: false, class: null);
-//    $dataTypes = $this->typeMapper->mapTypes([$propertyInfoType], $this->mockReflectionProperty, $this->mockSerializerContext);
-//
-//    expect($dataTypes)->toHaveCount(1)
-//        ->and($dataTypes[0]->type)->toBe(BuiltInType::OBJECT)
-//        ->and($dataTypes[0]->className)->toBeNull(); // Expecting generic object
-//});
+/**
+ * @property TypeMapper $typeMapper
+ * @property SerializerContext $serializerContext
+ */
+beforeEach(function () {
+    $this->typeMapper = new TypeMapper();
+    $this->serializerContext = new SerializerContext();
+});
+
+afterEach(function () {
+    Mockery::close();
+});
+
+test('map types with nullable type adds null type', function () {
+    $type = new NullableType(new SymfonyBuiltinType(TypeIdentifier::STRING));
+
+    $dataTypes = $this->typeMapper->mapTypes(
+        type: $type,
+        serializerContext: $this->serializerContext
+    );
+
+    expect($dataTypes)->toHaveCount(2)
+        ->and($dataTypes[0]->type)->toBe(BuiltInType::NULL)
+        ->and($dataTypes[1]->type)->toBe(BuiltInType::STRING);
+});
+
+test('map types with explicit null type does not add duplicate null', function () {
+    $type = new NullableType(new UnionType(
+        new SymfonyBuiltinType(TypeIdentifier::STRING),
+        new SymfonyBuiltinType(TypeIdentifier::INT),
+    ));
+
+    $dataTypes = $this->typeMapper->mapTypes(
+        type: $type,
+        serializerContext: $this->serializerContext
+    );
+
+    expect($dataTypes)->toHaveCount(3)
+        ->and($dataTypes[0]->type)->toBe(BuiltInType::NULL);
+
+    $remainingTypes = [
+        $dataTypes[1]->type,
+        $dataTypes[2]->type,
+    ];
+
+    expect($remainingTypes)->toContain(BuiltInType::STRING)
+        ->and($remainingTypes)->toContain(BuiltInType::INTEGER);
+});
+
+test('map to internal type throws unsupported type for callable', function () {
+    $type = new SymfonyBuiltinType(TypeIdentifier::CALLABLE);
+
+    $this->typeMapper->mapTypes(
+        type: $type,
+        serializerContext: $this->serializerContext
+    );
+})->throws(
+    MetadataExtractionException::class,
+    'Unsupported built-in type: callable'
+);
+
+test('map to internal type throws unsupported type for resource', function () {
+    $type = new SymfonyBuiltinType(TypeIdentifier::RESOURCE);
+
+    $this->typeMapper->mapTypes(
+        type: $type,
+        serializerContext: $this->serializerContext
+    );
+})->throws(
+    MetadataExtractionException::class,
+    'Unsupported built-in type: resource'
+);
+
+test('map object type for interface with overwrite', function () {
+    $type = new ObjectType(\DateTimeInterface::class);
+    $dataTypes = $this->typeMapper->mapTypes(type: $type, serializerContext: $this->serializerContext);
+
+    expect($dataTypes)->toHaveCount(1)
+        ->and($dataTypes[0]->type)->toBe(BuiltInType::OBJECT)
+        ->and($dataTypes[0]->className)->toBe(\DateTime::class);
+});
+
+test('map types throws exception for unknown type class', function () {
+    $unknownType = Mockery::mock(Type::class);
+    $expectedMessage = 'Unsupported type: ' . get_class($unknownType);
+
+    expect(fn () => $this->typeMapper->mapTypes(
+        type: $unknownType,
+        serializerContext: $this->serializerContext
+    ))->toThrow(MetadataExtractionException::class, $expectedMessage);
+});
+
+test('map object type for generic object', function () {
+    $type = new SymfonyBuiltinType(TypeIdentifier::OBJECT);
+    $dataTypes = $this->typeMapper->mapTypes(type: $type, serializerContext: $this->serializerContext);
+
+    expect($dataTypes)->toHaveCount(1)
+        ->and($dataTypes[0]->type)->toBe(BuiltInType::OBJECT)
+        ->and($dataTypes[0]->className)->toBeNull();
+});

@@ -3,6 +3,7 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
+use Vuryss\Serializer\Exception\MetadataExtractionException;
 use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\Complex2\Airbag;
 use Vuryss\Serializer\Tests\Datasets\Complex2\Car;
@@ -219,8 +220,8 @@ test(
     }
 )
 ->throws(
-    DeserializationImpossibleException::class,
-    'Class "Vuryss\Serializer\Tests\Datasets\InvalidClassName" does not exist'
+    MetadataExtractionException::class,
+    'Class "Vuryss\Serializer\Tests\Datasets\InvalidClassName" does not exist.'
 );
 
 
@@ -232,7 +233,7 @@ test(
     }
 )
 ->throws(
-    DeserializationImpossibleException::class,
+    MetadataExtractionException::class,
     'Class "Vuryss\Serializer\Tests\Datasets\NonBackedEnum" is not a backed enum. Cannot denormalize into enum that has no backing type'
 );
 

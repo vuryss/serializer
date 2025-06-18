@@ -74,12 +74,12 @@ class MetadataExtractor implements MetadataExtractorInterface
         string $propertyName,
     ): PropertyMetadata {
         $serializerContext = $this->getSerializerContext($reflectionProperty);
-        $resolvedTypes = self::getPropertyInfoInstance()->getTypes(
+        $resolvedType = self::getPropertyInfoInstance()->getType(
             class: $reflectionProperty->getDeclaringClass()->getName(),
             property: $propertyName,
         );
 
-        if (null === $resolvedTypes) {
+        if (null === $resolvedType) {
             $reflectionType = $reflectionProperty->getType();
 
             if ($reflectionType instanceof \ReflectionNamedType && 'mixed' === $reflectionType->getName()) {
@@ -98,8 +98,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             }
         } else {
             $types = $this->typeMapper->mapTypes(
-                propertyInfoTypes: $resolvedTypes,
-                reflectionProperty: $reflectionProperty,
+                type: $resolvedType,
                 serializerContext: $serializerContext,
             );
         }

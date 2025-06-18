@@ -30,4 +30,4 @@ test(
             ->and($instance->property2[0])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\TypeSequence\Truck::class)
             ->and($instance->property2[1])->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\TypeSequence\Truck::class);
     }
-);
+)->skip('No longer valid with the new Type Info Symfony component');

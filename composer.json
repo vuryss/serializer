@@ -15,7 +15,7 @@
         "pestphp/pest-plugin-faker": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.75",
         "mockery/mockery": "^1.6.12",
-        "symfony/serializer": "^7.2.5",
+        "symfony/serializer": "^7.3.0",
         "phpstan/phpstan": "^2.1.11"
     },
     "autoload": {
@@ -26,7 +26,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "^7.2"
+            "require": "^7.3"
         }
     },
     "autoload-dev": {

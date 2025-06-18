@@ -80,22 +80,11 @@ class MetadataExtractor implements MetadataExtractorInterface
         );
 
         if (null === $resolvedType) {
-            $reflectionType = $reflectionProperty->getType();
-
-            if ($reflectionType instanceof \ReflectionNamedType && 'mixed' === $reflectionType->getName()) {
-                $types = [
-                    new DataType(
-                        BuiltInType::MIXED,
-                        context: $serializerContext->context,
-                    ),
-                ];
-            } else {
-                throw new MetadataExtractionException(sprintf(
-                    'Unable to resolve type for property "%s" of class "%s".',
-                    $propertyName,
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                ));
-            }
+            throw new MetadataExtractionException(sprintf(
+                'Unable to resolve type for property "%s" of class "%s".',
+                $propertyName,
+                $reflectionProperty->getDeclaringClass()->getName(),
+            ));
         } else {
             $types = $this->typeMapper->mapTypes(
                 type: $resolvedType,

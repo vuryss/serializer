@@ -14,6 +14,8 @@ Symfony serializer was very flexible, but also very slow. This library tries to 
 
 Supports modern PHP projects with fully typed properties. Older codebases with no types would not work.
 
+Benchmarks comparing this library with Symfony Serializer and Serde can be found here: [Here](https://github.com/vuryss/serializer-benchmark)
+
 - [Fast serialization library](#fast-serialization-library)
   * [Installation](#installation)
   * [Features](#features)
@@ -25,6 +27,7 @@ Supports modern PHP projects with fully typed properties. Older codebases with n
     + [Deserialization groups](#deserialization-groups)
     + [Custom date format](#custom-date-format)
     + [Enforce date format](#enforce-date-format)
+    + [Convert date to timezone](#convert-date-to-timezone)
     + [Ignore property](#ignore-property)
     + [Handling of NULL values](#handling-of-null-values)
     + [Support for json serializable objects](#support-for-json-serializable-objects)
@@ -191,6 +194,32 @@ $serializer = new Serializer(
     context: [
         Context::DATETIME_FORMAT => 'Y-m-d',
         Context::DATETIME_FORMAT_STRICT => true
+    ]
+);
+```
+
+### Convert date to timezone
+
+After denormalization, the `DateTime` object can be converted to a specific timezone.
+
+Per property:
+```php
+use Vuryss\Serializer\Context;
+
+class SomeClass
+{
+    #[SerializerContext(context: [Context::DATETIME_TARGET_TIMEZONE => 'UTC'])]
+    public DateTime $someDate;
+}
+```
+
+Or globally:
+```php
+use Vuryss\Serializer\Context;
+
+$serializer = new Serializer(
+    context: [
+        Context::DATETIME_TARGET_TIMEZONE => 'UTC',
     ]
 );
 ```

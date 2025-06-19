@@ -1,6 +1,6 @@
 # Fast serialization library
 
-[![Tests](https://github.com/vuryss/serializer/workflows/Tests/badge.svg)](https://github.com/vuryss/serializer/actions?query=workflow:"Tests")
+[![Tests](https://github.com/vuryss/serializer/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/vuryss/serializer/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/vuryss/serializer/graph/badge.svg?token=kK0ZHh3raA)](https://codecov.io/gh/vuryss/serializer)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/760e3d4f985248fd8bb47b947873b847)](https://app.codacy.com/gh/vuryss/serializer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/vuryss/serializer/badge)](https://www.codefactor.io/repository/github/vuryss/serializer)
@@ -70,7 +70,7 @@ $person = $serializer->deserialize($json, Person::class);
 Supports PSR-6 CacheItemPoolInterface: <https://www.php-fig.org/psr/psr-6/#cacheitempoolinterface>
 
 No need to chain in-memory cache with external cache, the library will do it for you.
-Cache will be called once per used class (used in serialization or deserialization), then will be cached in memory until the script ends. 
+Cache will be called once per used class (used in serialization or deserialization), then will be cached in memory until the script ends.
 
 ```php
 $pst6cache = new CacheItemPool(); // Some PSR-6 cache implementation
@@ -104,7 +104,7 @@ class SomeClass
     public string $property2;
 }
 
-    
+
 $serializer = new Serializer();
 $object = new SomeClass();
 $object->property1 = 'value1';
@@ -124,7 +124,7 @@ class SomeClass
     public string $property2;
 }
 
-    
+
 $serializer = new Serializer();
 $data = '{"property1":"value1","property2":"value2"}';
 $object = $serializer->deserialize($data, SomeClass::class, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']]);
@@ -135,7 +135,7 @@ isset($object->property2); // false
 ### Custom date format
 
 On serialization the format will always be respected. On deserialization the format will be used to parse the date.
-However on deserialization by default if the date is not in the provided format, it will be parsed as is, given that 
+However on deserialization by default if the date is not in the provided format, it will be parsed as is, given that
 DateTime constructor can parse it.
 
 Per property:
@@ -158,7 +158,7 @@ $serializer = new Serializer(
 
 ### Enforce date format
 
-If strict data time format is required during deserialization then, you can use the 
+If strict data time format is required during deserialization then, you can use the
 `SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT` attribute:
 
 Per property:
@@ -185,7 +185,7 @@ $serializer = new Serializer(
 
 ### Ignore property
 
-Those properties will not be included in the serialized values during serialization and will not be populated with 
+Those properties will not be included in the serialized values during serialization and will not be populated with
 provided values during deserialization.
 
 ```php

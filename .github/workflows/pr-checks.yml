@@ -3,6 +3,8 @@ name: "Pull Request checks"
 on:
     pull_request:
 
+permissions: read-all
+
 jobs:
     validate-pr-title:
         name: Validate PR title

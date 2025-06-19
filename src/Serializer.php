@@ -137,7 +137,7 @@ class Serializer implements SerializerInterface
 
     public function denormalize(mixed $data, ?string $type, array $context = []): mixed
     {
-        $dataType = null === $type ? DataType::fromData($data) : DataType::fromUserType($type);
+        $dataType = null === $type || '' === $type ? DataType::fromData($data) : DataType::fromUserType($type);
 
         return $this->denormalizer->denormalize($data, $dataType, new Path(), $context);
     }

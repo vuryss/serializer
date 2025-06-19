@@ -95,6 +95,8 @@ class SomeClass
 ### Serialization groups
 
 ```php
+use Vuryss\Serializer\Context;
+
 class SomeClass
 {
     #[SerializerContext(groups: ['group1'])]
@@ -109,12 +111,14 @@ $serializer = new Serializer();
 $object = new SomeClass();
 $object->property1 = 'value1';
 $object->property2 = 'value2';
-$serializer->serialize($object, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']]); // {"property1":"value1"}
+$serializer->serialize($object, context: [Context::GROUPS => ['group1']]); // {"property1":"value1"}
 ```
 
 ### Deserialization groups
 
 ```php
+use Vuryss\Serializer\Context;
+
 class SomeClass
 {
     #[SerializerContext(groups: ['group1'])]
@@ -127,7 +131,7 @@ class SomeClass
 
 $serializer = new Serializer();
 $data = '{"property1":"value1","property2":"value2"}';
-$object = $serializer->deserialize($data, SomeClass::class, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']]);
+$object = $serializer->deserialize($data, SomeClass::class, context: [Context::GROUPS => ['group1']]);
 isset($object->property1); // true
 isset($object->property2); // false
 ```
@@ -140,18 +144,22 @@ DateTime constructor can parse it.
 
 Per property:
 ```php
+use Vuryss\Serializer\Context;
+
 class SomeClass
 {
-    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d'])]
+    #[SerializerContext(context: [Context::DATETIME_FORMAT => 'Y-m-d'])]
     public DateTime $someDate;
 }
 ```
 
 Or globally:
 ```php
+use Vuryss\Serializer\Context;
+
 $serializer = new Serializer(
-    attributes: [
-        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => \DateTimeInterface::RFC2822,
+    context: [
+        Context::DATETIME_FORMAT => \DateTimeInterface::RFC2822,
     ]
 );
 ```
@@ -159,15 +167,17 @@ $serializer = new Serializer(
 ### Enforce date format
 
 If strict data time format is required during deserialization then, you can use the
-`SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT` attribute:
+`Context::DATETIME_FORMAT_STRICT` context option:
 
 Per property:
 ```php
+use Vuryss\Serializer\Context;
+
 class SomeClass
 {
-    #[SerializerContext(attributes: [
-        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d',
-        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT => true
+    #[SerializerContext(context: [
+        Context::DATETIME_FORMAT => 'Y-m-d',
+        Context::DATETIME_FORMAT_STRICT => true
     ])]
     public DateTime $someDate;
 }
@@ -175,10 +185,12 @@ class SomeClass
 
 Or globally:
 ```php
+use Vuryss\Serializer\Context;
+
 $serializer = new Serializer(
-    attributes: [
-        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT => 'Y-m-d',
-        SerializerInterface::ATTRIBUTE_DATETIME_FORMAT_STRICT => true
+    context: [
+        Context::DATETIME_FORMAT => 'Y-m-d',
+        Context::DATETIME_FORMAT_STRICT => true
     ]
 );
 ```
@@ -200,22 +212,26 @@ class SomeClass
 
 - By default, NULL values are included in the serialized value.
 
-To disable this you can use the `SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES` attribute:
+To disable this you can use the `Context::SKIP_NULL_VALUES` context option:
 
 Per property:
 ```php
+use Vuryss\Serializer\Context;
+
 class SomeClass
 {
-    #[SerializerContext(attributes: [SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true])]
+    #[SerializerContext(context: [Context::SKIP_NULL_VALUES => true])]
     public ?string $someProperty;
 }
 ```
 
 Or globally:
 ```php
+use Vuryss\Serializer\Context;
+
 $serializer = new Serializer(
-    attributes: [
-        SerializerInterface::ATTRIBUTE_SKIP_NULL_VALUES => true,
+    context: [
+        Context::SKIP_NULL_VALUES => true,
     ]
 );
 ```
@@ -230,6 +246,7 @@ This library aims to be a drop-in replacement for Symfony Serializer. It support
 - Groups
 - SerializedName
 - Ignore
+- DiscriminatorMap
 
 ## Build, run & test locally
 

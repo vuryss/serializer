@@ -9,16 +9,16 @@ use Vuryss\Serializer\Metadata\DataType;
 interface DenormalizerInterface
 {
     /**
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     public function denormalize(
         mixed $data,
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): mixed;
 
     public function supportsDenormalization(mixed $data, DataType $type): bool;

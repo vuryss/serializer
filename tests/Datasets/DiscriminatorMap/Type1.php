@@ -9,6 +9,5 @@ readonly class Type1 implements DiscInterface, Disc2Interface
     public function __construct(
         public string $key,
         public string $property,
-    ) {
-    }
+    ) {}
 }

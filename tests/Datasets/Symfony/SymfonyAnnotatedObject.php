@@ -22,21 +22,17 @@ class SymfonyAnnotatedObject
         #[Groups(['group1'])]
         #[SerializedName('some_field')]
         public string $someField = 'foo',
-
         #[Groups(['group2'])]
         #[SerializedName('another_field')]
         public string $anotherField = 'bar',
-
         #[Groups(['group1'])]
         #[SerializedName('yet_another_field')]
         #[SerializerContext(name: 'this_has_priority')]
         public string $yetAnotherField = 'really?',
-
         #[Groups(['group2'])]
         #[SerializedName('and_another_field')]
         #[SerializerContext(groups: ['group1'])]
         public string $andAnotherField = 'blah',
-
         #[Ignore]
         public string $ignored = 'ignored',
     ) {}

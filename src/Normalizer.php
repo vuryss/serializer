@@ -10,20 +10,20 @@ final readonly class Normalizer
 {
     /**
      * @param array<NormalizerInterface> $normalizers
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context Options normalizers/encoders have access to
      */
     public function __construct(
         private array $normalizers,
         private MetadataExtractorInterface $metadataExtractor,
-        private array $attributes = [],
+        private array $context = [],
     ) {}
 
     /**
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context Options normalizers/encoders have access to
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
-    public function normalize(mixed $data, array $attributes): mixed
+    public function normalize(mixed $data, array $context): mixed
     {
         if ($data instanceof \JsonSerializable) {
             return $data->jsonSerialize();
@@ -31,9 +31,9 @@ final readonly class Normalizer
 
         $normalizer = $this->resolveNormalizer($data);
 
-        $attributes = $attributes + $this->attributes;
+        $context = $context + $this->context;
 
-        return $normalizer->normalize($data, $this, $attributes);
+        return $normalizer->normalize($data, $this, $context);
     }
 
     public function getMetadataExtractor(): MetadataExtractorInterface

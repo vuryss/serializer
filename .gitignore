@@ -1,3 +1,7 @@
 vendor
 .php-cs-fixer.cache
 coverage
+.clinerules
+.devcontainer
+.vscode
+.idea

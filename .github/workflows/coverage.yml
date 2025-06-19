@@ -1,27 +1,27 @@
 name: Code coverage
-on: [push, pull_request]
+on: [ push, pull_request ]
 permissions: read-all
 jobs:
-  run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - name: Set up php 8.4
-        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # 2.31.1
-        with:
-          php-version: '8.4'
-      - name: Install dependencies
-        run: composer self-update && composer install && composer dump-autoload
-      - name: Run tests and collect coverage
-        run: vendor/bin/pest --coverage-clover clover.xml
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # v5.1.2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: clover.xml
-      - name: Upload coverage to codacy
-        uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-report: clover.xml
+    run:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+            -   name: Set up php 8.4
+                uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # 2.31.1
+                with:
+                    php-version: '8.4'
+            -   name: Install dependencies
+                run: composer self-update && composer install && composer dump-autoload
+            -   name: Run tests and collect coverage
+                run: vendor/bin/pest --coverage-clover clover.xml
+            -   name: Upload coverage to Codecov
+                uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # v5.1.2
+                with:
+                    token: ${{ secrets.CODECOV_TOKEN }}
+                    files: clover.xml
+            -   name: Upload coverage to codacy
+                uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0
+                with:
+                    project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+                    coverage-report: clover.xml

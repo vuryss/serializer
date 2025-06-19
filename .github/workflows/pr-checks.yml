@@ -1,0 +1,54 @@
+name: "Pull Request checks"
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - master
+    pull_request:
+        types:
+            - opened
+            - edited
+            - reopened
+            - synchronize
+
+jobs:
+    validate-pr-title:
+        name: Validate PR title
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: amannn/action-semantic-pull-request@0723387faaf9b38adef4775cd42cfd5155ed6017 # v5
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    code-analysis:
+        name: Code analysis
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+            -   name: Set up php 8.4
+                uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # 2.31.1
+                with:
+                    php-version: '8.4'
+            -   name: Composer check platform requirements
+                run: composer check-platform-reqs
+            -   name: Validate composer.json
+                run: composer validate --strict
+            -   name: Install dependencies
+                run: composer install
+            -   name: Check coding standards
+                run: vendor/bin/php-cs-fixer fix --diff --dry-run --using-cache=no
+                env:
+                    PHP_CS_FIXER_IGNORE_ENV: 1
+            -   name: Static code analysis & Architecture validation
+                run: vendor/bin/phpstan analyse --memory-limit=1G -v
+            -   name: Security check
+                run: composer audit
+            -   name: Run tests
+                run: vendor/bin/pest
+            -   name: Check workflow files
+                run: |
+                    bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+                    ./actionlint -color
+                shell: bash

@@ -13,7 +13,7 @@ class BasicTypesNormalizer implements NormalizerInterface
      * @inheritDoc
      * @phpstan-param scalar|null $data
      */
-    public function normalize(mixed $data, Normalizer $normalizer, array $attributes): mixed
+    public function normalize(mixed $data, Normalizer $normalizer, array $context): mixed
     {
         return $data;
     }

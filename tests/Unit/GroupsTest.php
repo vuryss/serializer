@@ -10,6 +10,7 @@ use Vuryss\Serializer\Serializer;
 use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\Group\TopLevelClass;
 use Vuryss\Serializer\Tests\Datasets\GroupsDatasets;
+use Vuryss\Serializer\Context;
 
 test('Serializing only values under specified groups', function ($groups, $expected) {
     $subLevel2 = new \Vuryss\Serializer\Tests\Datasets\Group\SubLevel2();
@@ -28,7 +29,7 @@ test('Serializing only values under specified groups', function ($groups, $expec
     $subLevel1->propGroup1And2 = 'subLevel1PropGroup1And2';
     $subLevel1->propNoGroup = 'subLevel1PropNoGroup';
 
-    $data = new \Vuryss\Serializer\Tests\Datasets\Group\TopLevelClass();
+    $data = new TopLevelClass();
     $data->nestedPropGroup1 = clone $subLevel1;
     $data->nestedPropGroup2 = clone $subLevel1;
     $data->nestedPropGroup1And2 = clone $subLevel1;
@@ -39,7 +40,7 @@ test('Serializing only values under specified groups', function ($groups, $expec
     $data->propNoGroup = 'topLevelPropNoGroup';
 
     $serializer = new Serializer();
-    expect($serializer->serialize($data, attributes: [SerializerInterface::ATTRIBUTE_GROUPS => $groups]))
+    expect($serializer->serialize($data, SerializerInterface::FORMAT_JSON, context: [Context::GROUPS => $groups]))
         ->toBe(json_encode($expected));
 })->with([
     'no groups' => [
@@ -377,7 +378,8 @@ test('Deserializing values from all groups', function () {
     $object = $serializer->deserialize(
         json_encode($fullData),
         TopLevelClass::class,
-        [SerializerInterface::ATTRIBUTE_GROUPS => null],
+        SerializerInterface::FORMAT_JSON,
+        [Context::GROUPS => null],
     );
 
     expect(isset($object->nestedPropGroup1))->toBeTrue()
@@ -512,7 +514,8 @@ test('Deserializing values only in group1', function () {
     $object = $serializer->deserialize(
         json_encode($fullData),
         TopLevelClass::class,
-        [SerializerInterface::ATTRIBUTE_GROUPS => ['group1']],
+        SerializerInterface::FORMAT_JSON,
+        [Context::GROUPS => ['group1']],
     );
 
     expect(isset($object->nestedPropGroup1))->toBeTrue()
@@ -648,7 +651,8 @@ test('Deserializing values only group2', function () {
     $object = $serializer->deserialize(
         json_encode($fullData),
         TopLevelClass::class,
-        [SerializerInterface::ATTRIBUTE_GROUPS => ['group2']],
+        SerializerInterface::FORMAT_JSON,
+        [Context::GROUPS => ['group2']],
     );
 
     expect(isset($object->nestedPropGroup1))->toBeFalse()
@@ -784,7 +788,8 @@ test('Deserializing values from group 1 and group 2', function () {
     $object = $serializer->deserialize(
         json_encode($fullData),
         TopLevelClass::class,
-        [SerializerInterface::ATTRIBUTE_GROUPS => ['group1', 'group2']],
+        SerializerInterface::FORMAT_JSON,
+        [Context::GROUPS => ['group1', 'group2']],
     );
 
     expect(isset($object->nestedPropGroup1))->toBeTrue()
@@ -920,7 +925,8 @@ test('Deserializing values from group 1 and default group combination', function
     $object = $serializer->deserialize(
         json_encode($fullData),
         TopLevelClass::class,
-        [SerializerInterface::ATTRIBUTE_GROUPS => ['group1', 'default']],
+        SerializerInterface::FORMAT_JSON,
+        [Context::GROUPS => ['group1', 'default']],
     );
 
     expect(isset($object->nestedPropGroup1))->toBeTrue()

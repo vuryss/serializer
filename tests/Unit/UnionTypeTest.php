@@ -1,5 +1,6 @@
 <?php
 
+use Vuryss\Serializer\SerializerInterface;
 use Vuryss\Serializer\Tests\Datasets\UnionTypes\TestClass;
 
 test('Can deserialize into union types - case 1', function () {
@@ -12,7 +13,7 @@ test('Can deserialize into union types - case 1', function () {
     ];
 
     $data = ['param1' => $data1, 'param2' => $data2];
-    $object1 = $serializer->deserialize(json_encode($data), TestClass::class);
+    $object1 = $serializer->deserialize(json_encode($data), TestClass::class, SerializerInterface::FORMAT_JSON);
 
     expect($object1->param1)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\UnionTypes\UnionType1::class)
         ->and($object1->param1->paramA)->toBe($data1['paramA'])
@@ -31,7 +32,7 @@ test('Can deserialize into union types - case 2', function () {
     ];
 
     $data = ['param1' => $data2, 'param2' => $data1];
-    $object1 = $serializer->deserialize(json_encode($data), TestClass::class);
+    $object1 = $serializer->deserialize(json_encode($data), TestClass::class, SerializerInterface::FORMAT_JSON);
 
     expect($object1->param1)->toBeInstanceOf(\Vuryss\Serializer\Tests\Datasets\UnionTypes\UnionType2::class)
         ->and($object1->param1->paramB)->toBe($data2['paramB'])

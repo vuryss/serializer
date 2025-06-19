@@ -12,8 +12,8 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Vuryss\Serializer\Attribute\SerializerContext;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Exception\MetadataExtractionException;
+use Vuryss\Serializer\ExceptionInterface;
 use Vuryss\Serializer\MetadataExtractorInterface;
-use Vuryss\Serializer\SerializerException;
 
 class MetadataExtractor implements MetadataExtractorInterface
 {
@@ -40,13 +40,12 @@ class MetadataExtractor implements MetadataExtractorInterface
 
     public function __construct(
         private readonly TypeMapper $typeMapper = new TypeMapper(),
-    ) {
-    }
+    ) {}
 
     /**
      * @param class-string $class
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     public function extractClassMetadata(string $class): ClassMetadata
     {
@@ -68,39 +67,27 @@ class MetadataExtractor implements MetadataExtractorInterface
     }
 
     /**
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     private function extractPropertyMetadata(
         \ReflectionProperty $reflectionProperty,
         string $propertyName,
     ): PropertyMetadata {
         $serializerContext = $this->getSerializerContext($reflectionProperty);
-        $resolvedTypes = self::getPropertyInfoInstance()->getTypes(
+        $resolvedType = self::getPropertyInfoInstance()->getType(
             class: $reflectionProperty->getDeclaringClass()->getName(),
             property: $propertyName,
         );
 
-        if (null === $resolvedTypes) {
-            $reflectionType = $reflectionProperty->getType();
-
-            if ($reflectionType instanceof \ReflectionNamedType && 'mixed' === $reflectionType->getName()) {
-                $types = [
-                    new DataType(
-                        BuiltInType::MIXED,
-                        attributes: $serializerContext->attributes,
-                    ),
-                ];
-            } else {
-                throw new MetadataExtractionException(sprintf(
-                    'Unable to resolve type for property "%s" of class "%s".',
-                    $propertyName,
-                    $reflectionProperty->getDeclaringClass()->getName(),
-                ));
-            }
+        if (null === $resolvedType) {
+            throw new MetadataExtractionException(sprintf(
+                'Unable to resolve type for property "%s" of class "%s".',
+                $propertyName,
+                $reflectionProperty->getDeclaringClass()->getName(),
+            ));
         } else {
             $types = $this->typeMapper->mapTypes(
-                propertyInfoTypes: $resolvedTypes,
-                reflectionProperty: $reflectionProperty,
+                type: $resolvedType,
                 serializerContext: $serializerContext,
             );
         }
@@ -111,7 +98,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             serializedName: $serializerContext->name ?? $propertyName,
             types: $types,
             groups: [] === $serializerContext->groups ? ['default'] : $serializerContext->groups,
-            attributes: $serializerContext->attributes,
+            context: $serializerContext->context,
             readAccess: $this->getPropertyReadAccess($reflectionProperty),
             writeAccess: $this->getPropertyWriteAccess($reflectionProperty),
             ignore: $serializerContext->ignore,
@@ -141,7 +128,7 @@ class MetadataExtractor implements MetadataExtractorInterface
             $constructorParameters = $constructor->getParameters();
             $isPropertyInConstructor = array_any(
                 $constructorParameters,
-                static fn (\ReflectionParameter $parameter): bool => $parameter->getName() === $reflectionProperty->getName(),
+                static fn(\ReflectionParameter $parameter): bool => $parameter->getName() === $reflectionProperty->getName(),
             );
 
             if ($isPropertyInConstructor) {
@@ -251,6 +238,10 @@ class MetadataExtractor implements MetadataExtractorInterface
 
         if ($isSymfonyIgnored) {
             $serializerContext->ignore = true;
+        }
+
+        if (null !== $serializerContext->datetimeTargetTimezone) {
+            $serializerContext->context[\Vuryss\Serializer\Context::DATETIME_TARGET_TIMEZONE] = $serializerContext->datetimeTargetTimezone;
         }
 
         return $serializerContext;

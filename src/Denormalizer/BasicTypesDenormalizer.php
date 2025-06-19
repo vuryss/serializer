@@ -13,12 +13,20 @@ use Vuryss\Serializer\Path;
 
 class BasicTypesDenormalizer implements DenormalizerInterface
 {
+    private const array SUPPORTED_TYPES = [
+        BuiltInType::STRING->value => true,
+        BuiltInType::INTEGER->value => true,
+        BuiltInType::FLOAT->value => true,
+        BuiltInType::BOOLEAN->value => true,
+        BuiltInType::NULL->value => true,
+    ];
+
     public function denormalize(
         mixed $data,
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): mixed {
         return match ($type->type) {
             BuiltInType::STRING => is_string($data) ? $data : $this->error($data, 'string', $path),
@@ -32,10 +40,7 @@ class BasicTypesDenormalizer implements DenormalizerInterface
 
     public function supportsDenormalization(mixed $data, DataType $type): bool
     {
-        return match ($type->type) {
-            BuiltInType::STRING, BuiltInType::INTEGER, BuiltInType::FLOAT, BuiltInType::BOOLEAN, BuiltInType::NULL => true,
-            default => false,
-        };
+        return self::SUPPORTED_TYPES[$type->type->value] ?? false;
     }
 
     /**

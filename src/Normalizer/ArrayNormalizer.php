@@ -14,10 +14,10 @@ class ArrayNormalizer implements NormalizerInterface
      * @phpstan-param array<mixed> $data
      * @phpstan-return array<mixed>
      */
-    public function normalize(mixed $data, Normalizer $normalizer, array $attributes): array
+    public function normalize(mixed $data, Normalizer $normalizer, array $context): array
     {
         return array_map(
-            static fn(mixed $item): mixed => $normalizer->normalize($item, $attributes),
+            static fn(mixed $item): mixed => $normalizer->normalize($item, $context),
             $data,
         );
     }

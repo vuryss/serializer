@@ -7,10 +7,10 @@ namespace Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\Denormalizer;
 use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
+use Vuryss\Serializer\ExceptionInterface;
 use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
 use Vuryss\Serializer\Path;
-use Vuryss\Serializer\SerializerException;
 
 class ArrayDenormalizer implements DenormalizerInterface
 {
@@ -23,7 +23,7 @@ class ArrayDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): array {
         assert(is_array($data));
 
@@ -38,7 +38,7 @@ class ArrayDenormalizer implements DenormalizerInterface
                     $type->listType,
                     $denormalizer,
                     $path,
-                    $attributes,
+                    $context,
                 );
             } finally {
                 $path->pop();
@@ -55,16 +55,16 @@ class ArrayDenormalizer implements DenormalizerInterface
 
     /**
      * @param array<DataType> $types
-     * @param array<string, scalar|string[]> $attributes
+     * @param array<string, mixed> $context
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     private function tryToDenormalizeTypesInSequence(
         mixed $data,
         array $types,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes,
+        array $context,
     ): mixed {
         if ([] === $types) {
             $types = [DataType::fromData($data)];
@@ -74,8 +74,8 @@ class ArrayDenormalizer implements DenormalizerInterface
 
         foreach ($types as $type) {
             try {
-                return $denormalizer->denormalize($data, $type, $path, $attributes);
-            } catch (SerializerException $e) {
+                return $denormalizer->denormalize($data, $type, $path, $context);
+            } catch (ExceptionInterface $e) {
                 $lastException = $e;
                 continue;
             }

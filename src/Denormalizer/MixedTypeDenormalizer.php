@@ -17,7 +17,7 @@ class MixedTypeDenormalizer implements DenormalizerInterface
         DataType $type,
         Denormalizer $denormalizer,
         Path $path,
-        array $attributes = [],
+        array $context = [],
     ): mixed {
         return $data;
     }

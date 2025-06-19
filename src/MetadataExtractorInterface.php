@@ -8,7 +8,7 @@ interface MetadataExtractorInterface
 {
     /**
      * @param class-string $class
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
     public function extractClassMetadata(string $class): Metadata\ClassMetadata;
 }

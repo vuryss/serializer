@@ -4,37 +4,43 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer;
 
+/**
+ * Fully compatible with Symfony SerializerInterface to allow interoperability between the two.
+ *
+ * @phpstan-import-type ContextOptions from Context
+ */
 interface SerializerInterface
 {
-    public const string ATTRIBUTE_DATETIME_FORMAT = 'datetime-format';
-    public const string ATTRIBUTE_DATETIME_FORMAT_STRICT = 'datetime-format-strict';
-    public const string ATTRIBUTE_SKIP_NULL_VALUES = 'skip-null-values';
-    public const string ATTRIBUTE_GROUPS = 'groups';
+    public const string FORMAT_JSON = 'json';
 
     /**
-     * Serializes data into a string.
+     * Serializes data in the appropriate format.
      *
-     * @param array<string, scalar|string[]> $attributes
+     * @param mixed          $data
+     * @param 'json'         $format
+     * @param ContextOptions $context Options normalizers have access to
      *
-     * @throws SerializerException
+     * @return string
+     * @throws ExceptionInterface
      */
-    public function serialize(mixed $data, array $attributes = []): string;
+    public function serialize(mixed $data, string $format, array $context = []): string;
 
     /**
      * Deserializes data into the given type.
      *
      * @template TObject of object
-     * @template TType of null|class-string<TObject>|string
+     * @template TType of string|class-string<TObject>
      *
-     * @param array<string, scalar|string[]> $attributes
-     *
-     * @psalm-param TType $type
+     * @param mixed          $data
+     * @param TType          $type
+     * @param 'json'         $format
+     * @param ContextOptions $context Options normalizers have access to
      *
      * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
      *
      * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
      *
-     * @throws SerializerException
+     * @throws ExceptionInterface
      */
-    public function deserialize(string $data, ?string $type = null, array $attributes = []): mixed;
+    public function deserialize(mixed $data, string $type, string $format, array $context = []): mixed;
 }

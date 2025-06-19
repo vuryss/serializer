@@ -12,14 +12,14 @@ class PropertyMetadata
     /**
      * @param DataType[] $types
      * @param string[] $groups
-     * @param array<string, string|int|float|bool> $attributes
+     * @param array<string, mixed> $context
      */
     public function __construct(
         public string $name,
         public string $serializedName,
         public array $types,
         public array $groups,
-        public array $attributes,
+        public array $context,
         public ReadAccess $readAccess,
         public WriteAccess $writeAccess,
         public bool $ignore,

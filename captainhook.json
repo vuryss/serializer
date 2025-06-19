@@ -1,0 +1,81 @@
+{
+    "config": {
+        "run": {
+            "mode": "docker",
+            "exec": "docker compose exec -T library"
+        }
+    },
+    "commit-msg": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\Ramsey\\CaptainHook\\ValidateConventionalCommit"
+            }
+        ]
+    },
+    "pre-push": {
+        "enabled": false,
+        "actions": []
+    },
+    "pre-commit": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\CaptainHook\\App\\Hook\\Composer\\Action\\CheckLockFile"
+            },
+            {
+                "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting"
+            },
+            {
+                "action": "\\CaptainHook\\App\\Hook\\File\\Action\\MaxSize",
+                "options": {
+                    "maxSize": "5M"
+                }
+            },
+            {
+                "action": "composer audit"
+            },
+            {
+                "action": "./php-cs-fixer.sh"
+            },
+            {
+                "action": "vendor/bin/phpstan analyse --memory-limit 1G"
+            },
+            {
+                "action": "vendor/bin/pest"
+            }
+        ]
+    },
+    "prepare-commit-msg": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\Ramsey\\CaptainHook\\PrepareConventionalCommit"
+            }
+        ]
+    },
+    "post-commit": {
+        "enabled": false,
+        "actions": []
+    },
+    "post-merge": {
+        "enabled": false,
+        "actions": []
+    },
+    "post-checkout": {
+        "enabled": false,
+        "actions": []
+    },
+    "post-rewrite": {
+        "enabled": false,
+        "actions": []
+    },
+    "post-change": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "composer install"
+            }
+        ]
+    }
+}

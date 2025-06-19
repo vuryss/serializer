@@ -38,7 +38,7 @@ interface SerializerInterface
      *
      * @psalm-return (TType is class-string<TObject> ? TObject : (TType is class-string ? object : mixed))
      *
-     * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
+     * @phpstan-return ($type is class-string<TObject> ? TObject : ($type is class-string ? object : mixed))
      *
      * @throws ExceptionInterface
      */
@@ -64,7 +64,7 @@ interface SerializerInterface
      *
      * @psalm-return (TType is class-string<TObject> ? TObject : (TType is class-string ? object : mixed))
      *
-     * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
+     * @phpstan-return ($type is class-string<TObject> ? TObject : ($type is class-string ? object : mixed))
      *
      * @throws ExceptionInterface
      */

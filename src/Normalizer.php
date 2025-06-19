@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vuryss\Serializer;
 
 use Vuryss\Serializer\Exception\NormalizerNotFoundException;
+use Vuryss\Serializer\Normalizer\NormalizerInterface;
 
 final readonly class Normalizer
 {
@@ -21,11 +22,13 @@ final readonly class Normalizer
     /**
      * @param array<string, mixed> $context Options normalizers/encoders have access to
      *
+     * @phpstan-return array<mixed>|string|int|float|bool|null
      * @throws ExceptionInterface
      */
-    public function normalize(mixed $data, array $context): mixed
+    public function normalize(mixed $data, array $context): array|string|int|float|bool|null
     {
         if ($data instanceof \JsonSerializable) {
+            // @phpstan-ignore-next-line (We cannot fix PHP interface)
             return $data->jsonSerialize();
         }
 

@@ -7,7 +7,6 @@ namespace Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Exception\InvalidAttributeUsageException;
 use Vuryss\Serializer\Normalizer;
-use Vuryss\Serializer\NormalizerInterface;
 
 class DateTimeNormalizer implements NormalizerInterface
 {

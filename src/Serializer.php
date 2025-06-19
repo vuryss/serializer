@@ -7,6 +7,7 @@ namespace Vuryss\Serializer;
 use Vuryss\Serializer\Denormalizer\ArrayDenormalizer;
 use Vuryss\Serializer\Denormalizer\BasicTypesDenormalizer;
 use Vuryss\Serializer\Denormalizer\DateTimeDenormalizer;
+use Vuryss\Serializer\Denormalizer\DenormalizerInterface;
 use Vuryss\Serializer\Denormalizer\EnumDenormalizer;
 use Vuryss\Serializer\Denormalizer\GenericObjectDenormalizer;
 use Vuryss\Serializer\Denormalizer\InterfaceDenormalizer;
@@ -22,6 +23,7 @@ use Vuryss\Serializer\Normalizer\BasicTypesNormalizer;
 use Vuryss\Serializer\Normalizer\DateTimeNormalizer;
 use Vuryss\Serializer\Normalizer\EnumNormalizer;
 use Vuryss\Serializer\Normalizer\GenericObjectNormalizer;
+use Vuryss\Serializer\Normalizer\NormalizerInterface;
 use Vuryss\Serializer\Normalizer\ObjectNormalizer;
 
 class Serializer implements SerializerInterface
@@ -128,23 +130,11 @@ class Serializer implements SerializerInterface
         return $this->denormalize($decoded, $type, $context);
     }
 
-    /**
-     * @param array<string, mixed> $context Options normalizers/encoders have access to
-     *
-     * @throws ExceptionInterface
-     */
-    public function normalize(mixed $data, array $context): mixed
+    public function normalize(mixed $data, array $context): array|string|int|float|bool|null
     {
         return $this->normalizer->normalize($data, $context);
     }
 
-    /**
-     * Denormalized data into the given type.
-     *
-     * @param array<string, mixed> $context Options normalizers/encoders have access to
-     *
-     * @throws ExceptionInterface
-     */
     public function denormalize(mixed $data, ?string $type, array $context = []): mixed
     {
         $dataType = null === $type ? DataType::fromData($data) : DataType::fromUserType($type);

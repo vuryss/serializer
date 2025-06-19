@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Vuryss\Serializer;
 
+use Vuryss\Serializer\Denormalizer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DenormalizerNotFoundException;
 use Vuryss\Serializer\Metadata\DataType;
 

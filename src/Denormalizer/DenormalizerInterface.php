@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Vuryss\Serializer;
+namespace Vuryss\Serializer\Denormalizer;
 
+use Vuryss\Serializer\Denormalizer;
+use Vuryss\Serializer\ExceptionInterface;
 use Vuryss\Serializer\Metadata\DataType;
+use Vuryss\Serializer\Path;
 
 interface DenormalizerInterface
 {

@@ -7,7 +7,6 @@ namespace Vuryss\Serializer\Normalizer;
 use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Metadata\ReadAccess;
 use Vuryss\Serializer\Normalizer;
-use Vuryss\Serializer\NormalizerInterface;
 
 class ObjectNormalizer implements NormalizerInterface
 {

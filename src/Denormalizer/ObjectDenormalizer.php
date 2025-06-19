@@ -6,11 +6,10 @@ namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Context;
 use Vuryss\Serializer\Denormalizer;
-use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\DeserializationImpossibleException;
 use Vuryss\Serializer\ExceptionInterface;
-use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
+use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\WriteAccess;
 use Vuryss\Serializer\Path;
 

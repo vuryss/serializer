@@ -43,4 +43,21 @@ interface SerializerInterface
      * @throws ExceptionInterface
      */
     public function deserialize(mixed $data, string $type, string $format, array $context = []): mixed;
+
+    /**
+     * @param array<string, mixed> $context Options normalizers/encoders have access to
+     *
+     * @phpstan-return array<mixed>|string|int|float|bool|null
+     * @throws ExceptionInterface
+     */
+    public function normalize(mixed $data, array $context): array|string|int|float|bool|null;
+
+    /**
+     * Denormalized data into the given type.
+     *
+     * @param array<string, mixed> $context Options normalizers/encoders have access to
+     *
+     * @throws ExceptionInterface
+     */
+    public function denormalize(mixed $data, ?string $type, array $context = []): mixed;
 }

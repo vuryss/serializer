@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Denormalizer;
 
 use Vuryss\Serializer\Denormalizer;
-use Vuryss\Serializer\DenormalizerInterface;
 use Vuryss\Serializer\Exception\InvalidTypeException;
-use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Metadata\BuiltInType;
+use Vuryss\Serializer\Metadata\DataType;
 use Vuryss\Serializer\Path;
 
 class BasicTypesDenormalizer implements DenormalizerInterface

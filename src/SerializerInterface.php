@@ -29,14 +29,14 @@ interface SerializerInterface
      * Deserializes data into the given type.
      *
      * @template TObject of object
-     * @template TType of string|class-string<TObject>
+     * @template TType of string|class-string<TObject>|class-string
      *
      * @phpstan-param mixed          $data
      * @phpstan-param TType          $type
      * @phpstan-param 'json'         $format
      * @phpstan-param ContextOptions $context Options normalizers have access to
      *
-     * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
+     * @psalm-return (TType is class-string<TObject> ? TObject : (TType is class-string ? object : mixed))
      *
      * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
      *
@@ -56,13 +56,13 @@ interface SerializerInterface
      * Denormalized data into the given type.
      *
      * @template TObject of object
-     * @template TType of string|class-string<TObject>
+     * @template TType of string|class-string<TObject>|class-string
      *
      * @phpstan-param mixed $data
      * @phpstan-param TType $type
      * @phpstan-param ContextOptions $context Options normalizers have access to
      *
-     * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
+     * @psalm-return (TType is class-string<TObject> ? TObject : (TType is class-string ? object : mixed))
      *
      * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
      *

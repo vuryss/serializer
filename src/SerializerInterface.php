@@ -16,9 +16,9 @@ interface SerializerInterface
     /**
      * Serializes data in the appropriate format.
      *
-     * @param mixed          $data
-     * @param 'json'         $format
-     * @param ContextOptions $context Options normalizers have access to
+     * @phpstan-param mixed          $data
+     * @phpstan-param 'json'         $format
+     * @phpstan-param ContextOptions $context Options normalizers have access to
      *
      * @return string
      * @throws ExceptionInterface
@@ -31,10 +31,10 @@ interface SerializerInterface
      * @template TObject of object
      * @template TType of string|class-string<TObject>
      *
-     * @param mixed          $data
-     * @param TType          $type
-     * @param 'json'         $format
-     * @param ContextOptions $context Options normalizers have access to
+     * @phpstan-param mixed          $data
+     * @phpstan-param TType          $type
+     * @phpstan-param 'json'         $format
+     * @phpstan-param ContextOptions $context Options normalizers have access to
      *
      * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
      *
@@ -45,7 +45,7 @@ interface SerializerInterface
     public function deserialize(mixed $data, string $type, string $format, array $context = []): mixed;
 
     /**
-     * @param array<string, mixed> $context Options normalizers/encoders have access to
+     * @phpstan-param ContextOptions $context Options normalizers have access to
      *
      * @phpstan-return array<mixed>|string|int|float|bool|null
      * @throws ExceptionInterface
@@ -55,7 +55,16 @@ interface SerializerInterface
     /**
      * Denormalized data into the given type.
      *
-     * @param array<string, mixed> $context Options normalizers/encoders have access to
+     * @template TObject of object
+     * @template TType of string|class-string<TObject>
+     *
+     * @phpstan-param mixed $data
+     * @phpstan-param TType $type
+     * @phpstan-param ContextOptions $context Options normalizers have access to
+     *
+     * @psalm-return (TType is class-string<TObject> ? TObject : mixed)
+     *
+     * @phpstan-return ($type is class-string<TObject> ? TObject : mixed)
      *
      * @throws ExceptionInterface
      */

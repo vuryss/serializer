@@ -11,7 +11,7 @@
         "symfony/property-info": "^7.2.5"
     },
     "require-dev": {
-        "pestphp/pest": "^2.36.0",
+        "pestphp/pest": "^3.0.0",
         "pestphp/pest-plugin-faker": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.75",
         "mockery/mockery": "^1.6.12",

@@ -6,7 +6,6 @@ namespace Vuryss\Serializer\Tests\Unit\Metadata;
 
 use Mockery;
 use Symfony\Component\TypeInfo\Type;
-
 use Symfony\Component\TypeInfo\Type\BuiltinType as SymfonyBuiltinType;
 use Symfony\Component\TypeInfo\Type\NullableType;
 use Symfony\Component\TypeInfo\Type\ObjectType;
@@ -103,7 +102,7 @@ test('map types throws exception for unknown type class', function () {
     $unknownType = Mockery::mock(Type::class);
     $expectedMessage = 'Unsupported type: ' . get_class($unknownType);
 
-    expect(fn () => $this->typeMapper->mapTypes(
+    expect(fn() => $this->typeMapper->mapTypes(
         type: $unknownType,
         serializerContext: $this->serializerContext
     ))->toThrow(MetadataExtractionException::class, $expectedMessage);

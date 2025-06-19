@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Vuryss\Serializer\Tests\Datasets;
 
 use Vuryss\Serializer\Attribute\SerializerContext;
-use Vuryss\Serializer\Context;
 
 class DatesWithTimezoneProperty
 {

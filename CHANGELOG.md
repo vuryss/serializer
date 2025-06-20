@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://github.com/vuryss/serializer/compare/v2.0.0...v2.0.1) (2025-06-20)
+
+
+### Miscellaneous Chores
+
+* **deps:** pin php docker tag to a5ed9d1 ([#71](https://github.com/vuryss/serializer/issues/71)) ([586349a](https://github.com/vuryss/serializer/commit/586349a51b01fc5cd11d832d00ca28c6b9b115fa))
+* **deps:** update update github actions ([#72](https://github.com/vuryss/serializer/issues/72)) ([665a7b0](https://github.com/vuryss/serializer/commit/665a7b05a4f38d8c16b594a776440e5d3a5c2c72))
+
 ## [2.0.0](https://github.com/vuryss/serializer/compare/v1.11.0...v2.0.0) (2025-06-19)
 
 

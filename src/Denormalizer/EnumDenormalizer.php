@@ -19,7 +19,7 @@ class EnumDenormalizer implements DenormalizerInterface
         Path $path,
         array $context = [],
     ): \BackedEnum {
-        assert(is_string($data) && null !== $type->className);
+        assert((is_string($data) || is_int($data)) && null !== $type->className);
 
         if (!is_subclass_of($type->className, \BackedEnum::class)) {
             throw new DeserializationImpossibleException(sprintf(
@@ -29,7 +29,19 @@ class EnumDenormalizer implements DenormalizerInterface
         }
 
         $enumClass = $type->className;
-        $enum = $enumClass::tryFrom($data);
+
+        try {
+            $enum = $enumClass::tryFrom($data);
+        } catch (\TypeError) {
+            // This happens when the enum's backing type doesn't match the data type
+            // (e.g., passing string to int-backed enum or int to string-backed enum)
+            throw new DeserializationImpossibleException(sprintf(
+                'Cannot denormalize data "%s" at path "%s" into enum "%s"',
+                $data,
+                $path->toString(),
+                $type->className,
+            ));
+        }
 
         if (null === $enum) {
             throw new DeserializationImpossibleException(sprintf(
@@ -45,6 +57,6 @@ class EnumDenormalizer implements DenormalizerInterface
 
     public function supportsDenormalization(mixed $data, DataType $type): bool
     {
-        return is_string($data) && BuiltInType::ENUM === $type->type && null !== $type->className;
+        return (is_string($data) || is_int($data)) && BuiltInType::ENUM === $type->type && null !== $type->className;
     }
 }

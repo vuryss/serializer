@@ -24,7 +24,7 @@ class InterfaceDenormalizer implements DenormalizerInterface
         array $context = [],
     ): mixed {
         foreach ($type->typeMap as $field => $valueToClassName) {
-            if (!array_key_exists($field, $data)) {
+            if (!array_key_exists($field, $data) || !is_string($data[$field])) {
                 continue;
             }
 
@@ -32,7 +32,7 @@ class InterfaceDenormalizer implements DenormalizerInterface
                 throw new DeserializationImpossibleException(sprintf(
                     'Cannot denormalize data at path "%s" into interface because none of the mapped types match the value "%s"',
                     $path->toString(),
-                    is_string($data[$field]) ? $data[$field] : get_debug_type($data[$field]),
+                    $data[$field],
                 ));
             }
 

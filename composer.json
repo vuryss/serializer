@@ -11,8 +11,8 @@
         "symfony/property-info": "^7.2.5"
     },
     "require-dev": {
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-faker": "^3.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-faker": "^4.0",
         "friendsofphp/php-cs-fixer": "^3.75",
         "mockery/mockery": "^1.6.12",
         "symfony/serializer": "^7.3.0",
@@ -45,7 +45,7 @@
         }
     },
     "scripts": {
-        "test": "pest",
+        "test": "pest --no-coverage",
         "coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage-html coverage"
     }
 }

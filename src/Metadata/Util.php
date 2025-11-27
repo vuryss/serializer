@@ -16,7 +16,6 @@ readonly class Util
      * @return \ReflectionClass<T>
      *
      * @throws MetadataExtractionException
-     * @phpstan-ignore throws.unusedType
      */
     public static function reflectionClass(string|object $class): \ReflectionClass
     {

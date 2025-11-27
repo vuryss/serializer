@@ -42,7 +42,7 @@
                 "action": "vendor/bin/phpstan analyse --memory-limit 1G"
             },
             {
-                "action": "vendor/bin/pest"
+                "action": "vendor/bin/pest --no-coverage"
             }
         ]
     },

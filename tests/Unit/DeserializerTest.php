@@ -11,6 +11,9 @@ use Vuryss\Serializer\Tests\Datasets\Complex2\Engine;
 use Vuryss\Serializer\Tests\Datasets\Complex2\FuelType;
 use Vuryss\Serializer\Tests\Datasets\GenericObjectTypeWrapper;
 use Vuryss\Serializer\Tests\Datasets\InvalidEnumWrapper;
+use Vuryss\Serializer\Tests\Datasets\IntBackedEnum;
+use Vuryss\Serializer\Tests\Datasets\IntBackedEnumWrapper;
+use Vuryss\Serializer\Tests\Datasets\StringBackedEnumWrapper;
 use Vuryss\Serializer\Tests\Datasets\WriteAccessNoneProperty;
 
 test('Deserializing into data structures', function ($expected, $serialized, $type) {
@@ -235,6 +238,42 @@ test(
 ->throws(
     MetadataExtractionException::class,
     'Class "Vuryss\Serializer\Tests\Datasets\NonBackedEnum" is not a backed enum. Cannot denormalize into enum that has no backing type'
+);
+
+test(
+    'Can deserialize object with int-backed enum property',
+    function () {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $result = $serializer->deserialize('{"property": 2}', IntBackedEnumWrapper::class, SerializerInterface::FORMAT_JSON);
+
+        expect($result)->toBeInstanceOf(IntBackedEnumWrapper::class)
+            ->and($result->property)->toBeInstanceOf(IntBackedEnum::class)
+            ->and($result->property)->toBe(IntBackedEnum::TWO);
+    }
+);
+
+test(
+    'Cannot deserialize string value into int-backed enum',
+    function () {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"property": "invalid"}', IntBackedEnumWrapper::class, SerializerInterface::FORMAT_JSON);
+    }
+)
+->throws(
+    DeserializationImpossibleException::class,
+    'Cannot denormalize data "invalid" at path "$.property" into enum'
+);
+
+test(
+    'Cannot deserialize integer value into string-backed enum',
+    function () {
+        $serializer = new \Vuryss\Serializer\Serializer();
+        $serializer->deserialize('{"property": 123}', StringBackedEnumWrapper::class, SerializerInterface::FORMAT_JSON);
+    }
+)
+->throws(
+    DeserializationImpossibleException::class,
+    'Cannot denormalize data "123" at path "$.property" into enum'
 );
 
 // This test cannot be executed with old version of property info, cause it does not detect intersection types

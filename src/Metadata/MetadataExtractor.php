@@ -202,7 +202,10 @@ class MetadataExtractor implements MetadataExtractorInterface
             );
 
             if (isset($symfonySerializedNameAttribute[0])) {
-                $symfonySerializedName = $symfonySerializedNameAttribute[0]->newInstance()->getSerializedName();
+                /** @var \Symfony\Component\Serializer\Attribute\SerializedName $snAttribute */
+                $snAttribute = $symfonySerializedNameAttribute[0]->newInstance();
+
+                $symfonySerializedName = $snAttribute->serializedName;
             }
         }
 
@@ -212,7 +215,10 @@ class MetadataExtractor implements MetadataExtractorInterface
             );
 
             foreach ($symfonySerializerGroupsAttribute as $attribute) {
-                $symfonySerializerGroups = $attribute->newInstance()->getGroups();
+                /** @var \Symfony\Component\Serializer\Attribute\Groups $groupsAttributeInstance */
+                $groupsAttributeInstance = $attribute->newInstance();
+
+                $symfonySerializerGroups = $groupsAttributeInstance->groups;
             }
         }
 

@@ -8,14 +8,14 @@
         "phpdocumentor/reflection-docblock": "^5.6.5",
         "phpstan/phpdoc-parser": "^2.3",
         "psr/cache": "^3.0",
-        "symfony/property-info": "^7.4.1"
+        "symfony/property-info": "^8.0.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.2.0",
         "pestphp/pest-plugin-faker": "^4.0",
         "friendsofphp/php-cs-fixer": "^3.92",
         "mockery/mockery": "^1.6.12",
-        "symfony/serializer": "^7.4.2",
+        "symfony/serializer": "^8.0.0",
         "phpstan/phpstan": "^2.1.33",
         "captainhook/captainhook-phar": "^5.27.3",
         "captainhook/hook-installer": "^1.0.4",

@@ -169,12 +169,12 @@ readonly class TypeMapper
         $discriminatorMap = $reflectionClass->getAttributes(\Symfony\Component\Serializer\Attribute\DiscriminatorMap::class);
 
         if (1 === count($discriminatorMap)) {
+            /** @var \Symfony\Component\Serializer\Attribute\DiscriminatorMap $discriminatorMap */
             $discriminatorMap = $discriminatorMap[0]->newInstance();
 
             return new DiscriminatorMapMetadata(
-                field: $discriminatorMap->getTypeProperty(),
-                /* @phpstan-ignore-next-line */
-                map: $discriminatorMap->getMapping(),
+                field: $discriminatorMap->typeProperty,
+                map: $discriminatorMap->mapping,
             );
         }
 

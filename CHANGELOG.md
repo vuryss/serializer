@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.0.0](https://github.com/vuryss/serializer/compare/v2.0.0...v3.0.0) (2025-12-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Updating libraries, removing support for old versions, removing deprecations ([#84](https://github.com/vuryss/serializer/issues/84))
+
+### Features
+
+* Testing with latest dependencies, minor quality fixes & adding support for int-backed enum ([#80](https://github.com/vuryss/serializer/issues/80)) ([8215416](https://github.com/vuryss/serializer/commit/8215416ae4d89ad6ab1ebb492bfa666ba0acbac7))
+* Updating libraries, removing support for old versions, removing deprecations ([#84](https://github.com/vuryss/serializer/issues/84)) ([5da7f96](https://github.com/vuryss/serializer/commit/5da7f96d82e31e3d62db5a144019601ef0d3dccb))
+
+
+### Miscellaneous Chores
+
+* **deps:** pin php docker tag to a5ed9d1 ([#71](https://github.com/vuryss/serializer/issues/71)) ([586349a](https://github.com/vuryss/serializer/commit/586349a51b01fc5cd11d832d00ca28c6b9b115fa))
+* **deps:** update php:8.4-cli-alpine3.21 docker digest to 9c1dd92 ([#74](https://github.com/vuryss/serializer/issues/74)) ([c49acf0](https://github.com/vuryss/serializer/commit/c49acf0af4c941a8732551ae5d92cf3472c01d32))
+* **deps:** update update github actions ([#72](https://github.com/vuryss/serializer/issues/72)) ([665a7b0](https://github.com/vuryss/serializer/commit/665a7b05a4f38d8c16b594a776440e5d3a5c2c72))
+* **deps:** update update github actions ([#75](https://github.com/vuryss/serializer/issues/75)) ([a969e22](https://github.com/vuryss/serializer/commit/a969e2282ea5e018f764e9c1b6d8a87b45e2669d))
+* **deps:** update update github actions ([#82](https://github.com/vuryss/serializer/issues/82)) ([6618dfd](https://github.com/vuryss/serializer/commit/6618dfdceb92ea2cf80dbcdc6df27316effc7d74))
+* **deps:** update update github actions (major) ([#77](https://github.com/vuryss/serializer/issues/77)) ([4b82a8d](https://github.com/vuryss/serializer/commit/4b82a8d27bb91c5a638e2424d10aba1aec49e4cb))
+
 ## [2.0.0](https://github.com/vuryss/serializer/compare/v1.11.0...v2.0.0) (2025-06-19)
 
 

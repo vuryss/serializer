@@ -5,13 +5,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "phpdocumentor/reflection-docblock": "^5.6.5",
+        "phpdocumentor/reflection-docblock": "^6.0",
         "phpstan/phpdoc-parser": "^2.3",
         "psr/cache": "^3.0",
         "symfony/property-info": "^7.4.1"
     },
     "require-dev": {
-        "pestphp/pest": "^4.2.0",
+        "pestphp/pest": "^4.3",
         "pestphp/pest-plugin-faker": "^4.0",
         "friendsofphp/php-cs-fixer": "^3.92",
         "mockery/mockery": "^1.6.12",

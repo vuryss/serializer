@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.0.0](https://github.com/vuryss/serializer/compare/v3.0.0...v4.0.0) (2026-03-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Support for PHP 8.5 only
+
+### Features
+
+* Adding support and tests for Symfony 8.0, keeping support for 7.4 LTS ([da099cf](https://github.com/vuryss/serializer/commit/da099cf1e79cf2c0820ea1c4c3318a28667d1c98))
+* manual major bump ([d849551](https://github.com/vuryss/serializer/commit/d849551c790344c9e8182871cafad70e44617351))
+* Update libraries and PHP to 8.5 ([aad10ef](https://github.com/vuryss/serializer/commit/aad10ef5c358591a63a9d813ed5e2a822de873c0))
+* updated phppest and phpdocumentor ([#88](https://github.com/vuryss/serializer/issues/88)) ([1584d1b](https://github.com/vuryss/serializer/commit/1584d1b3de2550c55e1d03a51f7ef9876d0394c8))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#89](https://github.com/vuryss/serializer/issues/89)) ([195c96d](https://github.com/vuryss/serializer/commit/195c96dbcc4ee69d4b28fea6c4f22c08d9002da0))
+* **deps:** update actions/upload-artifact action to v7 ([#86](https://github.com/vuryss/serializer/issues/86)) ([ba05b28](https://github.com/vuryss/serializer/commit/ba05b2819e733abce13c4bf05b45ee6622efb9aa))
+* **deps:** update update composer packages to non-major versions ([#76](https://github.com/vuryss/serializer/issues/76)) ([8eb1a6b](https://github.com/vuryss/serializer/commit/8eb1a6bf135857df00156a7eff52b3e8bc028699))
+* **deps:** update update github actions ([#85](https://github.com/vuryss/serializer/issues/85)) ([3964639](https://github.com/vuryss/serializer/commit/39646398b0e1352cf893822f53ba2593ab135946))
+
 ## [3.0.0](https://github.com/vuryss/serializer/compare/v2.0.0...v3.0.0) (2025-12-15)
 
 

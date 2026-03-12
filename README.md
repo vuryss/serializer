@@ -40,6 +40,8 @@ Benchmarks comparing this library with Symfony Serializer and Serde can be found
 composer require vuryss/serializer
 ```
 
+The library supports Symfony 7.4 LTS and Symfony 8.x.
+
 ## Features
 
 ### Serialization
@@ -289,17 +291,28 @@ docker-compose exec library bash
 Install package dependencies:
 
 ```bash
-composer install -o
+docker-compose exec library composer install -o
 ```
 
-Run tests:
+Run the default local quality suite against the locked latest dependencies (Symfony 8.x):
 
 ```bash
-composer test
+docker-compose exec library composer qa
 ```
+
+Reproduce the Symfony compatibility matrix locally when needed:
+
+```bash
+docker-compose exec library composer deps:lowest
+docker-compose exec library composer qa
+docker-compose exec library composer deps:highest
+docker-compose exec library composer qa
+```
+
+`composer deps:lowest` rewrites composer.lock to the minimum supported dependency set, while `composer deps:highest` restores the latest supported set.
 
 HTML Coverage locally:
 
 ```bash
-XDEBUG_MODE=coverage vendor/bin/pest --coverage --coverage-html=coverage
+docker-compose exec library XDEBUG_MODE=coverage vendor/bin/pest --coverage --coverage-html=coverage
 ```

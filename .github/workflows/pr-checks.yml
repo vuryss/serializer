@@ -24,21 +24,13 @@ jobs:
                 uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
                 with:
                     php-version: '8.5'
-            -   name: Composer check platform requirements
-                run: composer check-platform-reqs
             -   name: Validate composer.json
                 run: composer validate --strict
             -   name: Install dependencies
-                run: composer install
-            -   name: Check coding standards
-                run: vendor/bin/php-cs-fixer fix --diff --dry-run --using-cache=no
-                env:
-                    PHP_CS_FIXER_IGNORE_ENV: 1
-            -   name: Static code analysis & Architecture validation
-                run: vendor/bin/phpstan analyse --memory-limit=1G -v
+                run: composer install --prefer-dist --no-interaction
+            -   name: Composer check platform requirements
+                run: composer check-platform-reqs
             -   name: Security check
                 run: composer audit
-            -   name: Run tests
-                run: vendor/bin/pest
             -   name: Check workflow files
                 uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11

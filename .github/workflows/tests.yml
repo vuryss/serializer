@@ -3,7 +3,16 @@ on: [ push, pull_request ]
 permissions: read-all
 jobs:
     tests:
+        name: Symfony ${{ matrix.symfony-version }}
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    -   symfony-version: 7.4-lowest
+                        install-command: composer update --prefer-lowest --prefer-stable --with-all-dependencies --no-interaction
+                    -   symfony-version: 8.x-highest
+                        install-command: composer update --prefer-stable --with-all-dependencies --no-interaction
         steps:
             -   name: Checkout
                 uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -11,7 +20,11 @@ jobs:
                 uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
                 with:
                     php-version: '8.5'
+            -   name: Validate composer.json
+                run: composer validate --strict
             -   name: Install dependencies
-                run: composer self-update && composer install && composer dump-autoload
-            -   name: Run tests
-                run: vendor/bin/pest
+                run: ${{ matrix.install-command }}
+            -   name: Composer check platform requirements
+                run: composer check-platform-reqs
+            -   name: Run quality checks
+                run: composer qa

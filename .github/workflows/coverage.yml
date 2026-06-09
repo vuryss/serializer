@@ -6,9 +6,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout
-                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
             -   name: Set up php 8.5
-                uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
+                uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
                 with:
                     php-version: '8.5'
                     coverage: xdebug
@@ -17,7 +17,7 @@ jobs:
             -   name: Run tests and collect coverage
                 run: vendor/bin/pest --coverage-clover clover.xml
             -   name: Upload coverage to Codecov
-                uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+                uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
                 with:
                     token: ${{ secrets.CODECOV_TOKEN }}
                     files: clover.xml
